@@ -1,0 +1,635 @@
+.visualLargeScreen {
+	width: 100vw !important;
+	height: 99.9vh !important;
+	background: linear-gradient(180deg, rgba(34, 52, 127, 1) 0%, rgba(9, 31, 119, 1) 100%);
+	display: flex;
+	padding: 0px 10px;
+	flex-direction: row;
+
+	-webkit-user-select: none;
+	/* Chrome/Safari/Opera */
+	-moz-user-select: none;
+	/* Firefox */
+	-ms-user-select: none;
+	/* Internet Explorer/Edge */
+	user-select: none;
+	position: relative;
+
+	.backgroundImage {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+		height: 100%;
+		background-image: url(src/assets/img/Group1.png);
+		z-index: 1;
+	}
+
+	img {
+		pointer-events: none;
+		/* 阻止拖拽 */
+	}
+
+	.titleBox {
+		position: relative;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 80%;
+		height: 40px;
+		background: linear-gradient(270deg, rgba(99, 235, 255, 0) 0%, rgba(99, 235, 233, 0.5) 34.74%, rgba(14, 179, 255, 0.5) 68.86%, rgba(27, 38, 174, 0) 100%);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		top: 13px;
+		z-index: 1;
+
+		.titleBox_button {
+			display: flex;
+			cursor: pointer;
+			min-width: 50px;
+
+			.arrow {
+				display: inline-block;
+
+				width: 15px;
+				height: 13.19px;
+				opacity: 1;
+				transform: rotate(90deg);
+				background: url(https://img.js.design/assets/img/65f7d9a958ddb4de45a63d06.png);
+				background-size: 100%;
+			}
+
+			&:hover {
+				.arrow {
+					width: 16px;
+					height: 14.19px;
+				}
+			}
+		}
+
+		.titleBox_button:last-child {
+			.arrow {
+				transform: rotate(270deg);
+			}
+		}
+
+		.titleBox_title {
+			font-size: 14px;
+			color: #fff;
+		}
+	}
+
+	.visualLargeScreen_left {
+		/* padding-left: 10px; */
+		padding-top: 10px;
+		padding-bottom: 10px;
+		width: 25%;
+		display: flex;
+		flex-direction: column;
+		z-index: 2;
+		height: 100%;
+
+		.exit {
+			width: 100px;
+			height: 38px;
+			opacity: 1;
+			background: linear-gradient(179.16deg, rgba(99, 235, 233, 1) 0%, rgba(99, 155, 235, 1) 100%);
+
+			font-size: 14px;
+			cursor: pointer;
+			letter-spacing: 1.71px;
+			line-height: 34.75px;
+			color: rgba(255, 255, 255, 1);
+			border-radius: 4px;
+			border: 1px solid #257fa9;
+
+			&:hover {
+				background: linear-gradient(179.16deg, rgb(80, 235, 232) 0%, rgb(59, 132, 235) 100%);
+			}
+		}
+
+		.left_top {
+			width: 100%;
+			height: 35%;
+			margin-top: 12px;
+			padding: 10px;
+			box-shadow:
+				inset 0px 0px 4px 2px rgba(255, 255, 255, 0.5),
+				0px 0px 4px 1px rgb(0 255 251);
+			position: relative;
+			display: flex;
+			flex-direction: column;
+
+			.content {
+				flex-grow: 1;
+				width: 97%;
+				position: relative;
+				left: 50%;
+				transform: translateX(-50%);
+			}
+		}
+
+		.left_bottom {
+			margin-top: 20px;
+			height: 58%;
+			width: 100%;
+			padding: 10px;
+			box-shadow:
+				inset 0px 0px 4px 2px rgba(255, 255, 255, 0.5),
+				0px 0px 4px 1px rgb(0 255 251);
+			position: relative;
+
+			.rateRingChartBox {
+				position: relative;
+				height: 55%;
+
+				.rateRingChart {
+					width: 100%;
+					height: 100%;
+					position: relative;
+					z-index: 2;
+				}
+
+				.outerRing {
+					position: absolute;
+					left: 35%;
+					top: 50%;
+					transform: translate(-50%, -50%);
+					border-radius: 50%;
+
+					border: 1px solid #7ed4ed;
+
+					box-shadow: inset 0px 1px 7px #63ebe9;
+					z-index: 1;
+				}
+
+				.solidCircle {
+					position: absolute;
+					left: 35%;
+					top: 50%;
+					transform: translate(-50%, -50%);
+					border-radius: 50%;
+					background: rgba(4, 70, 139, 0.5);
+					box-shadow: inset 0px 0px 3px 1px #63ebe9;
+					z-index: 1;
+				}
+			}
+
+			.rateRingInfo {
+				width: 100%;
+				height: 34%;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-around;
+
+				.rateRingInfoBox {
+					width: 100%;
+					display: flex;
+					justify-content: space-around;
+					height: 50%;
+
+					.item {
+						width: 25%;
+						height: 82%;
+						background-image: url(https://img.js.design/assets/img/64db2681c1f4a1f251392e0a.png);
+						background-size: cover;
+						background-position: center;
+						background-repeat: no-repeat;
+						position: relative;
+						display: flex;
+						flex-direction: column;
+						justify-content: center;
+						align-items: center;
+
+						.item_num {
+							color: #c5fffe;
+							position: absolute;
+							top: 1px;
+							font-size: 16px;
+						}
+
+						.item_title {
+							color: #fff;
+							position: absolute;
+							top: 50%;
+							font-size: 13px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.visualLargeScreen_content {
+		flex-grow: 1;
+		position: relative;
+		padding-top: 10%;
+		z-index: 2;
+		height: 100%;
+
+		.contentTitleBox {
+			width: 110%;
+			height: 12%;
+			background-image: url(src/assets/img/titleBox.png);
+			position: absolute;
+			left: -5%;
+			background-size: 100% 100%;
+			background-repeat: no-repeat;
+			top: 0%;
+		}
+
+		.optionSearchArea {
+			display: flex;
+			justify-content: center;
+
+			.dropDownList {
+				margin-right: 10px;
+			}
+
+			.search {
+				outline: none;
+				background-color: transparent;
+				height: 40px;
+				border-radius: 10px;
+				min-width: 100px;
+				color: #63ebe9;
+				cursor: pointer;
+				border: 2px solid rgb(78, 180, 206);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: all 0.1s ease-in-out;
+
+				&:hover {
+					box-shadow: 0px 0px 2px #94d9ae;
+				}
+
+				&:active {
+					box-shadow: 0px 0px 5px #94d9ae;
+				}
+
+				i {
+					font-size: 16px;
+					margin-left: 5px;
+				}
+			}
+		}
+
+		.contentBox {
+			width: 100%;
+			height: 75%;
+			padding: 0px 15px;
+			margin-top: 30px;
+
+			.map {
+				width: 100%;
+				height: 100%;
+			}
+
+			.echartsMap {
+				width: 100%;
+				height: 100%;
+				background-position-y: bottom;
+				background-position-x: center;
+				background-image: url(src/assets/img/地图底盘.png);
+				background-repeat: no-repeat;
+				transform: rotateX(31deg);
+			}
+
+			.loading {
+				position: absolute;
+				font-size: 46px;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				color: #c5fffe;
+                animation: rotate360 2s linear infinite;
+			}
+		}
+
+		.switchingArea {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 12%;
+
+			.button {
+				outline: none;
+				background: rgba(24, 57, 190, 0.5);
+				width: 110px;
+				height: 38px;
+				border: none;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #fff;
+				font-size: 14px;
+				cursor: pointer;
+
+				&:hover {
+					background: rgba(24, 57, 190, 1);
+					border: 1px solid #5c9695;
+				}
+
+				&.active {
+					background: rgba(24, 57, 190, 1);
+					border: 1px solid #5c9695;
+				}
+			}
+		}
+	}
+
+	.visualLargeScreen_right {
+		width: 25%;
+		/* padding-right: 10px; */
+		padding-top: 48px;
+		padding-bottom: 10px;
+		background-image: url(src/assets/img/背景.png);
+		background-size: 85%;
+		background-repeat: no-repeat;
+		background-position-y: 63%;
+		background-position-x: 241%;
+		display: flex;
+		flex-direction: column;
+		z-index: 2;
+		height: 100%;
+
+		.right_top {
+			width: 100%;
+			height: 42%;
+			margin-top: 12px;
+			padding: 10px;
+			box-shadow:
+				inset 0px 0px 4px 2px rgba(255, 255, 255, 0.5),
+				0px 0px 4px 1px rgb(0 255 251);
+			position: relative;
+
+			.contentBox {
+				display: flex;
+				width: 100%;
+				height: 60%;
+
+				.contentBox_content {
+					width: 60%;
+					height: 100%;
+					border-radius: 50%;
+					background-repeat: no-repeat;
+					background-position: center;
+					background-image: url(src/assets/img/圆.png);
+					background-size: cover;
+					position: relative;
+
+					.info {
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						transform: translate(-50%, -50%);
+						display: flex;
+						flex-direction: column;
+						justify-content: center;
+						align-items: center;
+
+						.num {
+							color: rgba(197, 255, 254, 1);
+							position: relative;
+							font-size: 2.5vw;
+							font-weight: bold;
+							top: -11px;
+						}
+
+						.text {
+							color: rgba(197, 255, 254, 1);
+							font-size: 0.8vw;
+							position: relative;
+							bottom: -10px;
+						}
+					}
+				}
+
+				.contentBox_info {
+					display: flex;
+					flex-direction: column;
+					justify-content: flex-end;
+					padding-bottom: 10%;
+
+					width: 40%;
+					height: 100%;
+
+					.item {
+						display: flex;
+						align-items: center;
+
+						.drop {
+							width: 10px;
+							height: 10px;
+							border-radius: 50%;
+							background-color: rgba(236, 54, 54, 1);
+							display: inline-block;
+						}
+
+						&:nth-child(2) {
+							.drop {
+								background-color: rgba(99, 235, 233, 1);
+							}
+						}
+
+						&:nth-child(3) {
+							.drop {
+								background-color: rgba(7, 119, 255, 1);
+							}
+						}
+
+						.text {
+							color: rgba(197, 255, 254, 1);
+							margin-left: 7px;
+							font-size: 13px;
+						}
+					}
+				}
+			}
+
+			.regulatoryRegion {
+				width: 90%;
+				margin: 0 auto;
+				height: 30%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+
+				.sliderBar {
+					width: 100%;
+				}
+			}
+		}
+
+		.right_bottom {
+			height: 55%;
+			padding: 10px;
+			box-shadow:
+				inset 0px 0px 4px 2px rgba(255, 255, 255, 0.5),
+				0px 0px 4px 1px rgb(0 255 251);
+			position: relative;
+			margin-top: 20px;
+
+			.carouselChart {
+				width: 85%;
+				margin: 0 auto;
+				height: 20%;
+				position: relative;
+				margin-top: 20px;
+
+				.swiper {
+					width: 100%;
+					height: 100%;
+
+					.swiper-slide {
+						background-image: url(src/assets/img/轮播背景图.png);
+						background-size: 100% 100%;
+						background-repeat: no-repeat;
+					}
+				}
+
+				.switchButton {
+					width: 25px;
+					height: 40%;
+					background-repeat: no-repeat;
+					background-size: contain;
+					position: absolute;
+					top: 50%;
+					transform: translateY(-50%);
+					cursor: pointer;
+
+					width: 0;
+					height: 0;
+					border-left: 25px solid transparent;
+					/* 左边透明 */
+					border-right: 25px solid transparent;
+					/* 右边透明 */
+					border-top: 16px solid rgba(99, 235, 233, 0.6);
+					/* 上方红色边框 */
+
+					transition: all 0.1s;
+
+					&:hover {
+						border-left: 27px solid transparent;
+
+						border-right: 27px solid transparent;
+
+						border-top: 18px solid rgba(99, 235, 233, 0.6);
+					}
+				}
+
+				.button-next {
+					right: -35px;
+					transform: translateY(-50%) rotate(270deg);
+				}
+
+				.button-prev {
+					left: -35px;
+					transform: translateY(-50%) rotate(90deg);
+				}
+			}
+
+			.tabulation {
+				width: 90%;
+				height: calc(100% - 40%);
+				margin: 0 auto;
+				margin-top: 15px;
+				overflow-y: auto;
+
+				/* 修改滚动条的轨道 */
+				&::-webkit-scrollbar {
+					width: 3px;
+					/* 滚动条宽度 */
+				}
+
+				/* 修改滚动条的滑块 */
+				&::-webkit-scrollbar-thumb {
+					background-color: rgb(124, 204, 224);
+					/* 滑块颜色 */
+					border-radius: 5px;
+					/* 滑块圆角 */
+				}
+
+				/* 鼠标悬停在滚动条上时的样式 */
+				&::-webkit-scrollbar-thumb:hover {
+					background-color: #555;
+				}
+
+				.tabulation_ul {
+					padding-left: 9%;
+
+					.ul_li {
+						list-style: none;
+						cursor: pointer;
+						padding: 5px 0px;
+
+						.li_date {
+							color: rgba(197, 255, 254, 1);
+							position: relative;
+							font-size: 13px;
+
+							&::before {
+								position: absolute;
+								content: '';
+								width: 8px;
+								height: 8px;
+								border-radius: 50%;
+								background-color: rgba(197, 255, 254, 1);
+								left: -6%;
+								top: 50%;
+								transform: translateY(-50%);
+								box-shadow: 0px 0px 4px 2px rgba(255, 255, 255, 0.5);
+							}
+						}
+
+						.li_title {
+							color: rgba(255, 179, 0, 1);
+							font-size: 13px;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@keyframes rotate360 {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+/* 当屏幕宽度小于 1400px 时应用的样式 */
+@media (max-width: 1400px) {
+}
+
+/* 当屏幕宽度大于 1400px 时应用的样式 */
+@media (min-width: 1500px) {
+	.visualLargeScreen {
+		.visualLargeScreen_left {
+			width: 22%;
+		}
+
+		.visualLargeScreen_content {
+		}
+
+		.visualLargeScreen_right {
+			width: 22%;
+
+			.right_top {
+				.contentBox {
+					.contentBox_content {
+					}
+
+					.contentBox_info {
+					}
+				}
+			}
+		}
+	}
+}
