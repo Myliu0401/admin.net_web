@@ -21,7 +21,7 @@
 		left: 0px;
 		width: 100%;
 		height: 100%;
-		background-image: url(src/assets/img/Group1.png);
+		background-image: url(../../assets/img/Group1.png);
 		z-index: 1;
 	}
 
@@ -230,7 +230,7 @@
 		.contentTitleBox {
 			width: 110%;
 			height: 12%;
-			background-image: url(src/assets/img/titleBox.png);
+			background-image: url(../../assets/img/titleBox.png);
 			position: absolute;
 			left: -5%;
 			background-size: 100% 100%;
@@ -291,7 +291,7 @@
 				height: 100%;
 				background-position-y: bottom;
 				background-position-x: center;
-				background-image: url(src/assets/img/地图底盘.png);
+				background-image: url(../../assets/img/地图底盘.png);
 				background-repeat: no-repeat;
 				transform: rotateX(31deg);
 			}
@@ -303,7 +303,7 @@
 				left: 50%;
 				transform: translate(-50%, -50%);
 				color: #c5fffe;
-                animation: rotate360 2s linear infinite;
+				animation: rotate360 2s linear infinite;
 			}
 		}
 
@@ -345,7 +345,7 @@
 		/* padding-right: 10px; */
 		padding-top: 48px;
 		padding-bottom: 10px;
-		background-image: url(src/assets/img/背景.png);
+		background-image: url(../../assets/img/背景.png);
 		background-size: 85%;
 		background-repeat: no-repeat;
 		background-position-y: 63%;
@@ -376,7 +376,7 @@
 					border-radius: 50%;
 					background-repeat: no-repeat;
 					background-position: center;
-					background-image: url(src/assets/img/圆.png);
+					background-image: url(../../assets/img/圆.png);
 					background-size: cover;
 					position: relative;
 
@@ -484,7 +484,7 @@
 					height: 100%;
 
 					.swiper-slide {
-						background-image: url(src/assets/img/轮播背景图.png);
+						background-image: url(../../assets/img/轮播背景图.png);
 						background-size: 100% 100%;
 						background-repeat: no-repeat;
 					}

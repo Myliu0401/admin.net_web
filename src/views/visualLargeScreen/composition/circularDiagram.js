@@ -7,7 +7,8 @@ export default function () {
    const outerRadius = ref(0);
 
    // 渲染环形饼图
-   function renderRateRingChart(dom) {
+   function renderRateRingChart(dom, datas = []) {
+
       const myChart = window.echarts.init(dom);
       const option = {
          legend: {
@@ -36,10 +37,7 @@ export default function () {
                labelLine: {
                   show: false,
                },
-               data: [
-                  { value: 1048, name: '在线装置' },
-                  { value: 735, name: '离线装置' },
-               ],
+               data: datas,
                label: {
                   show: false,
                   position: 'center',

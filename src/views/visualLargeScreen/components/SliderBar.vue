@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { defineProps, ref, onBeforeMount, onMounted, reactive } from 'vue';
+import { defineProps, ref, onBeforeMount, onMounted, reactive, watch } from 'vue';
 
 const props = defineProps({
     title: {
@@ -47,6 +47,16 @@ onMounted(() => {
     state.barBoxWidth = barBoxDom.value.offsetWidth;
 });
 
+watch(()=>{
+    return props.value;
+}, (newVal)=>{
+    state.myValue = newVal;
+    console.log(newVal, '==')
+    init();
+});
+
+
+// 鼠标按下时触发
 function mousedown(e) {
     state.downX = e.clientX;
     state.isDown = true;
@@ -54,6 +64,8 @@ function mousedown(e) {
     document.addEventListener('mouseup', mouseup);
 };
 
+
+// 鼠标移动时触发
 function mousemove(e) {
     state.schedule = (e.clientX - state.downX) + state.lastTimeX;
 
@@ -67,6 +79,8 @@ function mousemove(e) {
     state.myValue = Math.ceil(value);
 };
 
+
+// 鼠标抬起时触发
 function mouseup() {
     state.lastTimeX = state.schedule;
     state.isDown = false;
@@ -74,6 +88,8 @@ function mouseup() {
     document.removeEventListener('mouseup', mouseup);
 };
 
+
+// 初始化
 function init() {
     state.schedule = (state.barBoxWidth / props.maxValue) * props.value;
     state.schedule = state.schedule <= 11 ? 11 : state.schedule;
@@ -92,6 +108,7 @@ function init() {
         display: flex;
         justify-content: flex-end;
         font-size: 13px;
+        white-space: nowrap;
     }
 
     .text1 {

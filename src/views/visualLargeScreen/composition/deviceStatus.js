@@ -1,13 +1,17 @@
 import { reactive, ref, onBeforeMount } from 'vue';
-
+import { getOfDeviceStatuses } from '/@/api/visualLargeScreen/index.js';
 
 
 export default function () {
 
+    onBeforeMount(async ()=>{
+        
+    }); 
 
-    const inLineeQuipment = ref(200);
-    const offLineEquipment = ref(100);
-    const faultyEquipment = ref(170);
+
+    const inLineeQuipment = ref(0);
+    const offLineEquipment = ref(0);
+    const faultyEquipment = ref(0);
 
 
     // 渲染设备状态柱状图

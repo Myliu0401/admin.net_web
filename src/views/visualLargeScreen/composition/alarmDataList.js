@@ -1,42 +1,14 @@
 import { ref, onBeforeMount } from 'vue';
-
+import { getTheLatestAlarms } from '/@/api/visualLargeScreen/index.js';
 
 export default function (){
-    const alarmDataList =  ref([
-        {
-            timeStamp: 1710904959133,
-            title: '037-#002-大号侧-塔吊',
-        },
-        {
-            timeStamp: 1710904959133,
-            title: '037-#002-大号侧-塔吊',
-        },
-        {
-            timeStamp: 1710904959133,
-            title: '037-#002-大号侧-塔吊',
-        },
-        {
-            timeStamp: 1710904959133,
-            title: '037-#002-大号侧-塔吊',
-        },
-        {
-            timeStamp: 1710904959133,
-            title: '037-#002-大号侧-塔吊',
-        },
-        {
-            timeStamp: 1710904959133,
-            title: '037-#002-大号侧-塔吊',
-        },
-        {
-            timeStamp: 1710904959133,
-            title: '037-#002-大号侧-塔吊',
-        },
-        {
-            timeStamp: 1710904959133,
-            title: '037-#002-大号侧-塔吊',
-        },
-    ]);
+    const alarmDataList =  ref([]);
 
+
+    onBeforeMount(async ()=>{
+         const res = await getTheLatestAlarms();
+         alarmDataList.value = res.data.result;
+    });
 
 
     return {

@@ -93,7 +93,7 @@ function switchingTypes(e) {
 	width: 100%;
 	height: 100%;
 	background-repeat: no-repeat;
-	background-image: url(src/assets/img/GTback.png);
+	background-image: url(../../../assets/img/GTback.png);
 	background-size: 100% 100%;
 	padding-top: 9px;
 

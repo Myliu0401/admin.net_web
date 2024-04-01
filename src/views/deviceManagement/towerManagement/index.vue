@@ -58,7 +58,7 @@
         </div>
 
 
-        <el-dialog title="修改" :visible.sync="state.dialogVisible" :close-on-click-modal="false" width="50%"
+        <el-dialog title="修改" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%"
             :before-close="handleClose">
             <span>这是一段信息</span>
             <span slot="footer" class="dialog-footer">

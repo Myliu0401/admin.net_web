@@ -84,7 +84,7 @@ const enterTheLargeScreen = ()=>{
         background-color: #fff;
         box-shadow: 1px 1px 4px 1px rgba(221, 221, 221, 1);
         border-radius: 10px;
-        background-image: url(src/assets/img/titleback.png);
+        background-image: url(../../../assets/img/titleback.png);
         background-repeat: no-repeat;
         background-size: 60% 110%;
         background-position-x: center;

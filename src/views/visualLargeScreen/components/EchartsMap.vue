@@ -340,7 +340,7 @@ export default defineComponent({
 	height: 100%;
 	background-position-y: bottom;
 	background-position-x: center;
-	background-image: url(src/assets/img/地图底盘.png);
+	background-image: url(../../../assets/img/地图底盘.png);
 	background-repeat: no-repeat;
 	transform: rotateX(31deg);
 }

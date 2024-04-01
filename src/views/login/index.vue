@@ -48,7 +48,9 @@
 		</div>
 	</div>
 
-	<div class="mg"></div>
+	<div class="mg">
+          <img src="../../assets/img/1.png" />
+	</div>
 </template>
 
 <script setup lang="ts" name="loginIndex">
@@ -251,8 +253,7 @@ onMounted(() => {
 		}
 	}
 }
-
 .mg{
-   background-image: url(src/assets/img/1.png)
+	background-image: url(../../assets/img/titleback.png);
 }
 </style>
