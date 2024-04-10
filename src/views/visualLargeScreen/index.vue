@@ -46,11 +46,11 @@
 		<div class="visualLargeScreen_content">
 			<div class="contentTitleBox"></div>
 			<div class="optionSearchArea">
-				<DropDownList :lists="administrativeRegion" prompt="省" />
-				<DropDownList :lists="administrativeRegion" prompt="市" />
-				<DropDownList :lists="administrativeRegion" prompt="区" />
+				<DropDownList :lists="administrativeRegion" prompt="省" :activeTitle="state.selectRegions[0]" @setSelected="setSelected($event, '省')" />
+				<DropDownList :lists="administrativeRegion" prompt="市" :activeTitle="state.selectRegions[1]" @setSelected="setSelected($event, '市')" />
+				<DropDownList :lists="administrativeRegion" prompt="区" :activeTitle="state.selectRegions[2]" @setSelected="setSelected($event, '区')" />
 
-				<button class="search">
+				<button class="search" @click="search">
 					搜索
 					<el-icon>
 						<ele-Search />
@@ -59,9 +59,9 @@
 			</div>
 
 			<div class="contentBox">
-				<BaiduMap v-show="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" />
-				<EchartsMap v-show="state.currentlySelectedMap === 'echarts'" ref="echartsMap" />
-				<GTDetails v-if="state.currentlySelectedMap === 'GTDetails'" />
+				<BaiduMap v-if="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" key="baiduMap" />
+				<EchartsMap v-else-if="state.currentlySelectedMap === 'echarts'" ref="echartsMap" key="echartsMap" />
+				<GTDetails v-else-if="state.currentlySelectedMap === 'GTDetails'" key="GTDetails" />
 				<el-icon v-if="state.isLoading" class="loading">
 					<ele-Loading />
 				</el-icon>
@@ -154,6 +154,8 @@ import circularDiagram from './composition/circularDiagram.js'; // 环形图的�
 import alarmDataList1 from './composition/alarmDataList.js'; // 告警数据列表
 import carouselChart from './composition/carouselChart.js'; // 轮播图数据
 import { getOfDeviceStatuses, getTotalNumberOfLineTowers } from '/@/api/visualLargeScreen/index.js';
+import { ElMessage } from 'element-plus';
+
 const router = useRouter();
 
 const deviceDom = ref(null);
@@ -163,18 +165,18 @@ const echartsMap = ref(null);
 
 // 创建数据
 const state = reactive({
-	currentlySelectedMap: 'GTDetails', // 当前选中的地图
+	currentlySelectedMap: null, // 当前选中的地图
 
 	contentTimerId: null,
 
 	isLoading: false, // 是否正在加载
 
-	isFinite: true,
-
 	alarmLoading: false,
 
 	totalNumberOfLines: 0, // 线路总数
 	totalNumberOfTowerPoles: 0, // 塔杆总数
+
+	selectRegions: [],
 });
 
 const { inLineeQuipment, offLineEquipment, faultyEquipment, renderDeviceStatu } = deviceStatus();
@@ -188,10 +190,100 @@ onBeforeMount(async () => {
 
 	NextLoading.done(); // 移除加载中
 
-	window.addEventListener('resize', antiShakeLargeScreen); // 监听事件
+	// window.addEventListener('resize', largeScreen); // 监听事件
+
+	document.addEventListener('keydown', largeScreen);
 
 	state.alarmLoading = true;
 
+	setTimeout(init, 100);
+});
+
+// 挂载后执行
+onMounted(() => {
+	state.isLoading = true;
+});
+
+// 卸载前生命周期
+onBeforeUnmount(() => {
+	//document.removeEventListener('fullscreenchange', antiShakeLargeScreen);
+	baiduMap.value && baiduMap.value.destroyBaiduMaps(); // 卸载百度地图
+	echartsMap.value && echartsMap.value.uninstallingAnInstance(); // 卸载echarts地图
+});
+
+// 监听进退出大屏函数
+function largeScreen(event) {
+	if (event.key === 'Escape') {
+		window.location.reload();
+	}
+}
+
+// 切换地图
+function switchMaps(type) {
+	if (type === state.currentlySelectedMap) {
+		return;
+	}
+
+	baiduMap.value && baiduMap.value.destroyBaiduMaps(); // 卸载百度地图
+	echartsMap.value && echartsMap.value.uninstallingAnInstance(); // 卸载echarts地图
+	state.isLoading = true;
+	clearTimeout(state.contentTimerId);
+	state.currentlySelectedMap = type;
+	if (type === 'baiduMap') {
+		state.contentTimerId = setTimeout(() => {
+			baiduMap.value.renderBaiduMap(); // 渲染百度地图
+			state.isLoading = false;
+		}, 16);
+	} else if (type === 'echarts') {
+		state.contentTimerId = setTimeout(() => {
+			echartsMap.value.renderInitEchartsRender(); // 渲染echarts地图
+			state.isLoading = false;
+		}, 16);
+	}
+}
+
+// 切换进入 GT详情
+function enterGT(e) {
+	state.currentlySelectedMap = 'GTDetails';
+}
+
+// 退出
+function backReturn() {
+	document.exitFullscreen();
+	router.replace('/dashboard/workbench');
+}
+
+// 时间戳转换成日期时间
+function formatTimestamp(timestamp) {
+	// 创建一个 Date 对象并传入时间戳（单位为毫秒）
+	var date = new Date(timestamp);
+
+	// 获取年、月、日、时、分、秒
+	var year = date.getFullYear();
+	var month = ('0' + (date.getMonth() + 1)).slice(-2); // 月份从0开始，需要加1，并确保两位数格式
+	var day = ('0' + date.getDate()).slice(-2); // 确保两位数格式
+	var hours = ('0' + date.getHours()).slice(-2); // 确保两位数格式
+	var minutes = ('0' + date.getMinutes()).slice(-2); // 确保两位数格式
+	var seconds = ('0' + date.getSeconds()).slice(-2); // 确保两位数格式
+
+	// 拼接日期时间字符串
+	var formattedDate = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+
+	return formattedDate;
+}
+
+// 防抖函数
+const antiShake = (callback) => {
+	let timedID = null;
+	return () => {
+		clearTimeout(timedID);
+		timedID = setTimeout(callback, 1000);
+	};
+};
+
+// 初始化
+async function init() {
+	// 请求数据
 	const res = await Promise.all([getOfDeviceStatuses(), getTotalNumberOfLineTowers()]);
 
 	state.alarmLoading = false;
@@ -222,110 +314,36 @@ onBeforeMount(async () => {
 
 	// 渲染环形饼图
 	renderRateRingChart(chartDom.value, pieChartData);
-});
 
-// 挂载后执行
-onMounted(() => {
+	// 渲染轮播图
+	initCarouselChart();
+
 	setTimeout(() => {
-		initCarouselChart(); // 渲染轮播图
 		switchMaps('echarts'); // 渲染地图
-	}, 16);
-});
+	}, 1300);
+}
 
-// 卸载前生命周期
-onBeforeUnmount(() => {
-	document.removeEventListener('fullscreenchange', antiShakeLargeScreen);
-});
-
-// 监听进退出大屏函数
-function largeScreen() {
-	if (state.isFinite) {
-		return;
-	}
-
-	renderRateRingChart(chartDom.value); // 渲染饼图
-	initCarouselChart(); // 渲染轮播图
-
-	// 渲染柱状图
-	renderDeviceStatu(
-		{
-			inLineeQuipment: inLineeQuipment.value,
-			offLineEquipment: offLineEquipment.value,
-			faultyEquipment: faultyEquipment.value,
-		},
-		deviceDom.value
-	);
-
-	if (state.currentlySelectedMap === 'baiduMap') {
-		baiduMap.value.renderBaiduMap(); // 渲染百度地图
-	} else if (state.currentlySelectedMap === 'echarts') {
-		echartsMap.value.renderInitEchartsRender(); // 渲染echarts地图
+// 修改选中区域
+function setSelected(name, type) {
+	if (type === '省') {
+		state.selectRegions.length = 0;
+		state.selectRegions[0] = name;
+	} else if (type === '市') {
+		state.selectRegions[1] = name;
+	} else if (type === '区') {
+		state.selectRegions[2] = name;
 	}
 }
 
-// 切换地图
-function switchMaps(type) {
-	if (type === state.currentlySelectedMap) {
-		return;
-	}
-
-	baiduMap.value.destroyBaiduMaps(); // 卸载百度地图
-	echartsMap.value.uninstallingAnInstance(); // 卸载echarts地图
-	state.isLoading = true;
-	clearTimeout(state.contentTimerId);
-	state.currentlySelectedMap = type;
-	if (type === 'baiduMap') {
-		state.contentTimerId = setTimeout(() => {
-			baiduMap.value.renderBaiduMap(); // 渲染百度地图
-			state.isLoading = false;
-		}, 16);
-	} else if (type === 'echarts') {
-		state.contentTimerId = setTimeout(() => {
-			echartsMap.value.renderInitEchartsRender(); // 渲染echarts地图
-			state.isLoading = false;
-		}, 16);
-	}
+// 搜索
+function search() {
+	ElMessage({
+		message: '该功能暂未开放',
+		type: 'warning',
+	});
 }
 
-// 切换进入 GT详情
-function enterGT(e) {
-	state.currentlySelectedMap = 'GTDetails';
-}
 
-// 退出
-function backReturn() {
-	document.exitFullscreen();
-	router.replace('/dashboard/workbench');
-}
-
-function formatTimestamp(timestamp) {
-	// 创建一个 Date 对象并传入时间戳（单位为毫秒）
-	var date = new Date(timestamp);
-
-	// 获取年、月、日、时、分、秒
-	var year = date.getFullYear();
-	var month = ('0' + (date.getMonth() + 1)).slice(-2); // 月份从0开始，需要加1，并确保两位数格式
-	var day = ('0' + date.getDate()).slice(-2); // 确保两位数格式
-	var hours = ('0' + date.getHours()).slice(-2); // 确保两位数格式
-	var minutes = ('0' + date.getMinutes()).slice(-2); // 确保两位数格式
-	var seconds = ('0' + date.getSeconds()).slice(-2); // 确保两位数格式
-
-	// 拼接日期时间字符串
-	var formattedDate = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
-
-	return formattedDate;
-}
-
-// 防抖函数
-const antiShake = (callback) => {
-	let timedID = null;
-	return () => {
-		clearTimeout(timedID);
-		timedID = setTimeout(callback, 1000);
-	};
-};
-
-const antiShakeLargeScreen = antiShake(largeScreen);
 </script>
 
 
@@ -335,11 +353,11 @@ const antiShakeLargeScreen = antiShake(largeScreen);
 
 <style lang="scss">
 .visualLargeScreen {
-    .el-loading-mask{
-        background-color: transparent;
-    }
+	.el-loading-mask {
+		background-color: transparent;
+	}
 	.el-loading-spinner .path {
-        stroke: #42f5e1;
+		stroke: #42f5e1;
 	}
 }
 </style>

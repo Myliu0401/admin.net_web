@@ -39,7 +39,7 @@
   
   
           .accordion {
-              height: 100%;
+              height: calc(100% - 58px);
               border-bottom: 1px solid #ccc;
   
               .el-tree {

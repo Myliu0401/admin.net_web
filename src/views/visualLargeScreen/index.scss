@@ -261,11 +261,12 @@
 				transition: all 0.1s ease-in-out;
 
 				&:hover {
-					box-shadow: 0px 0px 2px #94d9ae;
+					box-shadow: 0px 0px 4px #94d9ae;
 				}
 
 				&:active {
-					box-shadow: 0px 0px 5px #94d9ae;
+					transition: all 0s ease-in-out;
+					box-shadow: 0px 0px 8px #94d9ae;
 				}
 
 				i {
@@ -395,14 +396,14 @@
 							position: relative;
 							font-size: 2.5vw;
 							font-weight: bold;
-							top: -11px;
+							top: -6px;
 						}
 
 						.text {
 							color: rgba(197, 255, 254, 1);
 							font-size: 0.8vw;
 							position: relative;
-							bottom: -10px;
+							bottom: -5px;
 						}
 					}
 				}

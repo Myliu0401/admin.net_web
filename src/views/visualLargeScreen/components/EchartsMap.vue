@@ -1,5 +1,7 @@
 <template>
-	<div class="echartsMap" id="ChinaMap" ref="ChinaMap"></div>
+	<div class="echartsMapBox">
+		<div class="echartsMap" id="ChinaMap" ref="ChinaMap"></div>
+	</div>
 </template>
 
 
@@ -21,17 +23,17 @@ export default defineComponent({
 			echartsMapExample: null, // 地图实例
 		});
 
-
 		// 渲染初始化echarts地图
 		function renderInitEchartsRender() {
 			window.echarts.registerMap('中国', mapData);
-			state.echartsMapExample = window.echarts.init(document.getElementById('ChinaMap'));
+			state.echartsMapExample = window.echarts.init(document.getElementById('ChinaMap'), null, { useWorker: true });
 			state.echartsMapExample.setOption({
 				geo: assemblingMapModules(),
 				graphic: state.graphic,
 				series: buildingScatterData(),
+				animation: false
 			});
-		};
+		}
 
 		// 渲染选中的省份
 		function renderSelectedEcharts() {
@@ -87,11 +89,9 @@ export default defineComponent({
 					geo: assemblingMapModules(),
 					graphic: state.graphic,
 				},
-				() => {
-					console.log('==');
-				}
+				() => {}
 			);
-		};
+		}
 
 		// 构建地图选中数据
 		function buildSelectedData(provinceName) {
@@ -104,7 +104,7 @@ export default defineComponent({
 					]),
 				},
 			};
-		};
+		}
 
 		// 组装选择数据
 		function buildProvincePromptData(left, top, value) {
@@ -138,7 +138,7 @@ export default defineComponent({
 				],
 				zlevel: 10,
 			};
-		};
+		}
 
 		// 组装地图模块数据
 		function assemblingMapModules() {
@@ -273,7 +273,7 @@ export default defineComponent({
 			];
 
 			return mapBackground;
-		};
+		}
 
 		// 构建散点数据
 		function buildingScatterData() {
@@ -313,35 +313,33 @@ export default defineComponent({
 					},
 				},
 			];
-		};
-
+		}
 
 		// 卸载实例
 		function uninstallingAnInstance() {
 			state.echartsMapExample && state.echartsMapExample.dispose();
-		};
+		}
 
 		return { renderInitEchartsRender, uninstallingAnInstance };
-	}
+	},
 });
-
-
-
-
-
-
 </script>
 
 
 
 <style lang="scss" scoped>
-.echartsMap {
+.echartsMapBox {
 	width: 100%;
 	height: 100%;
 	background-position-y: bottom;
 	background-position-x: center;
 	background-image: url(../../../assets/img/地图底盘.png);
 	background-repeat: no-repeat;
-	transform: rotateX(31deg);
+	.echartsMap {
+		width: 100%;
+		height: 100%;
+
+		transform: rotateX(31deg);
+	}
 }
 </style>

@@ -57,7 +57,10 @@
                 </li>
             </ul>
         </div>
+
+        <div class="hided"></div>
     </div>
+    
 </template>
 
 
@@ -182,6 +185,10 @@ const enterTheLargeScreen = ()=>{
                 }
             }
         }
+    }
+
+    .hided{
+        background-image: url(../../../assets/img/地图底盘.png);
     }
 }
 </style>

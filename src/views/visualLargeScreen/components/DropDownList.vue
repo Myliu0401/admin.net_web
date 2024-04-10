@@ -1,13 +1,13 @@
 <template>
 	<div class="dropDownList" @click.stop="">
 		<div class="dropDownList_Box" @click="expand">
-			<span class="title">{{ prompt }}</span>
+			<span class="title" :title="activeTitle || prompt">{{ activeTitle || prompt }}</span>
 			<i class="triangle" ref="iconDom"></i>
 		</div>
 
 		<div class="tabulation" ref="tabulationDom">
-			<ul class="tabulationUl">
-				<li class="ul_li" v-for="(item, index) in lists" :key="index">{{ item.name }}</li>
+			<ul class="tabulationUl" @click="switchOption">
+				<li class="ul_li" :class="{ active: activeTitle === item.name }" v-for="(item, index) in lists" :key="index" :data-name="item.name">{{ item.name }}</li>
 			</ul>
 		</div>
 	</div>
@@ -15,11 +15,12 @@
 
 
 <script setup>
-import { defineProps, onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { defineProps, onBeforeMount, onBeforeUnmount, ref, defineEmits } from 'vue';
+const emit = defineEmits(['setSelected']);
 
 const props = defineProps({
 	prompt: {
-		default: '请选择'
+		default: '请选择',
 	},
 	activeTitle: '',
 	lists: {
@@ -32,15 +33,14 @@ const props = defineProps({
 const iconDom = ref(null);
 const tabulationDom = ref(null);
 
-
 // 挂载前执行
 onBeforeMount(() => {
 	window.addEventListener('click', putItAllAway);
 });
 
 // 卸载前执行
-onBeforeUnmount(()=>{
-    window.removeEventListener('click', putItAllAway);
+onBeforeUnmount(() => {
+	window.removeEventListener('click', putItAllAway);
 });
 
 // 展开
@@ -52,17 +52,21 @@ function expand() {
 			if (tabulations[i].classList.contains('block')) {
 				tabulations[i].classList.remove('block');
 				tabulations[i].style.height = '0px';
-				setTimeout(() => { tabulations[i] && (tabulations[i].style.display = 'none'); }, 500);
+				setTimeout(() => {
+					tabulations[i] && (tabulations[i].style.display = 'none');
+				}, 500);
 			} else {
 				tabulations[i].classList.add('block');
 				tabulations[i].style.display = 'block';
-				setTimeout(() => { tabulations[i] && (tabulations[i].style.height = '200px'); }, 16);
+				setTimeout(() => {
+					tabulations[i] && (tabulations[i].style.height = '200px');
+				}, 16);
 			}
 
 			continue;
 		} else {
 			tabulations[i].classList.remove('block');
-			tabulations[i].style.height = '0px'
+			tabulations[i].style.height = '0px';
 			tabulations[i].style.display = 'none';
 		}
 	}
@@ -77,8 +81,7 @@ function expand() {
 			icons[i].classList.remove('rotate');
 		}
 	}
-};
-
+}
 
 // 全部收起
 function putItAllAway() {
@@ -86,19 +89,21 @@ function putItAllAway() {
 	const icons = document.querySelectorAll('.dropDownList .triangle');
 
 	for (let i = 0; i < tabulations.length; i++) {
-
 		tabulations[i].classList.remove('block');
-		tabulations[i].style.height = '0px'
+		tabulations[i].style.height = '0px';
 		tabulations[i].style.display = 'none';
 
 		icons[i].classList.remove('rotate');
-
 	}
-};
+}
 
-
-
-
+function switchOption(event) {
+	if (event.target.dataset.name === props.activeTitle) {
+		return;
+	}
+	emit('setSelected', event.target.dataset.name);
+	putItAllAway();
+}
 </script>
 
 
@@ -123,7 +128,15 @@ function putItAllAway() {
 		justify-content: center;
 
 		.title {
+			display: inline-block;
 			color: rgba(99, 235, 233, 1);
+			max-width: 80px;
+			white-space: nowrap;
+			/* 不换行 */
+			overflow: hidden;
+			/* 溢出部分隐藏 */
+			text-overflow: ellipsis;
+			/* 使用省略号代替溢出部分 */
 		}
 
 		.triangle {
@@ -195,6 +208,16 @@ function putItAllAway() {
 				/* 溢出部分隐藏 */
 				text-overflow: ellipsis;
 				/* 使用省略号代替溢出部分 */
+
+				transition: all 0.3s;
+
+				&.active {
+					background-color: rgb(99 116 186);
+				}
+
+				&:hover {
+					background-color: rgb(75 93 167);
+				}
 			}
 		}
 	}
