@@ -48,6 +48,8 @@
 
 <script setup>
 import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { getMySnapshotPage } from '/@/api/imageManagement/index.js';
+import listInfo from './composition/list.js';
 
 const imgBoxDom = ref(null);
 
@@ -197,6 +199,10 @@ const state = reactive({
 
     conetntType: 'imgBoxs', // 内容类型
 });
+
+
+const { listData } = listInfo();
+
 
 onBeforeMount(() => {
     window.addEventListener('resize', getQuantityPerRow);

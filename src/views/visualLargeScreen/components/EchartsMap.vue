@@ -6,14 +6,23 @@
 
 
 <script>
-import { reactive, defineComponent } from 'vue';
+import { reactive, defineComponent, onBeforeMount, watch, onBeforeUnmount } from 'vue';
 import mapData from '../mapData.js'; // 地图数据
+import { getCount, getRegion } from '/@/api/visualLargeScreen/index.js';
 
 const x = 10;
 const y = 25;
 
 export default defineComponent({
-	setup() {
+	props: {
+		administrativeRegion: {
+			default() {
+				return [];
+			},
+		},
+	},
+
+	setup(props, { emit }) {
 		const state = reactive({
 			// 选中的图片
 			graphic: [],
@@ -21,17 +30,42 @@ export default defineComponent({
 			selectedProvince: [], // 选中的省份
 
 			echartsMapExample: null, // 地图实例
+
+			allCount: [], // 各省杠的数量
+
+			currentActive: null,
+		});
+
+		onBeforeMount(() => {
+		
+			setTimeout(()=>{
+				renderInitEchartsRender();
+				state.allCount.length || getMyCount();
+				emit('complete');
+			});
+			
+		});
+
+		onBeforeUnmount(()=>{
+			uninstallingAnInstance();
 		});
 
 		// 渲染初始化echarts地图
 		function renderInitEchartsRender() {
 			window.echarts.registerMap('中国', mapData);
 			state.echartsMapExample = window.echarts.init(document.getElementById('ChinaMap'), null, { useWorker: true });
+			
+			if(window.allCount && window.allCount.length){
+				state.allCount = window.allCount;
+				reRendering();
+				return
+			};
+
 			state.echartsMapExample.setOption({
 				geo: assemblingMapModules(),
 				graphic: state.graphic,
 				series: buildingScatterData(),
-				animation: false
+				animation: false,
 			});
 		}
 
@@ -65,7 +99,7 @@ export default defineComponent({
 			];
 
 			data.forEach((item) => {
-				const coordinate = window.mapChart.convertToPixel('geo', item.name); // 获取省份在界面中的像素坐标
+				const coordinate = state.echartsMapExample.convertToPixel('geo', item.name); // 获取省份在界面中的像素坐标
 
 				state.selectedProvince.push(buildSelectedData(item.name));
 
@@ -91,6 +125,25 @@ export default defineComponent({
 				},
 				() => {}
 			);
+		}
+
+		// 获取经纬度
+		function getLonAndLat(name) {
+			const coordinate = state.echartsMapExample.convertToPixel('geo', name);
+
+			// 修正指定省份的坐标
+			if (name === '河北省') {
+				coordinate[0] = coordinate[0] - 10;
+				coordinate[1] = coordinate[1] + 20;
+			} else if (name === '香港特别行政区') {
+				coordinate[0] = coordinate[0] + 10;
+				coordinate[1] = coordinate[1] + 5;
+			} else if (name === '澳门特别行政区') {
+				coordinate[0] = coordinate[0] - 10;
+				coordinate[1] = coordinate[1] + 5;
+			}
+
+			return coordinate;
 		}
 
 		// 构建地图选中数据
@@ -276,17 +329,12 @@ export default defineComponent({
 		}
 
 		// 构建散点数据
-		function buildingScatterData() {
+		function buildingScatterData(data = []) {
 			return [
 				{
 					type: 'effectScatter',
 					coordinateSystem: 'geo', // 使用地理坐标系
-					data: [
-						{ name: '散点1', value: [116.405285, 41.5, 100] },
-						{ name: '散点2', value: [117.190182, 40.425596, 100] },
-						{ name: '散点3', value: [87.617733, 45.0928, 130] },
-						// 继续添加更多的散点数据
-					],
+					data,
 
 					rippleEffect: {
 						//涟漪特效
@@ -318,6 +366,86 @@ export default defineComponent({
 		// 卸载实例
 		function uninstallingAnInstance() {
 			state.echartsMapExample && state.echartsMapExample.dispose();
+		}
+
+		// 获取杠数量
+		async function getMyCount() {
+			const arr = [];
+			
+			props.administrativeRegion.forEach((item) => {
+				arr.push(getCount({ id: item.id }));
+			});
+
+			const res1 = await Promise.all(arr);
+
+			props.administrativeRegion.forEach((item, index) => {
+				state.allCount.push({ name: item.name, count: res1[index].data.result });
+			});
+
+			window.allCount = state.allCount.map((item)=>{ return { ...item } });
+
+			reRendering();
+		};
+
+		function goujian() {
+			return {
+				广西壮族自治区: [108.320004, 24.82402],
+				北京市: [116.405285, 41.5],
+				天津市: [117.190182, 40.425596],
+				新疆维吾尔自治区: [87.617733, 45.0928],
+				江苏省: [118.767413, 35.441544],
+				河北省: [114.502461, 40.045474],
+				山西省: [112.549248, 39.857014],
+				内蒙古自治区: [111.670801, 42.818311],
+				辽宁省: [123.429096, 42.796767],
+				吉林省: [125.3245, 44.886841],
+				黑龙江省: [126.642464, 47.756967],
+				上海市: [121.472644, 33.231706],
+				浙江省: [120.153576, 31.287459],
+				安徽省: [117.283042, 33.86119],
+				福建省: [118.306239, 28.075302],
+				江西省: [115.892151, 29.676493],
+				山东省: [117.000923, 38.675807],
+				河南省: [113.665412, 36.757975],
+				湖北省: [113.298572, 32.584355],
+				湖南省: [111.982279, 30.19409],
+				广东省: [113.280637, 25.125178],
+				海南省: [110.3, 20.031971],
+				重庆市: [106.504962, 31.533155],
+				四川省: [104.065735, 32.659462],
+				贵州省: [106.713478, 28.578343],
+				云南省: [100.712251, 25.040609],
+				西藏自治区: [91.132212, 31.660361],
+				陕西省: [108.948024, 36.263161],
+				甘肃省: [103.823557, 38.058039],
+				青海省: [97.778916, 37.623178],
+				宁夏回族自治区: [106.278179, 38.46637],
+				台湾省: [121.5, 25.044332],
+				香港特别行政区: [114.173355, 23.320048],
+				澳门特别行政区: [113.54909, 23.198951],
+			};
+		};
+
+		// 重渲染
+		function reRendering() {
+			const arr = [];
+
+			const s = goujian();
+
+			state.allCount.forEach((item) => {
+				if (state.currentActive) {
+					item.name === state.currentActive && item.count != 0 && arr.push({ name: item.count, value: [...s[item.name], item.count > 100 ? 100 : 50] });
+				} else {
+					item.count != 0 && arr.push({ name: item.count, value: [...s[item.name], item.count > 100 ? 100 : 50] });
+				}
+			});
+
+			state.echartsMapExample.setOption({
+				geo: assemblingMapModules(),
+				graphic: state.graphic,
+				series: buildingScatterData(arr),
+				animation: false,
+			});
 		}
 
 		return { renderInitEchartsRender, uninstallingAnInstance };

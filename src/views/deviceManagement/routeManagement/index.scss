@@ -41,6 +41,7 @@
         .accordion {
             height: calc(100% - 58px);
             border-bottom: 1px solid #ccc;
+            overflow: auto;
 
             .el-tree {
                 background-color: transparent;
@@ -193,5 +194,14 @@
         .el-dialog {
             border-radius: 9px;
         }
+    }
+
+    .el-text.el-text--primary,.el-text.el-text--danger{
+        cursor: pointer;
+    }
+
+    .el-select{
+        width: 150px !important;
+        margin-right: 10px;
     }
 }

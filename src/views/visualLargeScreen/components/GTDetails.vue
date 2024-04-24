@@ -2,7 +2,7 @@
 	<div class="GTDetails">
 		<div class="GTDetails_titleBox">
 			<span class="title">GT 详情</span>
-			<i class="closeIcon"></i>
+			<i class="closeIcon" @click.stop="close"></i>
 		</div>
 
 		<div class="GTDetails_buttonBox" @click="switchingTypes">
@@ -70,7 +70,8 @@
 
 <script setup>
 import DropDownList from './DropDownList.vue';
-import { reactive } from 'vue';
+import { reactive, defineEmits } from 'vue';
+const emit = defineEmits(['closeGTD']);
 
 const state = reactive({
 	currentType: 'deviceDetails'
@@ -86,6 +87,10 @@ function switchingTypes(e) {
 };
 
 
+function close(){
+	emit('closeGTD');
+};
+
 </script>
 
 <style scoped lang="scss">
@@ -96,6 +101,11 @@ function switchingTypes(e) {
 	background-image: url(../../../assets/img/GTback.png);
 	background-size: 100% 100%;
 	padding-top: 9px;
+	position: absolute;
+    top: 0px;
+    z-index: 11;
+    height: 100%;
+    left: 0px;
 
 	.GTDetails_titleBox {
 		width: 100%;

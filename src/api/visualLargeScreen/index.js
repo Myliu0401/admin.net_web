@@ -18,10 +18,38 @@ export function getTheLatestAlarms(){
 };
 
 
-// 获取线路塔杆总数
+// 获取塔杆总数
 export function getTotalNumberOfLineTowers(){
     return request({
-        url: '/api/sysTrackPole/totalNumber',
+        url: '/api/sysPole/totalNumber',
         method: 'get'
+    });
+};
+
+// 获取线路总数
+export function getTotalNumberOfLines(){
+    return request({
+        url: '/api/sysRailLine/totalNumber',
+        method: 'get'
+    });
+};
+
+
+// 获取塔杆数量
+export function getCount(data = {}){
+    return request({
+        url: '/api/sysPole/count',
+        method: 'post',
+        data
+    });
+};
+
+
+// 获取行政区
+export function getRegion(id){
+    return request({
+        url: '/api/sysRegion/list',
+        method: 'get',
+        data: { id  }
     });
 };

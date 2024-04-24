@@ -70,6 +70,12 @@ service.interceptors.request.use(
 				config.url = url;
 			}
 		}
+		if (config.url === '/api/sysDevice/tree') {
+			console.log(config, '====')
+		}else {
+			//console.log(config)
+		}
+
 		return config;
 	},
 	(error) => {

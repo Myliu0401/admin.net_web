@@ -14,7 +14,8 @@
 
 
 <script setup name="Choices">
-import { defineProps, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed } from 'vue';
+import { defineProps, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed, defineEmits } from 'vue';
+const emit = defineEmits(['setSelected']);
 
 const props = defineProps({
 	selectIndex: {
@@ -54,6 +55,7 @@ function close() {
 
 function switchSelection(text) {
 	state.activeIndex = state.data.indexOf(text);
+	emit('setSelected', state.data[state.activeIndex]);
 };
 </script>
 
@@ -61,6 +63,7 @@ function switchSelection(text) {
 <style lang="scss" scoped>
 .choice {
 	position: relative;
+	z-index: 11;
 
 	.choiceBox {
 		height: 40px;

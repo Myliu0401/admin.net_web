@@ -2,60 +2,110 @@
 	<div class="realTimeVideo">
 		<div class="realTimeVideo_leftNavs">
 			<div class="searchArea">
-				<el-input v-model="state.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search"> </el-input>
+				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search"> </el-input>
 			</div>
 			<div class="accordion">
-				<el-tree :data="state.data" :props="state.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick" />
+				<el-tree :key="treeData.myKey" show-checkbox :load="loadNode" lazy :props="treeData.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick" />
 			</div>
 
 			<div class="control">
 				<span class="text">云台控制</span>
 
-				<div class="content"></div>
+				<div class="content">
+					<div class="circle-btn">
+						<el-icon v-for="text in ['Up', 'UpRight', 'Right', 'DownRight', 'Down', 'Left', 'DownLeft', 'UpLeft']" :size="27" :key="text" color="#ccc" @click="clickGimbal(text)">
+							<ele-CaretTop />
+						</el-icon>
+					</div>
+
+					<ul class="liest">
+						<li class="item">
+							<span class="title">变倍</span>
+							<div class="main">
+								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Zoom1')">
+									<ele-CirclePlusFilled />
+								</el-icon>
+
+								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Zoom2')">
+									<ele-RemoveFilled />
+								</el-icon>
+							</div>
+						</li>
+
+						<li class="item">
+							<span class="title">聚焦</span>
+							<div class="main">
+								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Focus1')">
+									<ele-CirclePlusFilled />
+								</el-icon>
+
+								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Focus2')">
+									<ele-RemoveFilled />
+								</el-icon>
+							</div>
+						</li>
+
+						<li class="item">
+							<span class="title">光圈</span>
+							<div class="main">
+								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Iris1')">
+									<ele-CirclePlusFilled />
+								</el-icon>
+
+								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Iris2')">
+									<ele-RemoveFilled />
+								</el-icon>
+							</div>
+						</li>
+
+						<li class="item">
+							<span class="title">速度</span>
+							<div class="main" style="padding-left: 13px; padding-right: 13px">
+								<el-slider :min="1" :max="254" size="small" v-model="gimbalData.speed" />
+							</div>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 
 		<div class="realTimeVideo_main">
 			<div class="content">
-				<video class="video" :ref="videoDom"></video>
+				<MultiGridVideo :currentGrid="state.currentGrid" @deleteVideo="deleteVideo" ref="multiGridVideo" />
 			</div>
 			<div class="domain">
 				<div class="domain_left">
 					<div class="item">
-						<img src="../../assets/realTimeVideo/1.png" />
+						<img class="weiduyip" src="../../assets/realTimeVideo/1.png" />
 					</div>
 
 					<div class="item">
-						<img src="../../assets/realTimeVideo/2.png" />
+						<img class="weiduyip" src="../../assets/realTimeVideo/2.png" @click.stop="fullScreen" />
 					</div>
 					<div class="item">
-						<img :class="{ down: state.isDown }" src="../../assets/realTimeVideo/3.png" @mousedown="mousedown"/>
+						<img class="weiduyip" :class="{ down: state.isDown }" src="../../assets/realTimeVideo/3.png" @mousedown="mousedown" />
 					</div>
 					<div class="item">
-						<img src="../../assets/realTimeVideo/4.png" @click="screenshot" />
+						<img class="weiduyip" src="../../assets/realTimeVideo/4.png" @click.stop="screenshot" />
 					</div>
 					<div class="item">
-						<img src="../../assets/realTimeVideo/5.png" />
+						<span class="text" v-if="state.isRecording">录制中...</span>
+						<img class="weiduyip" src="../../assets/realTimeVideo/5.png" @click.stop="recordingAndDownloading" />
 					</div>
 					<div class="item">
-						<img src="../../assets/realTimeVideo/6.png" />
+						<img class="weiduyip" src="../../assets/realTimeVideo/6.png" />
 
 						<div class="progressBarSlider">
-							<el-slider v-model="state.voice" :show-tooltip="false"></el-slider>
+							<el-slider size="small" :min="0" :max="100" v-model="volume" :show-tooltip="false" @input.stop="adjustingVolume"></el-slider>
 						</div>
 					</div>
 				</div>
 
 				<div class="domain_right">
-					<Choices />
+					<Choices @setSelected="switchGrid" />
 				</div>
 			</div>
 		</div>
-
-		<el-dialog title="截图" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="state.dialogVisible = false">
-			
-			<img class="image" :src="state.screenshotImg"/>
-		</el-dialog>
 	</div>
 </template>
 
@@ -63,116 +113,98 @@
 <script setup>
 import { defineAsyncComponent, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import Choices from './components/Choices.vue';
+import directSeeding from './composition/directSeeding.js';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import treeInfo from './composition/tree.js';
+import gimbalInfo from './composition/gimbal.js';
+import MultiGridVideo from './components/MultiGridVideo.vue';
 
-const videoDom = ref(null);
+const volume = ref(0);
+const multiGridVideo = ref(null);
 
 const state = reactive({
-	keyword: null,
-	data: [
-		{
-			label: '一级 1',
-			children: [
-				{
-					label: '二级 1-1',
-					children: [
-						{
-							label: '三级 1-1-1',
-						},
-					],
-				},
-			],
-		},
-		{
-			label: '一级 2',
-			children: [
-				{
-					label: '二级 2-1',
-					children: [
-						{
-							label: '三级 2-1-1',
-						},
-					],
-				},
-				{
-					label: '二级 2-2',
-					children: [
-						{
-							label: '三级 2-2-1',
-						},
-					],
-				},
-			],
-		},
-		{
-			label: '一级 3',
-			children: [
-				{
-					label: '二级 3-1',
-					children: [
-						{
-							label: '三级 3-1-1',
-						},
-					],
-				},
-				{
-					label: '二级 3-2',
-					children: [
-						{
-							label: '三级 3-2-1',
-						},
-					],
-				},
-			],
-		},
-	],
-	defaultProps: {
-		children: 'children',
-		label: 'label',
-	},
-	voice: 10,
-    dialogVisible: false,
-    screenshotImg: null,
+	voice: 0, // 音量
 
-    isDown: false, // 是否按照
+	isDown: false, // 是否按照
+	isRecording: false, // 是否录制中
+
+	currentGrid: '1x1', // 当前格子
 });
 
-function search() {
-	console.log('=');
+const { treeData, loadNode, handleNodeClick, search, cleanUp } = treeInfo(state, multiGridVideo);
+
+const { gimbalData, clickGimbal } = gimbalInfo(treeData, multiGridVideo);
+
+//================================//
+
+onMounted(() => {});
+
+//=======================================================================================================//
+
+// 录制与下载
+function recordingAndDownloading() {
+	if (state.isRecording) {
+		startRecord();
+	} else {
+		stopRecordAndSave();
+	}
+};
+
+// 按下
+function mousedown() {
+	state.isDown = true;
+	document.addEventListener('mouseup', mouseup);
 }
-function handleNodeClick(data) {
-	console.log(data);
+
+// 抬起
+function mouseup() {
+	state.isDown = false;
+	document.removeEventListener('mouseup', mouseup);
+}
+
+// 切换格子
+function switchGrid(text) {
+	state.currentGrid = text;
+
+	setTimeout(() => {
+		const s = multiGridVideo.value.cleanUp();
+		s.forEach((currentNodeId) => {
+			cleanUp(currentNodeId);
+		});
+	}, 16);
+}
+
+// 删除视频
+function deleteVideo(currentNodeId) {
+	cleanUp(currentNodeId); // 解除选中导航
 }
 
 // 截图
 function screenshot() {
-    const canvas = document.createElement('canvas');
-	const context = canvas.getContext('2d');
-	context.drawImage(videoDom.value, 0, 0, canvas.width, canvas.height);
+	
+	multiGridVideo.value.screenshot();
+}
 
-	// 将图像数据转换为 base64 格式
-	const imageData = canvas.toDataURL('image/png');
+// 调节音量
+function adjustingVolume(value) {
+	multiGridVideo.value.adjustingVolume(value);
+}
 
-	/* // 创建一个新的图像元素，显示截图
-	const img = new Image();
-	img.src = imageData; */
+// 录制视频
+function startRecord() {
+	state.isRecording = multiGridVideo.value.startRecord();
+}
 
-    state.screenshotImg = imageData;
+// 停止录制并下载
+function stopRecordAndSave() {
+	state.isRecording = false;
+	multiGridVideo.value.stopRecordAndSave();
+}
 
-    state.dialogVisible = true;
-};
-
-// 按下
-function mousedown(){
-    state.isDown = true;
-    document.addEventListener('mouseup', mouseup);
-};
-
-
-// 抬起
-function mouseup(){
-    state.isDown = false;
-    document.removeEventListener('mouseup', mouseup);
-};
+// 全屏
+function fullScreen() {
+	multiGridVideo.value.fullScreen(value);
+}
 </script>
 
 <style lang="scss" scoped>

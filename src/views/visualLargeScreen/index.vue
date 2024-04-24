@@ -47,8 +47,8 @@
 			<div class="contentTitleBox"></div>
 			<div class="optionSearchArea">
 				<DropDownList :lists="administrativeRegion" prompt="省" :activeTitle="state.selectRegions[0]" @setSelected="setSelected($event, '省')" />
-				<DropDownList :lists="administrativeRegion" prompt="市" :activeTitle="state.selectRegions[1]" @setSelected="setSelected($event, '市')" />
-				<DropDownList :lists="administrativeRegion" prompt="区" :activeTitle="state.selectRegions[2]" @setSelected="setSelected($event, '区')" />
+				<!-- <DropDownList :lists="administrativeRegion" prompt="市" :activeTitle="state.selectRegions[1]" @setSelected="setSelected($event, '市')" />
+				<DropDownList :lists="administrativeRegion" prompt="区" :activeTitle="state.selectRegions[2]" @setSelected="setSelected($event, '区')" /> -->
 
 				<button class="search" @click="search">
 					搜索
@@ -59,9 +59,9 @@
 			</div>
 
 			<div class="contentBox">
-				<BaiduMap v-if="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" key="baiduMap" />
-				<EchartsMap v-else-if="state.currentlySelectedMap === 'echarts'" ref="echartsMap" key="echartsMap" />
-				<GTDetails v-else-if="state.currentlySelectedMap === 'GTDetails'" key="GTDetails" />
+				<BaiduMap v-if="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" key="baiduMap" :administrativeRegion="state.administrativeRegion" @tuneUp="tuneUp"/>
+				<EchartsMap v-else-if="state.currentlySelectedMap === 'echarts'" ref="echartsMap" key="echartsMap" :administrativeRegion="state.administrativeRegion" @complete="state.isLoading = false" />
+				<GTDetails v-if="state.GTDetails" key="GTDetails" @closeGTD="state.GTDetails = false" />
 				<el-icon v-if="state.isLoading" class="loading">
 					<ele-Loading />
 				</el-icon>
@@ -121,7 +121,7 @@
 					<div class="button-next switchButton" @click="switchingTheCarouselChart('next')"></div>
 				</div>
 
-				<div class="tabulation" @click="enterGT" v-loading="state.alarmLoading">
+				<div class="tabulation" v-loading="state.alarmLoading">
 					<ul class="tabulation_ul">
 						<li class="ul_li" v-for="item in alarmDataList" :key="item.alarnCode">
 							<p class="li_date">{{ item.createTime }}</p>
@@ -153,8 +153,9 @@ import deviceStatus from './composition/deviceStatus.js'; // 设备状态数据
 import circularDiagram from './composition/circularDiagram.js'; // 环形图的内外半径数据
 import alarmDataList1 from './composition/alarmDataList.js'; // 告警数据列表
 import carouselChart from './composition/carouselChart.js'; // 轮播图数据
-import { getOfDeviceStatuses, getTotalNumberOfLineTowers } from '/@/api/visualLargeScreen/index.js';
+import { getOfDeviceStatuses, getTotalNumberOfLineTowers, getTotalNumberOfLines } from '/@/api/visualLargeScreen/index.js';
 import { ElMessage } from 'element-plus';
+import { getRegion } from '/@/api/visualLargeScreen/index.js';
 
 const router = useRouter();
 
@@ -175,8 +176,11 @@ const state = reactive({
 
 	totalNumberOfLines: 0, // 线路总数
 	totalNumberOfTowerPoles: 0, // 塔杆总数
+    GTDetails: false,
 
 	selectRegions: [],
+
+	administrativeRegion: []
 });
 
 const { inLineeQuipment, offLineEquipment, faultyEquipment, renderDeviceStatu } = deviceStatus();
@@ -197,6 +201,10 @@ onBeforeMount(async () => {
 	state.alarmLoading = true;
 
 	setTimeout(init, 100);
+
+	const res = await getRegion(0); // 获取所有省
+	state.administrativeRegion = res.data.result;
+
 });
 
 // 挂载后执行
@@ -222,9 +230,16 @@ function largeScreen(event) {
 function switchMaps(type) {
 	if (type === state.currentlySelectedMap) {
 		return;
-	}
+	};
 
-	baiduMap.value && baiduMap.value.destroyBaiduMaps(); // 卸载百度地图
+	if(type === 'echarts'){
+          state.isLoading = true;
+	} 
+
+	state.currentlySelectedMap = type;
+	state.GTDetails = false;
+
+	/* baiduMap.value && baiduMap.value.destroyBaiduMaps(); // 卸载百度地图
 	echartsMap.value && echartsMap.value.uninstallingAnInstance(); // 卸载echarts地图
 	state.isLoading = true;
 	clearTimeout(state.contentTimerId);
@@ -239,13 +254,8 @@ function switchMaps(type) {
 			echartsMap.value.renderInitEchartsRender(); // 渲染echarts地图
 			state.isLoading = false;
 		}, 16);
-	}
-}
-
-// 切换进入 GT详情
-function enterGT(e) {
-	state.currentlySelectedMap = 'GTDetails';
-}
+	} */
+};
 
 // 退出
 function backReturn() {
@@ -284,7 +294,7 @@ const antiShake = (callback) => {
 // 初始化
 async function init() {
 	// 请求数据
-	const res = await Promise.all([getOfDeviceStatuses(), getTotalNumberOfLineTowers()]);
+	const res = await Promise.all([getOfDeviceStatuses(), getTotalNumberOfLineTowers(), getTotalNumberOfLines()]);
 
 	state.alarmLoading = false;
 
@@ -305,8 +315,9 @@ async function init() {
 	];
 
 	const items = res[1].data.result;
+	const items1 = res[2].data.result;
 
-	state.totalNumberOfLines = items.trackCount;
+	state.totalNumberOfLines = items1.lineCount;
 	state.totalNumberOfTowerPoles = items.poleCount;
 
 	// 渲染柱状图
@@ -333,7 +344,7 @@ function setSelected(name, type) {
 	} else if (type === '区') {
 		state.selectRegions[2] = name;
 	}
-}
+};
 
 // 搜索
 function search() {
@@ -341,7 +352,12 @@ function search() {
 		message: '该功能暂未开放',
 		type: 'warning',
 	});
-}
+};
+
+
+function tuneUp(id){
+   state.GTDetails = true;
+};
 
 
 </script>
