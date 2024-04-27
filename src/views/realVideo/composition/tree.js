@@ -72,7 +72,6 @@ export default function (state, multiGridVideo) {
 
         setTimeout(addAClassToANode);
 
-
     };
 
     function zhuanhuan() {
@@ -97,7 +96,7 @@ export default function (state, multiGridVideo) {
         const node = document.querySelector(`.${currentNodeId}`);
         node && node.classList.remove('active');
 
-        console.log(treeData.passageway, node)
+        //console.log(treeData.passageway, node)
 
     };
 

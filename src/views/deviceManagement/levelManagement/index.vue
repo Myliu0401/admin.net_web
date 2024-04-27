@@ -8,7 +8,7 @@
 			</div>
 
 			<div class="cotentMain_table">
-				<el-table v-lo :data="listData.voltageList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
+				<el-table :data="listData.voltageList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
 					<el-table-column prop="id" label="id" width="180" :align="'center'"> </el-table-column>
 					<el-table-column prop="createTime" label="创建日期" :align="'center'"> </el-table-column>
 					<el-table-column prop="name" label="电压"  :align="'center'"> </el-table-column>

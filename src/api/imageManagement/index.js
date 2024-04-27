@@ -9,3 +9,12 @@ export function getMySnapshotPage(data = {}){
         data
      });
 };
+
+// 获取通道树形结构
+export function getChannelTree(data = {}){
+   return request({
+      url: '/api/sysChannel/tree',
+      method: 'post',
+      data
+   });
+};

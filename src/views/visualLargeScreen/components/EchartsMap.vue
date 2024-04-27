@@ -39,8 +39,8 @@ export default defineComponent({
 		onBeforeMount(() => {
 		
 			setTimeout(()=>{
-				renderInitEchartsRender();
-				state.allCount.length || getMyCount();
+				renderInitEchartsRender(); // 初始化
+				state.allCount.length || getMyCount(); // 获取设备数量
 				emit('complete');
 			});
 			

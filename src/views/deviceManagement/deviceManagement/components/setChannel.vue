@@ -29,11 +29,21 @@
 				<el-switch inline-prompt active-text="正常" inactive-text="故障" v-model="form.okFailureStatus" />
 			</el-form-item>
 
-			<!-- <el-form-item label="直属设备" prop="deviceId">
-				<el-select v-model="form.deviceId" filterable clearable placeholder="设备" style="width: 240px">
-					<el-option v-for="item in deviceList" :key="item.value" :label="item.label" :value="item.value" />
-				</el-select>
-			</el-form-item> -->
+			<el-form-item label="是否启用定时截图">
+				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.enableSnapshot" />
+			</el-form-item>
+
+			<el-form-item label="定时截图的起始时间，分钟数" v-if="form.enableSnapshot">
+				<el-time-picker v-model="form.snapStartTime" placeholder="起始时间" />
+			</el-form-item>
+
+			<el-form-item label="定时截图的终止时间，分钟数" v-if="form.enableSnapshot">
+				<el-time-picker v-model="form.snapEndTime" placeholder="终止时间" />
+			</el-form-item>
+
+			<el-form-item label="定时截图的间隔时间，分钟数" v-if="form.enableSnapshot">
+				<el-time-picker v-model="form.snapInterval" placeholder="间隔时间" />
+			</el-form-item>
 
 			<el-form-item class="dialog-footer">
 				<el-button @click="state.dialogVisible = false">取 消</el-button>
@@ -79,6 +89,10 @@ export default {
 			orderNo: undefined, // 排序
 			deviceId: undefined, // 直属设备id
 			status: undefined, // 通用状态
+			enableSnapshot: undefined, // 是否启用定时截图
+			snapStartTime: undefined, // 定时截图的起始时间，分钟数
+			snapEndTime: undefined, // 定时截图的终止时间，分钟数
+			snapInterval: undefined, // 定时截图的间隔时间，分钟数
 		});
 
 		const rules = reactive({
@@ -99,12 +113,24 @@ export default {
 			form.remark = item.remark;
 			form.deviceId = item.deviceId;
 			form.orderNo = item.orderNo;
+			form.enableSnapshot = item.enableSnapshot;
+			form.snapStartTime = item.snapStartTime;
+			form.snapEndTime = item.snapEndTime;
+			form.snapInterval = item.snapInterval;
 		}
 
 		// 关闭弹窗
 		function close() {
 			state.dialogVisible = false;
 		};
+
+		// 转换日期格式
+		function formatTime(date) {
+			var hours = date.getHours().toString().padStart(2, '0');
+			var minutes = date.getMinutes().toString().padStart(2, '0');
+			var seconds = date.getSeconds().toString().padStart(2, '0');
+			return hours + ':' + minutes + ':' + seconds;
+		}
 
 
         async function submitForm(ruleFormRef){
@@ -121,7 +147,11 @@ export default {
                 remark: form.remark,
                 status: form.status ? 1 : 2,
                 onOffStatus: form.onOffStatus ? 1 : 2,
-                okFailureStatus: form.okFailureStatus ? 1 : 2
+                okFailureStatus: form.okFailureStatus ? 1 : 2,
+				enableSnapshot: form.enableSnapshot,
+				snapStartTime: form.snapStartTime ? formatTime(form.snapStartTime) : undefined,
+				snapEndTime: form.snapEndTime ? formatTime(form.snapEndTime) : undefined,
+				snapInterval: form.snapInterval ? formatTime(form.snapInterval) : undefined,
             });
             state.loading = false;
             ElMessage({

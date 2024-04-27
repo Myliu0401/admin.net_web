@@ -6,76 +6,46 @@
 		</div>
 
 		<div class="GTDetails_buttonBox" @click="switchingTypes">
-			<button class="button" :class="{ active: state.currentType === 'deviceDetails' }"
-				data-type="deviceDetails">设备详情</button>
-			<button class="button" :class="{ active: state.currentType === 'latestPictures' }"
-				data-type="latestPictures">最新图片</button>
-			<button class="button" :class="{ active: state.currentType === 'latestVideo' }"
-				data-type="latestVideo">最新视频</button>
+			<button class="button" :class="{ active: state.currentType === 'GTDDetailsList' }"
+				data-type="GTDDetailsList">设备详情</button>
+			<button class="button" :class="{ active: state.currentType === 'GTDLatestPictures' }"
+				data-type="GTDLatestPictures">最新图片</button>
+			<button class="button" :class="{ active: state.currentType === 'GTDLatestVideo' }"
+				data-type="GTDLatestVideo">最新视频</button>
 		</div>
 
-		<div class="GTDetails_selectDevice">
-			<span class="title">请选择设备: </span>
-			<DropDownList prompt="请选择id" />
-		</div>
-
-		<div class="GTDetails_content">
-			<ul class="content_ul">
-				<li class="ul_li">
-					<p class="left">MEID/IMEI</p>
-					<p class="right">86728005238357700</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">电话号码</p>
-					<p class="right">1441272207747</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">装置类型</p>
-					<p class="right">主机</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">镜头类型</p>
-					<p class="right">暂无信息</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">装置型号</p>
-					<p class="right">SCHY</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">安装日期</p>
-					<p class="right">2023-06-20</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">最后上传时间</p>
-					<p class="right">2023-09-01</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">网络类型</p>
-					<p class="right">移动</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">运行状态</p>
-					<p class="right">启用</p>
-				</li>
-				<li class="ul_li">
-					<p class="left">生产厂家</p>
-					<p class="right">SCHY</p>
-				</li>
-			</ul>
-		</div>
+		<GTDDetailsList v-if="state.currentType === 'GTDDetailsList'" :polesDevices="state.polesDevices"/>
+	    <GTDLatestPictures v-else-if="state.currentType === 'GTDLatestPictures'" :polesDevices="state.polesDevices"/>
+	    <GTDLatestVideo v-else-if="state.currentType === 'GTDLatestVideo'"/>
 	</div>
 </template>
 
 
 
 <script setup>
-import DropDownList from './DropDownList.vue';
-import { reactive, defineEmits } from 'vue';
+import { reactive, defineEmits, defineProps, onBeforeMount  } from 'vue';
+import { getDeviceList } from '/@/api/deviceManagement/index.js';
+import GTDDetailsList from './GTDDetailsList.vue';
+import GTDLatestPictures from './GTDLatestPictures.vue';
+import GTDLatestVideo from './GTDLatestVideo.vue';
+
 const emit = defineEmits(['closeGTD']);
 
-const state = reactive({
-	currentType: 'deviceDetails'
+const props = defineProps({
+	currentGTDid: {
+		default: null
+	}
 });
+
+const state = reactive({
+	currentType: 'GTDDetailsList', // 当前类型
+	polesDevices: [], // 指定塔杆下的所有设备
+});
+
+onBeforeMount(()=>{
+	getTowerPoles();
+});
+
 
 // 切换类型 
 function switchingTypes(e) {
@@ -84,9 +54,27 @@ function switchingTypes(e) {
 		return;
 	}
 	state.currentType = type;
+
 };
 
 
+// 获取指定塔杆下的所有设备
+async function getTowerPoles(){
+    const res = await getDeviceList({
+		page: 1,
+		pageSize: 10000,
+		treeNode: {
+			id: props.currentGTDid,
+			type: 3
+		}
+	});
+
+	state.polesDevices = res.data.result.items;
+};
+
+
+
+// 关闭弹窗
 function close(){
 	emit('closeGTD');
 };
@@ -102,9 +90,9 @@ function close(){
 	background-size: 100% 100%;
 	padding-top: 9px;
 	position: absolute;
-    top: 0px;
+    top: -6px;
     z-index: 11;
-    height: 100%;
+    height: 102%;
     left: 0px;
 
 	.GTDetails_titleBox {
@@ -193,62 +181,9 @@ function close(){
 		}
 	}
 
-	.GTDetails_selectDevice {
-		display: flex;
-		align-items: center;
-		position: relative;
-		padding-left: 20px;
-		margin-top: 10px;
+	
 
-		.title {
-			color: rgba(99, 235, 233, 1);
-			font-size: 13px;
-		}
-	}
-
-	.GTDetails_content {
-		width: 95%;
-		margin: 0 auto;
-		height: calc(100% - 135px);
-		border: 1px solid #04a6a5;
-		margin-top: 10px;
-
-		.content_ul {
-			width: 100%;
-			height: 100%;
-
-			.ul_li {
-				width: 100%;
-				height: calc(100% / 10);
-				list-style: none;
-				border-bottom: 1px solid #04a6a5;
-				display: flex;
-				align-items: center;
-
-				&:last-child {
-					border-bottom: none;
-				}
-
-				p {
-					height: 100%;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					color: #05cfcf;
-					font-size: 13px;
-				}
-
-				.left {
-					width: 40%;
-					border-right: 1px solid #04a6a5;
-				}
-
-				.right {
-					width: 60%;
-				}
-			}
-		}
-	}
+	
 }
 </style>
 
@@ -259,7 +194,7 @@ function close(){
 			margin-left: 15px;
 
 			.dropDownList_Box {
-				background-color: transparent;
+				//background-color: transparent;
 				height: 29px;
 				border-radius: 6px;
 				font-size: 13px;
@@ -272,7 +207,7 @@ function close(){
 			}
 
 			.tabulation {
-				background-color: transparent;
+				//background-color: transparent;
 			}
 		}
 	}

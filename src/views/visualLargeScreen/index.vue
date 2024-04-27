@@ -61,8 +61,18 @@
 			<div class="contentBox">
 				<BaiduMap v-if="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" key="baiduMap" :administrativeRegion="state.administrativeRegion" @tuneUp="tuneUp"/>
 				<EchartsMap v-else-if="state.currentlySelectedMap === 'echarts'" ref="echartsMap" key="echartsMap" :administrativeRegion="state.administrativeRegion" @complete="state.isLoading = false" />
-				<GTDetails v-if="state.GTDetails" key="GTDetails" @closeGTD="state.GTDetails = false" />
-				<el-icon v-if="state.isLoading" class="loading">
+				
+				
+				<GTDetails 
+				v-if="state.GTDetails" 
+				key="GTDetails" 
+				@closeGTD="state.GTDetails = false" 
+				:currentGTDid="state.currentGTDid" />
+
+				<el-icon 
+				v-if="state.isLoading" 
+				class="loading"
+				>
 					<ele-Loading />
 				</el-icon>
 			</div>
@@ -177,6 +187,7 @@ const state = reactive({
 	totalNumberOfLines: 0, // 线路总数
 	totalNumberOfTowerPoles: 0, // 塔杆总数
     GTDetails: false,
+	currentGTDid: null, 
 
 	selectRegions: [],
 
@@ -356,6 +367,7 @@ function search() {
 
 
 function tuneUp(id){
+   state.currentGTDid = id;
    state.GTDetails = true;
 };
 

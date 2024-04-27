@@ -2,7 +2,8 @@
 	<div class="dropDownList" @click.stop="">
 		<div class="dropDownList_Box" @click="expand">
 			<span class="title" :title="activeTitle || prompt">{{ activeTitle || prompt }}</span>
-			<i class="triangle" ref="iconDom"></i>
+			<i v-if="!loading" class="triangle" ref="iconDom"></i>
+			<el-icon v-else><ele-Loading /></el-icon>
 		</div>
 
 		<div class="tabulation" ref="tabulationDom">
@@ -22,7 +23,12 @@ const props = defineProps({
 	prompt: {
 		default: '请选择',
 	},
-	activeTitle: '',
+	activeTitle: {
+		default: '',
+	},
+	loading: {
+		default: false,
+	},
 	lists: {
 		default: () => {
 			return [];
@@ -45,6 +51,11 @@ onBeforeUnmount(() => {
 
 // 展开
 function expand() {
+
+	if(props.loading){
+          return
+	};
+
 	const tabulations = document.querySelectorAll('.dropDownList .tabulation');
 
 	for (let i = 0; i < tabulations.length; i++) {
@@ -157,6 +168,15 @@ function switchOption(event) {
 				transform: translateY(-50%) rotate(180deg);
 			}
 		}
+
+		.el-icon {
+			color: #20dad6;
+			position: absolute;
+			top: 50%;
+			right: 5px;
+			transform: translateY(-50%);
+			animation: rotate360 2s linear infinite;
+		}
 	}
 
 	.tabulation {
@@ -220,6 +240,15 @@ function switchOption(event) {
 				}
 			}
 		}
+	}
+}
+
+@keyframes rotate360 {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
 	}
 }
 </style>
