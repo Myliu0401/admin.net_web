@@ -11,6 +11,8 @@
 				<DropDownList prompt="请选择通道" :lists="state.passDatas[state.deviceId]" :loading="state.loading" @setSelected="setSelectedPass" :activeTitle="state.passName" />
 			</div>
 		</div>
+
+		<div class="GTDetails_content"></div>
 	</div>
 </template>
 
@@ -19,7 +21,6 @@
 import DropDownList from './DropDownList.vue';
 import { reactive, defineEmits, defineProps, onBeforeMount } from 'vue';
 import { getMyChannelList } from '/@/api/deviceManagement/index.js';
-
 
 const props = defineProps({
 	polesDevices: {
@@ -31,59 +32,58 @@ const props = defineProps({
 
 const state = reactive({
 	devicesName: '', // 设备名称
-    deviceId: '', // 设备id
+	deviceId: '', // 设备id
 	passName: '', // 通道名称
-    loading: false, // 是否加载中
-    passDatas: {}
+	loading: false, // 是否加载中
+	passDatas: {},
 });
 
 async function setSelectedDevice(name) {
-    const item = correspondingDevice(name);
-    state.devicesName = name;
-    state.deviceId =  item.id;
-    if(state[item.id]){
-        return
-    };
+	const item = correspondingDevice(name);
+	state.devicesName = name;
+	state.deviceId = item.id;
+	if (state[item.id]) {
+		return;
+	}
 
-    state.loading = true;
+	state.loading = true;
 
-    const channes = await getMyChannelList({
-        page: 1,
-        pageSize: 10000,
-        id: item.id
-    });
+	const channes = await getMyChannelList({
+		page: 1,
+		pageSize: 10000,
+		id: item.id,
+	});
 
-    state.loading = false;
+	state.loading = false;
 
-    console.log(channes.data.result)
-
-};
+	console.log(channes.data.result);
+}
 
 // 过滤获取到对应设备
-function correspondingDevice(name){
-    for(let i = 0; i < props.polesDevices.length; i++){
+function correspondingDevice(name) {
+	for (let i = 0; i < props.polesDevices.length; i++) {
 		const item = props.polesDevices[i];
-         if(item.name === name){
-               return item;
-		 }
+		if (item.name === name) {
+			return item;
+		}
 	}
-};
+}
 
 function setSelectedPass(name) {
-    state.name = name;
-};
+	state.name = name;
+}
 </script>
 
 
 <style lang="scss" scoped>
 .GTDLatestPictures {
 	width: 100%;
-	height: 100%;
+	height: 80%;
 
-    .selectBox{
-        display: flex;
-        align-items: center;
-    }
+	.selectBox {
+		display: flex;
+		align-items: center;
+	}
 
 	.GTDetails_selectDevice {
 		display: flex;
@@ -96,6 +96,11 @@ function setSelectedPass(name) {
 			color: rgba(99, 235, 233, 1);
 			font-size: 13px;
 		}
+	}
+
+	.GTDetails_content {
+		margin-top: 20px;
+		height: calc(100% - 65px);
 	}
 }
 </style>

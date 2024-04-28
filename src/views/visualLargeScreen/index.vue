@@ -46,9 +46,28 @@
 		<div class="visualLargeScreen_content">
 			<div class="contentTitleBox"></div>
 			<div class="optionSearchArea">
-				<DropDownList :lists="administrativeRegion" prompt="省" :activeTitle="state.selectRegions[0]" @setSelected="setSelected($event, '省')" />
-				<!-- <DropDownList :lists="administrativeRegion" prompt="市" :activeTitle="state.selectRegions[1]" @setSelected="setSelected($event, '市')" />
-				<DropDownList :lists="administrativeRegion" prompt="区" :activeTitle="state.selectRegions[2]" @setSelected="setSelected($event, '区')" /> -->
+				<DropDownList 
+				:lists="state.administrativeRegion" 
+				prompt="省" 
+				:activeTitle="state.selectRegions[0]"
+				 @setSelected="setSelected($event, '省')" 
+				 />
+				<DropDownList
+					v-if="state.currentlySelectedMap === 'baiduMap'"
+					:lists="state.citys[state.selectRegions[0]]"
+					prompt="市"
+					:activeTitle="state.selectRegions[1]"
+					@setSelected="setSelected($event, '市')"
+					:loading="state.cityLoading"
+				/>
+				<DropDownList
+					v-if="state.currentlySelectedMap === 'baiduMap'"
+					:lists="state.areas[state.selectRegions[1]]"
+					prompt="区"
+					:activeTitle="state.selectRegions[2]"
+					@setSelected="setSelected($event, '区')"
+					:loading="state.areasLoading"
+				/>
 
 				<button class="search" @click="search">
 					搜索
@@ -59,20 +78,12 @@
 			</div>
 
 			<div class="contentBox">
-				<BaiduMap v-if="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" key="baiduMap" :administrativeRegion="state.administrativeRegion" @clickPole="clickPole"/>
+				<BaiduMap v-if="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" key="baiduMap" :administrativeRegion="state.administrativeRegion" @clickPole="clickPole" />
 				<EchartsMap v-else-if="state.currentlySelectedMap === 'echarts'" ref="echartsMap" key="echartsMap" :administrativeRegion="state.administrativeRegion" @complete="state.isLoading = false" />
-				
-				
-				<GTDetails 
-				v-if="state.GTDetails" 
-				key="GTDetails" 
-				@closeGTD="state.GTDetails = false" 
-				:currentGTDid="state.currentGTDid" />
 
-				<el-icon 
-				v-if="state.isLoading" 
-				class="loading"
-				>
+				<GTDetails v-if="state.GTDetails" key="GTDetails" @closeGTD="state.GTDetails = false" :currentGTDid="state.currentGTDid" />
+
+				<el-icon v-if="state.isLoading" class="loading">
 					<ele-Loading />
 				</el-icon>
 			</div>
@@ -163,9 +174,9 @@ import deviceStatus from './composition/deviceStatus.js'; // 设备状态数据
 import circularDiagram from './composition/circularDiagram.js'; // 环形图的内外半径数据
 import alarmDataList1 from './composition/alarmDataList.js'; // 告警数据列表
 import carouselChart from './composition/carouselChart.js'; // 轮播图数据
-import { getOfDeviceStatuses, getTotalNumberOfLineTowers, getTotalNumberOfLines } from '/@/api/visualLargeScreen/index.js';
+import { getOfDeviceStatuses, getTotalNumberOfLineTowers, getTotalNumberOfLines, getRegion } from '/@/api/visualLargeScreen/index.js';
 import { ElMessage } from 'element-plus';
-import { getRegion } from '/@/api/visualLargeScreen/index.js';
+
 
 const router = useRouter();
 
@@ -178,20 +189,23 @@ const echartsMap = ref(null);
 const state = reactive({
 	currentlySelectedMap: null, // 当前选中的地图
 
-	contentTimerId: null,
-
 	isLoading: false, // 是否正在加载
 
-	alarmLoading: false,
+	alarmLoading: false, // 告警列表是否加载中
 
 	totalNumberOfLines: 0, // 线路总数
 	totalNumberOfTowerPoles: 0, // 塔杆总数
-    GTDetails: false,
-	currentGTDid: null, 
+	GTDetails: false, // 是否展示GTD
+	currentGTDid: null, // 当前选中的塔杆id
 
-	selectRegions: [],
+	selectRegions: [], // 选中的省市区
 
-	administrativeRegion: []
+	administrativeRegion: [], // 所有省份
+
+	citys: {}, // 市
+	cityLoading: false, // 市是否加载中
+	areas: {}, // 区
+	areasLoading: false, // 区是否加载中
 });
 
 const { inLineeQuipment, offLineEquipment, faultyEquipment, renderDeviceStatu } = deviceStatus();
@@ -213,7 +227,6 @@ onBeforeMount(async () => {
 
 	const res = await getRegion(0); // 获取所有省
 	state.administrativeRegion = res.data.result;
-
 });
 
 // 挂载后执行
@@ -238,23 +251,22 @@ function largeScreen(event) {
 function switchMaps(type) {
 	if (type === state.currentlySelectedMap) {
 		return;
-	};
+	}
 
-	if(type === 'echarts'){
-          state.isLoading = true;
-	} 
+	if (type === 'echarts') {
+		state.isLoading = true;
+	}
 
 	state.currentlySelectedMap = type;
+	state.selectRegions = [];
 	state.GTDetails = false;
-};
+}
 
 // 退出
 function backReturn() {
 	document.exitFullscreen();
 	router.replace('/dashboard/workbench');
 }
-
-
 
 // 初始化
 async function init() {
@@ -300,32 +312,78 @@ async function init() {
 }
 
 // 修改选中区域
-function setSelected(name, type) {
+async function setSelected(name, type) {
 	if (type === '省') {
 		state.selectRegions.length = 0;
 		state.selectRegions[0] = name;
+		if(!state.citys[name]){
+			state.cityLoading = true;
+			const arr = await getPonding(getCorresponding(state.administrativeRegion ,name));
+			state.citys[name] = arr;
+			state.cityLoading = false;
+		}
+		
 	} else if (type === '市') {
+		state.selectRegions.length = 1;
 		state.selectRegions[1] = name;
+		if(!state.areas[name]){
+			state.areasLoading = true;
+			const arr = await getPonding(getCorresponding(state.citys[state.selectRegions[0]], name));
+			state.areas[name] = arr;
+			state.areasLoading = false;
+		}
 	} else if (type === '区') {
 		state.selectRegions[2] = name;
 	}
 };
 
+// 获取对应行政区
+async function getPonding(id){
+  const res = await getRegion(id);
+  return res.data.result
+}
+
+
+
 // 搜索
 function search() {
-	ElMessage({
-		message: '该功能暂未开放',
-		type: 'warning',
-	});
-};
+	if (state.GTDetails || !state.selectRegions.length) {
+		return;
+	}
+
+	let id = null;
+
+	if (state.currentlySelectedMap === 'baiduMap') {
+		if (state.selectRegions.length === 1) {
+			id = getCorresponding(state.administrativeRegion, state.selectRegions[0]);
+		} else if (state.selectRegions.length === 2) {
+			id = getCorresponding(state.citys[state.selectRegions[0]], state.selectRegions[1]);
+		} else if (state.selectRegions.length === 3) {
+			id = getCorresponding(state.areas[state.selectRegions[1]], state.selectRegions[2]);
+		}
+		baiduMap.value.getSpecificTowerPoles(id);
+	} else if (state.currentlySelectedMap === 'echarts') {
+		//id = getCorresponding(state.administrativeRegion, state.selectRegions[0]);
+		echartsMap.value.reRendering(state.selectRegions[0])
+	}
+	
+}
+
+// 获取对应行政区id
+function getCorresponding(data, name) {
+	for (let i = 0; i < data.length; i++) {
+		const item = data[i];
+		if (item.name === name) {
+			return item.id;
+		}
+	}
+}
 
 // 点击塔杆
-function clickPole(id){
-   state.currentGTDid = id;
-   state.GTDetails = true;
-};
-
-
+function clickPole(id) {
+	state.currentGTDid = id;
+	state.GTDetails = true;
+}
 </script>
 
 

@@ -1,15 +1,17 @@
 
 
 import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
-import { getMySnapshotPage } from '/@/api/imageManagement/index.js';
+import { getMyRecordings } from '/@/api/recordingManagement/index.js';
 
 
 export default function (treeData) {
     const listData = reactive({
         lists: [],
+        allLists: [],
         loading: false,
         times: [new Date(), new Date()],
         page: 1,
+        totle: 1, // 总页数
         pageSize: 10,
     });
 
@@ -25,12 +27,10 @@ export default function (treeData) {
             return
         }
         listData.loading = true;
-        const res = await getMySnapshotPage({
-            page: listData.page,
-            pageSize: listData.pageSize,
+        const res = await getMyRecordings({
             treeNode: { id: treeData.passageway.id, type: treeData.passageway.type, extId: treeData.passageway.extId },
-            startTime: listData.times ? formatDate(listData.times[0]) : undefined,
-            endTime: listData.times ? formatDate(listData.times[1]) : undefined,
+            startTime: '2024-04-28T16:58:33.891Z',//listData.times ? formatDate(listData.times[0]) : undefined,
+            endTime: '2024-04-28T16:58:33.891Z',//listData.times ? formatDate(listData.times[1]) : undefined,
         });
         listData.loading = false;
 
@@ -48,9 +48,21 @@ export default function (treeData) {
     function conditionSearch(){
         listData.page = 1;
         listData.pageSize = 10;
+        listData.allLists = [];
+        listData.lists = [];
         getPages();
     };
 
 
-    return { listData, getPages, conditionSearch }
+    // 处理分页
+    function processPaging(type){
+        if(type === 'lastPage' && listData.page === 1 || type === 'nextPage' && listData.page === listData.totle){
+          return
+        }
+
+        
+    }
+
+
+    return { listData, getPages, conditionSearch, processPaging }
 };

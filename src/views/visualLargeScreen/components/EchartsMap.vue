@@ -33,20 +33,17 @@ export default defineComponent({
 
 			allCount: [], // 各省杠的数量
 
-			currentActive: null,
 		});
 
 		onBeforeMount(() => {
-		
-			setTimeout(()=>{
+			setTimeout(() => {
 				renderInitEchartsRender(); // 初始化
 				state.allCount.length || getMyCount(); // 获取设备数量
 				emit('complete');
 			});
-			
 		});
 
-		onBeforeUnmount(()=>{
+		onBeforeUnmount(() => {
 			uninstallingAnInstance();
 		});
 
@@ -54,12 +51,12 @@ export default defineComponent({
 		function renderInitEchartsRender() {
 			window.echarts.registerMap('中国', mapData);
 			state.echartsMapExample = window.echarts.init(document.getElementById('ChinaMap'), null, { useWorker: true });
-			
-			if(window.allCount && window.allCount.length){
+
+			if (window.allCount && window.allCount.length) {
 				state.allCount = window.allCount;
 				reRendering();
-				return
-			};
+				return;
+			}
 
 			state.echartsMapExample.setOption({
 				geo: assemblingMapModules(),
@@ -370,26 +367,20 @@ export default defineComponent({
 
 		// 获取杠数量
 		async function getMyCount() {
-			const arr = [];
-
 			const res = await getAllProle();
 
-			console.log(res.data.result, '==')
-			
-			/* props.administrativeRegion.forEach((item) => {
-				arr.push(getCount({ id: item.id }));
+			const shengs = res.data.result;
+
+			props.administrativeRegion.forEach((item) => {
+				state.allCount.push({ name: item.name, count: shengs[item.id] });
 			});
 
-			const res1 = await Promise.all(arr);
-
-			props.administrativeRegion.forEach((item, index) => {
-				state.allCount.push({ name: item.name, count: res1[index].data.result });
+			window.allCount = state.allCount.map((item) => {
+				return { ...item };
 			});
 
-			window.allCount = state.allCount.map((item)=>{ return { ...item } });
- */
 			reRendering();
-		};
+		}
 
 		function goujian() {
 			return {
@@ -428,19 +419,25 @@ export default defineComponent({
 				香港特别行政区: [114.173355, 23.320048],
 				澳门特别行政区: [113.54909, 23.198951],
 			};
-		};
+		}
 
 		// 重渲染
-		function reRendering() {
+		function reRendering(province) {
+
+
+			if(!state.echartsMapExample && window.allCount.length){
+                return
+			}
+
 			const arr = [];
 
 			const s = goujian();
 
 			state.allCount.forEach((item) => {
-				if (state.currentActive) {
-					item.name === state.currentActive && item.count != 0 && arr.push({ name: item.count, value: [...s[item.name], item.count > 100 ? 100 : 50] });
-				} else {
-					item.count != 0 && arr.push({ name: item.count, value: [...s[item.name], item.count > 100 ? 100 : 50] });
+				if(province && item.name === province){
+                    arr.push({ name: item.count, value: [...s[item.name], item.count > 100 ? 100 : 50] });
+				}else if(item.count != 0 && !province){
+					arr.push({ name: item.count, value: [...s[item.name], item.count > 100 ? 100 : 50] });
 				}
 			});
 
@@ -452,7 +449,7 @@ export default defineComponent({
 			});
 		}
 
-		return { renderInitEchartsRender, uninstallingAnInstance };
+		return { renderInitEchartsRender, uninstallingAnInstance, reRendering };
 	},
 });
 </script>

@@ -1,48 +1,45 @@
 <template>
-    <div class="videoRecordingManagement">
-        <div class="videoRecordingManagement_leftNavs">
-            <div class="searchArea">
-                <el-input v-model="state.keyword" placeholder="搜索" suffix-icon="el-icon-search"
-                    @change="search"></el-input>
+	<div class="videoRecordingManagement">
+		<div class="videoRecordingManagement_leftNavs">
+			<div class="searchArea">
+				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search"></el-input>
+			</div>
 
-            </div>
+			<div class="accordion">
+				<el-tree :key="treeData.myKey" :data="treeData.myTrees" :props="treeData.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick" />
+			</div>
+		</div>
 
-            <div class="accordion">
-                <el-tree :data="state.data" :props="state.defaultProps" :highlight-current="true" accordion
-                    @node-click="handleNodeClick" />
+		<div class="mainContent">
+			<div class="selectionArea">
+				<el-date-picker
+					style="margin-right: 10px; margin-top: 6px"
+					size="small"
+					v-model="listData.times"
+					type="datetimerange"
+					range-separator="至"
+					start-placeholder="开始时间"
+					end-placeholder="结束时间"
+				/>
 
-            </div>
-        </div>
+				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px">搜索</el-button>
 
-        <div class="mainContent">
-            <div class="selectionArea">
-                <el-date-picker style="margin-right: 10px; margin-top: 6px" size="small" v-model="state.times"
-                    type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px" @click="switchingTypes"
+					><el-icon><ele-Sort /></el-icon>文本切换</el-button
+				>
+			</div>
 
-                <el-input size="small" suffix-icon="el-icon-search"
-                    style="width: 200px; margin-right: 10px; margin-top: 6px" v-model="state.keyword"
-                    placeholder="请输入搜索内容" />
+			<div class="videoRecordingManagement_contentBox" :class="{ tableType: state.conetntType === 'table' }">
+				<el-table v-if="state.conetntType === 'table'" :data="state.tableData" height="100%" border style="width: 100%">
+					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
+					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
+					<el-table-column prop="address" label="地址"> </el-table-column>
+				</el-table>
+				<div v-else-if="state.conetntType === 'imgBoxs'" class="imgBoxs" ref="imgBoxDom">
+					<el-empty v-if="false" :description="listState" />
 
-                <el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px">搜索</el-button>
-
-                <el-button size="small"
-                    style="margin-right: 10px; margin-left: 0px; margin-top: 6px"><el-icon><ele-Download /></el-icon>导出</el-button>
-
-                <el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px"
-                    @click="switchingTypes"><el-icon><ele-Sort /></el-icon>文本切换</el-button>
-            </div>
-
-
-            <div class="videoRecordingManagement_contentBox" :class="{ tableType: state.conetntType === 'table' }">
-                <el-table v-if="state.conetntType === 'table'" :data="state.tableData" height="100%" border
-                    style="width: 100%;">
-                    <el-table-column prop="date" label="日期" width="180"> </el-table-column>
-                    <el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-                    <el-table-column prop="address" label="地址"> </el-table-column>
-                </el-table>
-                <div v-else-if="state.conetntType === 'imgBoxs'" class="imgBoxs" ref="imgBoxDom">
-                    <ul class="ul">
-                        <li class="li" v-for="(item, index) in state.imgs" :key="index">
+					 <ul class="ul">
+                        <li class="li" v-for="(item, index) in state.imgs" :key="index" @click="openWindow">
                             <div class="li_content">
                                 <img class="img" src="../../assets/videoRecordingManagement/bofan.png" />
                             </div>
@@ -50,284 +47,243 @@
                         </li>
                         <li class="li" v-for="item in state.quantityPerRow" :key="item + ']'"></li>
                     </ul>
-                </div>
-            </div>
+				</div>
+			</div>
 
-            <div class="contentPage">
-                <button class="button">上一页</button>
-                <div class="info">1/2</div>
-                <button class="button">下一页</button>
-            </div>
-        </div>
+			<div class="contentPage">
+				<button class="button">上一页</button>
+				<div class="info">1/2</div>
+				<button class="button">下一页</button>
+			</div>
+		</div>
 
 
-
-    </div>
+        <teleport to="#app">
+            <MyVideo ref="myVideo" />
+        </teleport>
+	</div>
 </template>
 
 
 <script setup>
-import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed } from 'vue';
+import treeInfo from './composition/tree.js';
+import listInfo from './composition/list.js';
+import MyVideo from './components/myVideo.vue';
 
 const imgBoxDom = ref(null);
+const myVideo = ref(null);
 
 const state = reactive({
-    keyword: null,
-    data: [
-        {
-            label: '一级 1',
-            children: [
-                {
-                    label: '二级 1-1',
-                    children: [
-                        {
-                            label: '三级 1-1-1',
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            label: '一级 2',
-            children: [
-                {
-                    label: '二级 2-1',
-                    children: [
-                        {
-                            label: '三级 2-1-1',
-                        },
-                    ],
-                },
-                {
-                    label: '二级 2-2',
-                    children: [
-                        {
-                            label: '三级 2-2-1',
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            label: '一级 3',
-            children: [
-                {
-                    label: '二级 3-1',
-                    children: [
-                        {
-                            label: '三级 3-1-1',
-                        },
-                    ],
-                },
-                {
-                    label: '二级 3-2',
-                    children: [
-                        {
-                            label: '三级 3-2-1',
-                        },
-                    ],
-                },
-            ],
-        },
-    ],
-    defaultProps: {
-        children: 'children',
-        label: 'label',
-    },
-    voice: 10,
-    times: '',
-    keyword: '',
+	times: [new Date(), new Date()],
+	keyword: '',
 
-    tableData: [
-        {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-08',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-06',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-        {
-            date: '2016-05-07',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-        },
-    ],
+	tableData: [
+		{
+			date: '2016-05-03',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-02',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-04',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-01',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-08',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-06',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+		{
+			date: '2016-05-07',
+			name: '王小虎',
+			address: '上海市普陀区金沙江路 1518 弄',
+		},
+	],
 
-    imgs: [
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-        {
-            id: 1,
-            src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-            date: '2023-09-10 12:00:15',
-        },
-    ],
+	imgs: [
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+		{
+			id: 1,
+			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
+			date: '2023-09-10 12:00:15',
+		},
+	],
 
-    quantityPerRow: 0,
+	quantityPerRow: 0,
 
-    conetntType: 'imgBoxs', // 内容类型
+	conetntType: 'imgBoxs', // 内容类型
 });
 
-
 onBeforeMount(() => {
-    window.addEventListener('resize', getQuantityPerRow);
+	window.addEventListener('resize', getQuantityPerRow);
 });
 
 onMounted(() => {
-    setTimeout(getQuantityPerRow, 10);
+	setTimeout(getQuantityPerRow, 10);
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', getQuantityPerRow);
+	window.removeEventListener('resize', getQuantityPerRow);
 });
 
+const { treeData, search, handleNodeClick } = treeInfo(() => {
+	return { getPages, listData };
+});
+const { listData, getPages } = listInfo(treeData);
 
-function search() { };
+// 列表状态
+const listState = computed(() => {
+	if (listData.loading) {
+		return '加载中';
+	} else if (!treeData.passageway.id) {
+		return '请选择通道';
+	} else if (!listData.loading && treeData.passageway.id && !listData.lists.length) {
+		return '暂无数据';
+	}
+});
 
-function handleNodeClick(data) {
-    console.log(data);
+function change(e) {
+	console.log(state.times);
 }
 
 // 获取每行的数量
 function getQuantityPerRow() {
-    if (!imgBoxDom.value || state.imgs.length <= 0) {
-        return;
-    }
+	if (!imgBoxDom.value || state.imgs.length <= 0) {
+		return;
+	}
 
-    const width = imgBoxDom.value.offsetWidth;
+	const width = imgBoxDom.value.offsetWidth;
 
-    const liwidth = imgBoxDom.value.children[0].children[0].offsetWidth;
+	const liwidth = imgBoxDom.value.children[0].children[0].offsetWidth;
 
-    state.quantityPerRow = state.imgs.length % Math.floor(width / liwidth);
-    state.quantityPerRow = Math.floor(width / liwidth) - state.quantityPerRow;
+	state.quantityPerRow = state.imgs.length % Math.floor(width / liwidth);
+	state.quantityPerRow = Math.floor(width / liwidth) - state.quantityPerRow;
 
-
-    if (state.imgs.length <= Math.floor(width / liwidth)) {
-        state.quantityPerRow = 0;
-    }
-};
+	if (state.imgs.length <= Math.floor(width / liwidth)) {
+		state.quantityPerRow = 0;
+	}
+}
 
 // 切换类型
 function switchingTypes() {
-    state.conetntType = state.conetntType === 'imgBoxs' ? 'table' : 'imgBoxs';
+	state.conetntType = state.conetntType === 'imgBoxs' ? 'table' : 'imgBoxs';
 };
 
+
+// 打开弹窗
+function openWindow(){
+    myVideo.value.open()
+}
 </script>
 
 <style lang="scss" scoped>

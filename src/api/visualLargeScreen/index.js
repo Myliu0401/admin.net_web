@@ -48,13 +48,13 @@ export function getCount(data = {}){
 // 获取行政区
 export function getRegion(id){
     return request({
-        url: '/api/sysRegion/list',
+        url: `/api/sysRegion/list?id=${id}`,
         method: 'get',
-        data: { id  }
+       
     });
 };
 
-// 获取所有身份的塔杆数量
+// 获取所有省份的塔杆数量
 export function getAllProle(data = {}){
     return request({
         url: '/api/sysPole/countForAllProvince',
@@ -62,3 +62,5 @@ export function getAllProle(data = {}){
         data
     });
 }
+
+

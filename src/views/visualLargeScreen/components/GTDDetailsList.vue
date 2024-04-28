@@ -94,7 +94,7 @@ function correspondingDevice(name){
 
 <style lang="scss" scoped>
 .GTDDetailsList{
-    height: 100%;
+    height: 80%;
     .GTDetails_selectDevice {
 		display: flex;
 		align-items: center;
@@ -111,7 +111,7 @@ function correspondingDevice(name){
     .GTDetails_content {
 		width: 95%;
 		margin: 0 auto;
-		height: calc(100% - 135px);
+		height: calc(100% - 65px);
 		border: 1px solid #04a6a5;
 		margin-top: 10px;
 

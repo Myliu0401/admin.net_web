@@ -24,16 +24,16 @@ export default defineComponent({
 		});
 
 		onBeforeMount(() => {
-			setTimeout(()=>{
-				renderBaiduMap();
-			}); 
+			setTimeout(() => {
+				getAllPole(); // 获取所有塔杆
+			}, 16);
 		});
 
 		// 渲染百度地图
-		function renderBaiduMap() {
+		function renderBaiduMap(lon = 116.404, lat = 39.925) {
 			mapInstance.value = new BMapGL.Map('baiduMap');
 			mapInstance.value.enableScrollWheelZoom(true);
-			const point = new BMapGL.Point(116.404, 39.925); // 地图中心点
+			const point = new BMapGL.Point(lon, lat); // 地图中心点
 			mapInstance.value.centerAndZoom(point, 15); // 创建地图并设置中心点
 			mapInstance.value.setMapType(BMAP_SATELLITE_MAP); // 切换到卫星地图模式
 			mapInstance.value.setMaxZoom(18); // 允许用户放大到18级
@@ -41,9 +41,7 @@ export default defineComponent({
 			addAllMarker(mapInstance);
 
 			// 在这里执行地图渲染完成后的操作
-			mapInstance.value.addEventListener('tilesloaded', () => {
-				getAllPole();
-			});
+			mapInstance.value.addEventListener('tilesloaded', () => {});
 		}
 
 		// 添加所有覆盖层
@@ -81,20 +79,55 @@ export default defineComponent({
 		async function getAllPole() {
 			if (window.poles && window.poles.length) {
 				state.poles = window.poles;
-
 			} else {
+				renderBaiduMap(); // 渲染地图
 				const res = await getListOfTowerPoles({ page: 1, pageSize: 10000000 });
 				window.poles = res.data.result.items;
 				state.poles = res.data.result.items;
 			}
 
-			setTimeout(() => {
-				mapInstance.value.clearOverlays();
-				addAllMarker(mapInstance);
-			}, 1000);
-		};
+			let lon = undefined;
+			let lat = undefined;
 
-		return { renderBaiduMap, destroyBaiduMaps };
+			for (let i = 0; i < state.poles.length; i++) {
+				const item = state.poles[i];
+				if (item.longitude && item.latitude) {
+					lon = item.longitude;
+					lat = item.latitude;
+					break;
+				}
+			}
+
+			mapInstance.value && mapInstance.value.clearOverlays();
+			renderBaiduMap(lon, lat); // 渲染地图
+		}
+
+		// 获取特定塔杆
+		async function getSpecificTowerPoles(id) {
+			if (!mapInstance.value) {
+				return;
+			}
+			window.poles = undefined;
+			renderBaiduMap(); // 渲染地图
+			const res = await getListOfTowerPoles({ page: 1, pageSize: 10000000, treeNode: { id } });
+			state.poles = res.data.result.items;
+			let lon = undefined;
+			let lat = undefined;
+
+			for (let i = 0; i < state.poles.length; i++) {
+				const item = state.poles[i];
+				if (item.longitude && item.latitude) {
+					lon = item.longitude;
+					lat = item.latitude;
+					break;
+				}
+			}
+
+			mapInstance.value.clearOverlays();
+			renderBaiduMap(lon, lat); // 渲染地图
+		}
+
+		return { renderBaiduMap, destroyBaiduMaps, getSpecificTowerPoles };
 	},
 });
 </script>
