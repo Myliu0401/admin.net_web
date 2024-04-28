@@ -57,7 +57,8 @@ export default {
 		const state = reactive({
 			dialogVisible: false,
 			loading: false,
-			id: undefined
+			id: undefined,
+			item: null
 		});
 
 		const form = reactive({
@@ -77,6 +78,7 @@ export default {
 		// 开启弹窗
 		function open(item) {
 			state.dialogVisible = true;
+			state.item = item;
 			state.id = item.id;
 			form.name = item.name;
 			form.poleId = item.poleId;
@@ -101,6 +103,7 @@ export default {
 			state.loading = true;
 			await setDevice({
 				id: state.id,
+                ...state.item,
 				name: form.name,
 				orderNo: form.orderNo,
 				remark: form.remark,

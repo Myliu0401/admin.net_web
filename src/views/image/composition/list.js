@@ -34,7 +34,7 @@ export default function (treeData) {
         });
         listData.loading = false;
 
-        console.log(res.data)
+        console.log(res.data.result)
     };
 
 
@@ -46,5 +46,11 @@ export default function (treeData) {
     };
 
 
-    return { listData, getPages }
+    // 条件搜索
+    function conditionSearch(){
+
+    };
+
+
+    return { listData, getPages, conditionSearch }
 };

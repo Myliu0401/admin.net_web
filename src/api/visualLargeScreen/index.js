@@ -53,3 +53,12 @@ export function getRegion(id){
         data: { id  }
     });
 };
+
+// 获取所有身份的塔杆数量
+export function getAllProle(data = {}){
+    return request({
+        url: '/api/sysPole/countForAllProvince',
+        method: 'post',
+        data
+    });
+}

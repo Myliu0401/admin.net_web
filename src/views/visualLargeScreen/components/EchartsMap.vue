@@ -8,7 +8,7 @@
 <script>
 import { reactive, defineComponent, onBeforeMount, watch, onBeforeUnmount } from 'vue';
 import mapData from '../mapData.js'; // 地图数据
-import { getCount, getRegion } from '/@/api/visualLargeScreen/index.js';
+import { getCount, getRegion, getAllProle } from '/@/api/visualLargeScreen/index.js';
 
 const x = 10;
 const y = 25;
@@ -371,8 +371,12 @@ export default defineComponent({
 		// 获取杠数量
 		async function getMyCount() {
 			const arr = [];
+
+			const res = await getAllProle();
+
+			console.log(res.data.result, '==')
 			
-			props.administrativeRegion.forEach((item) => {
+			/* props.administrativeRegion.forEach((item) => {
 				arr.push(getCount({ id: item.id }));
 			});
 
@@ -383,7 +387,7 @@ export default defineComponent({
 			});
 
 			window.allCount = state.allCount.map((item)=>{ return { ...item } });
-
+ */
 			reRendering();
 		};
 

@@ -19,3 +19,21 @@ export function getMyAuthorizedDevices(data = {}){
         data
      });
 };
+
+// 添加设备授权
+export function addDevicesAuthorization(data = {}){
+   return request({
+      url: '/api/sysPermission/add',
+      method: 'post',
+      data
+   });
+};
+
+// 解绑设备授权
+export function unbindAuthorization(data = {}){
+   return request({
+      url: '/api/sysPermission/delete',
+      method: 'post',
+      data
+   });
+};

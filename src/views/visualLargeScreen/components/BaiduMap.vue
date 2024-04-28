@@ -42,7 +42,6 @@ export default defineComponent({
 
 			// 在这里执行地图渲染完成后的操作
 			mapInstance.value.addEventListener('tilesloaded', () => {
-				console.log('地图渲染完成');
 				getAllPole();
 			});
 		}
@@ -67,7 +66,7 @@ export default defineComponent({
 			mapInstance.value.addOverlay(marker);
 			marker.id = id;
 			marker.addEventListener('click', (e) => {
-				emit('tuneUp', marker.id);
+				emit('clickPole', marker.id);
 			});
 		}
 

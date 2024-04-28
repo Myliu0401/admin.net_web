@@ -21,8 +21,8 @@
 
                 <el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px">搜索</el-button>
 
-                <el-button size="small"
-                    style="margin-right: 10px; margin-left: 0px; margin-top: 6px"><el-icon><ele-Download /></el-icon>导出</el-button>
+              <!--   <el-button size="small"
+                    style="margin-right: 10px; margin-left: 0px; margin-top: 6px"><el-icon><ele-Download /></el-icon>导出</el-button> -->
 
                 <el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px"
                     @click="switchingTypes"><el-icon><ele-Sort /></el-icon>文本切换</el-button>

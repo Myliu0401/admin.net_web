@@ -33,16 +33,16 @@
 				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.enableSnapshot" />
 			</el-form-item>
 
-			<el-form-item label="定时截图的起始时间，分钟数" v-if="form.enableSnapshot">
-				<el-time-picker v-model="form.snapStartTime" placeholder="起始时间" />
+			<el-form-item label="截图时段" v-if="form.enableSnapshot">
+				<div class="itemBox">
+					<el-time-picker v-model="snapStartTime" placeholder="起始时间" style="width: 150px;"/>至
+					<el-time-picker v-model="snapEndTime" placeholder="终止时间" style="width: 150px;"/>
+				</div>
+
 			</el-form-item>
 
-			<el-form-item label="定时截图的终止时间，分钟数" v-if="form.enableSnapshot">
-				<el-time-picker v-model="form.snapEndTime" placeholder="终止时间" />
-			</el-form-item>
-
-			<el-form-item label="定时截图的间隔时间，分钟数" v-if="form.enableSnapshot">
-				<el-time-picker v-model="form.snapInterval" placeholder="间隔时间" />
+			<el-form-item label="截图间隔" v-if="form.enableSnapshot">
+				<el-input v-model="form.snapInterval" style="width: 100px" placeholder="分钟" type="number" />
 			</el-form-item>
 
 			<el-form-item class="dialog-footer">
@@ -71,6 +71,9 @@ export default {
 	setup(props, { emit }) {
 		const ruleFormRef = ref(null);
 
+		const snapStartTime = ref(); // 起始时间
+		const snapEndTime = ref(); // 结束时间
+
 		const state = reactive({
 			dialogVisible: false,
 			loading: false,
@@ -87,14 +90,11 @@ export default {
 			deviceId: undefined, // 直属设备id
 			status: undefined, // 通用状态
 			enableSnapshot: undefined, // 是否启用定时截图
-			snapStartTime: undefined, // 定时截图的起始时间，分钟数
-			snapEndTime: undefined, // 定时截图的终止时间，分钟数
 			snapInterval: undefined, // 定时截图的间隔时间，分钟数
 		});
 
 		const rules = reactive({
 			name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }],
-			//deviceId: [{ required: true, message: '必须选择设备', trigger: 'blur' }]
 		});
 
 		// 开启弹窗
@@ -132,8 +132,8 @@ export default {
 				onOffStatus: form.onOffStatus ? 1 : 2,
 				okFailureStatus: form.okFailureStatus ? 1 : 2,
 				enableSnapshot: form.enableSnapshot,
-				snapStartTime: form.snapStartTime ? formatTime(form.snapStartTime) : undefined,
-				snapEndTime: form.snapEndTime ? formatTime(form.snapEndTime) : undefined,
+				snapStartTime: snapStartTime.value ? formatTime(snapStartTime.value) : undefined,
+				snapEndTime: snapEndTime.value ? formatTime(snapEndTime.value) : undefined,
 				snapInterval: form.snapInterval ? formatTime(form.snapInterval) : undefined,
 			});
 			state.loading = false;
@@ -145,10 +145,14 @@ export default {
 			close();
 		}
 
-		return { ruleFormRef, state, form, rules, open, close, submitForm };
+		return { ruleFormRef, state, form, rules, open, close, submitForm, snapStartTime, snapEndTime };
 	},
 };
 </script>
 
 <style lang="scss" scoped>
+.itemBox {
+	display: flex;
+	align-items: center;
+}
 </style>

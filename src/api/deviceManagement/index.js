@@ -204,7 +204,7 @@ export function getLineTree(data = {}){
 // 获取设备通道列表
 export function getMyChannelList(data = {}){
    return request({
-      url: '/api/sysChannel/channelList',
+      url: '/api/sysChannel/list',
       method: 'post',
       data
    });
@@ -214,7 +214,7 @@ export function getMyChannelList(data = {}){
 // 添加通道
 export function addChannel(data = {}){
    return request({
-      url: '/api/sysChannel/addChannel',
+      url: '/api/sysChannel/add',
       method: 'post',
       data
    });
@@ -224,7 +224,7 @@ export function addChannel(data = {}){
 // 修改通道
 export function setChannel(data = {}){
    return request({
-      url: '/api/sysChannel/updateChannel',
+      url: '/api/sysChannel/update',
       method: 'post',
       data
    });
@@ -234,7 +234,7 @@ export function setChannel(data = {}){
 // 删除通道
 export function delelteMyChannel(data = {}){
    return request({
-      url: '/api/sysChannel/deleteChannel',
+      url: '/api/sysChannel/delete',
       method: 'post',
       data
    });

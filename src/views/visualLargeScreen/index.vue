@@ -59,7 +59,7 @@
 			</div>
 
 			<div class="contentBox">
-				<BaiduMap v-if="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" key="baiduMap" :administrativeRegion="state.administrativeRegion" @tuneUp="tuneUp"/>
+				<BaiduMap v-if="state.currentlySelectedMap === 'baiduMap'" ref="baiduMap" key="baiduMap" :administrativeRegion="state.administrativeRegion" @clickPole="clickPole"/>
 				<EchartsMap v-else-if="state.currentlySelectedMap === 'echarts'" ref="echartsMap" key="echartsMap" :administrativeRegion="state.administrativeRegion" @complete="state.isLoading = false" />
 				
 				
@@ -205,8 +205,6 @@ onBeforeMount(async () => {
 
 	NextLoading.done(); // 移除加载中
 
-	// window.addEventListener('resize', largeScreen); // 监听事件
-
 	document.addEventListener('keydown', largeScreen);
 
 	state.alarmLoading = true;
@@ -225,7 +223,6 @@ onMounted(() => {
 
 // 卸载前生命周期
 onBeforeUnmount(() => {
-	//document.removeEventListener('fullscreenchange', antiShakeLargeScreen);
 	baiduMap.value && baiduMap.value.destroyBaiduMaps(); // 卸载百度地图
 	echartsMap.value && echartsMap.value.uninstallingAnInstance(); // 卸载echarts地图
 });
@@ -249,23 +246,6 @@ function switchMaps(type) {
 
 	state.currentlySelectedMap = type;
 	state.GTDetails = false;
-
-	/* baiduMap.value && baiduMap.value.destroyBaiduMaps(); // 卸载百度地图
-	echartsMap.value && echartsMap.value.uninstallingAnInstance(); // 卸载echarts地图
-	state.isLoading = true;
-	clearTimeout(state.contentTimerId);
-	state.currentlySelectedMap = type;
-	if (type === 'baiduMap') {
-		state.contentTimerId = setTimeout(() => {
-			baiduMap.value.renderBaiduMap(); // 渲染百度地图
-			state.isLoading = false;
-		}, 16);
-	} else if (type === 'echarts') {
-		state.contentTimerId = setTimeout(() => {
-			echartsMap.value.renderInitEchartsRender(); // 渲染echarts地图
-			state.isLoading = false;
-		}, 16);
-	} */
 };
 
 // 退出
@@ -274,33 +254,7 @@ function backReturn() {
 	router.replace('/dashboard/workbench');
 }
 
-// 时间戳转换成日期时间
-function formatTimestamp(timestamp) {
-	// 创建一个 Date 对象并传入时间戳（单位为毫秒）
-	var date = new Date(timestamp);
 
-	// 获取年、月、日、时、分、秒
-	var year = date.getFullYear();
-	var month = ('0' + (date.getMonth() + 1)).slice(-2); // 月份从0开始，需要加1，并确保两位数格式
-	var day = ('0' + date.getDate()).slice(-2); // 确保两位数格式
-	var hours = ('0' + date.getHours()).slice(-2); // 确保两位数格式
-	var minutes = ('0' + date.getMinutes()).slice(-2); // 确保两位数格式
-	var seconds = ('0' + date.getSeconds()).slice(-2); // 确保两位数格式
-
-	// 拼接日期时间字符串
-	var formattedDate = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
-
-	return formattedDate;
-}
-
-// 防抖函数
-const antiShake = (callback) => {
-	let timedID = null;
-	return () => {
-		clearTimeout(timedID);
-		timedID = setTimeout(callback, 1000);
-	};
-};
 
 // 初始化
 async function init() {
@@ -365,8 +319,8 @@ function search() {
 	});
 };
 
-
-function tuneUp(id){
+// 点击塔杆
+function clickPole(id){
    state.currentGTDid = id;
    state.GTDetails = true;
 };
