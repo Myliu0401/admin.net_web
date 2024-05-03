@@ -40,7 +40,7 @@ export default function () {
         });
         listData.loading = false;
         listData.lists = res.data.result.items;
-        listData.totalPages = res.data.result.totalPages;
+        listData.totalPages = res.data.result.total;
         
     };
 
@@ -52,7 +52,19 @@ export default function () {
     };
 
 
-    return { listData, setPagination, search };
+    function handleSizeChange(num){
+        listData.pageSize = num;
+        getUserList();
+    }
+
+
+    function handleCurrentChange(index){
+         
+         listData.page = index
+         getUserList()
+    }
+
+    return { listData, setPagination, search, handleSizeChange, handleCurrentChange };
 
 
 };

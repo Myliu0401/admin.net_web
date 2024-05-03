@@ -27,6 +27,9 @@
 					<el-table-column prop="id" label="id" :align="'center'"> </el-table-column>
 					<el-table-column prop="createTime" label="创建日期" :align="'center'"> </el-table-column>
 					<el-table-column prop="name" label="塔杆名称" :align="'center'"> </el-table-column>
+					<el-table-column prop="material" label="材质" :align="'center'"> </el-table-column>
+					<el-table-column prop="property" label="性质" :align="'center'"> </el-table-column>
+
 					<el-table-column label="通用状态" :align="'center'">
 						<template #default="scope">
 							<el-text class="mx-1" :type="scope.row.status == 1 ? 'success' : 'warning'">{{ scope.row.status == 1 ? '启用' : '停用' }}</el-text>
@@ -44,11 +47,23 @@
 				</el-table>
 			</div>
 
-			<div class="contentPage">
+			<!-- <div class="contentPage">
 				<button class="button" @click="setPagination('lastPage')">上一页</button>
 				<div class="info">{{ listData.page }}/{{ listData.totalPages }}</div>
 				<button class="button" @click="setPagination('nextPage')">下一页</button>
-			</div>
+			</div> -->
+
+			<el-pagination
+				v-model:currentPage="listData.page"
+				v-model:page-size="listData.pageSize"
+				:total="listData.totalPages"
+				:page-sizes="[10, 20, 50, 100]"
+				small
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				layout="total, sizes, prev, pager, next, jumper"
+			/>
 		</div>
 
 		<AddTowerPole ref="towex" :railLines="state.railLines"  @complete="mySearch"/>
@@ -76,7 +91,7 @@ const state = reactive({
 });
 
 const { leftData, getSpecificTreeShape } = leftInfo();
-const { listData, search, reset, setPagination } = listInfo(state);
+const { listData, search, reset, setPagination, handleSizeChange, handleCurrentChange } = listInfo(state);
 
 onBeforeMount(()=>{
     getAllRailLines();

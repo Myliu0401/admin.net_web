@@ -2,15 +2,16 @@
 
 import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { getMySnapshotPage } from '/@/api/imageManagement/index.js';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
-
-export default function (treeData) {
+export default function (treeData, getQuantityPerRow) {
     const listData = reactive({
         lists: [],
         loading: false,
-        times: [new Date(), new Date()],
+        times: [new Date(Date.now() - (24 * 60 * 60 * 1000)), new Date()],
         page: 1,
-        pageSize: 10,
+        pageSize: 12,
+        totalPages: 0, 
     });
 
 
@@ -33,24 +34,45 @@ export default function (treeData) {
             endTime: listData.times ? formatDate(listData.times[1]) : undefined,
         });
         listData.loading = false;
+        listData.totalPages = res.data.result.total;
+        listData.lists = res.data.result.items;
 
-        console.log(res.data.result)
+        setTimeout(()=>{getQuantityPerRow()}, 20)
     };
 
 
     function formatDate(date) {
         const now = new Date(+date);
-       return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
     };
 
 
     // 条件搜索
-    function conditionSearch(){
+    function conditionSearch() {
+        if (!treeData.passageway.id) {
+            ElMessage({
+				message: '请选择通道',
+				type: 'warning',
+			});
+            return
+        }
         listData.page = 1;
-        listData.pageSize = 10;
+        listData.pageSize = 12;
         getPages();
     };
 
 
-    return { listData, getPages, conditionSearch }
+    function handleSizeChange(num){
+        listData.pageSize = num;
+        getPages();
+    }
+
+
+    function handleCurrentChange(index){
+         listData.page = index
+         getPages()
+    }
+
+
+    return { listData, getPages, conditionSearch, handleSizeChange, handleCurrentChange }
 };

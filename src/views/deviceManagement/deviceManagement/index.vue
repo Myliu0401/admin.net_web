@@ -27,7 +27,17 @@
 				<el-table :data="listData.deviceList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
 					<el-table-column prop="id" label="设备id" width="70" :align="'center'"> </el-table-column>
 					<el-table-column prop="createTime" label="创建日期" width="180" :align="'center'"> </el-table-column>
-					<el-table-column prop="name" label="设备名称" width="180" :align="'center'"> </el-table-column>
+					<el-table-column prop="name" label="设备名称"  :align="'center'"> </el-table-column>
+
+					<el-table-column prop="imei" label="IMEI/MEID"  :align="'center'"> </el-table-column>
+					<el-table-column prop="phone" label="电话"  :align="'center'"> </el-table-column>
+					<el-table-column prop="type" label="类型"  :align="'center'"> </el-table-column>
+					<el-table-column prop="lensType" label="静态类别"  :align="'center'"> </el-table-column>
+					<el-table-column prop="model" label="装置型号"  :align="'center'"> </el-table-column>
+					<el-table-column prop="installDate" label="安装日期"  :align="'center'"> </el-table-column>
+					<el-table-column prop="networkType" label="网络类型"  :align="'center'"> </el-table-column>
+					<el-table-column prop="manufacturer" label="生产厂家"  :align="'center'"> </el-table-column>
+
 					<el-table-column label="通用状态" :align="'center'">
 						<template #default="scope">
 							<el-text class="mx-1" :type="scope.row.status == 1 ? 'success' : 'warning'">{{ scope.row.status == 1 ? '启用' : '停用' }}</el-text>
@@ -53,16 +63,28 @@
 				</el-table>
 			</div>
 
-			<div class="contentPage">
+			<!-- <div class="contentPage">
 				<button class="button" @click="setPagination('lastPage')">上一页</button>
 				<div class="info">{{ listData.page }}/{{ listData.totalPages }}</div>
 				<button class="button" @click="setPagination('nextPage')">下一页</button>
-			</div>
+			</div> -->
+
+			<el-pagination
+				v-model:currentPage="listData.page"
+				v-model:page-size="listData.pageSize"
+				:total="listData.totalPages"
+				:page-sizes="[10, 20, 50, 100]"
+				small
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				layout="total, sizes, prev, pager, next, jumper"
+			/>
 		</div>
 
 		<AddDevice ref="addDevic" :towerPoles="state.towerPoles" @complete="mySearch" />
 		<SetDevice ref="setDevic" :towerPoles="state.towerPoles" @complete="mySearch" />
-		<DeviceChannel ref="channel" :deviceList="state.allDevices"/>
+		<DeviceChannel ref="channel" :deviceList="state.allDevices" />
 	</div>
 </template>
 
@@ -89,7 +111,7 @@ const state = reactive({
 });
 
 const { leftData, getSpecificTreeShape } = leftInfo();
-const { listData, search, reset, setPagination } = listInfo(state);
+const { listData, search, reset, setPagination, handleSizeChange, handleCurrentChange } = listInfo(state);
 
 onBeforeMount(() => {
 	getAllTowerPole(); // 获取所有塔杆
@@ -132,7 +154,7 @@ async function myDeleteDevice(item) {
 	});
 	if (text !== 'confirm') {
 		return;
-	};
+	}
 	await deleteDevice({
 		id: item.id,
 	});
@@ -161,7 +183,7 @@ function mySearch() {
 // 打开设备通道
 function openChannel(item = {}) {
 	channel.value.open(item);
-};
+}
 
 // 获取所有设备
 async function getAllDevices() {

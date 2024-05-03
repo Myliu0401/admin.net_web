@@ -203,7 +203,7 @@ function stopRecordAndSave() {
 
 // 全屏
 function fullScreen() {
-	multiGridVideo.value.fullScreen(value);
+	multiGridVideo.value.fullScreen();
 }
 </script>
 

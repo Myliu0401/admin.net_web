@@ -209,7 +209,7 @@ export default defineComponent({
 					silent: true,
 					zoom: 1.1,
 				},
-				{
+				/* {
 					map: '中国',
 					label: {
 						show: false,
@@ -253,7 +253,7 @@ export default defineComponent({
 					},
 					silent: true,
 					zoom: 1.1,
-				},
+				}, 
 				{
 					map: '中国',
 					label: {
@@ -268,7 +268,7 @@ export default defineComponent({
 					},
 					silent: true,
 					zoom: 1.1,
-				},
+				},*/
 				//地图坐标,本层为最上层，上面是为了营造立体效果，可以删除上面的就是2d效果
 				{
 					map: '中国',
@@ -333,12 +333,12 @@ export default defineComponent({
 					coordinateSystem: 'geo', // 使用地理坐标系
 					data,
 
-					rippleEffect: {
+					/* rippleEffect: {
 						//涟漪特效
 						period: 2, //动画时间，值越小速度越快
 						brushType: 'stroke', //波纹绘制方式 stroke, fill
 						scale: 4, //波纹圆环最大限制，值越大波纹越大
-					},
+					}, */
 
 					symbolSize: function (val) {
 						if (!val[2]) {
@@ -346,11 +346,13 @@ export default defineComponent({
 						}
 						return val[2] / 10;
 					},
+
 					label: {
 						show: true,
 						position: 'right', // 文字位置
 						formatter: '{b}', // 显示散点的名称
 					},
+
 					itemStyle: {
 						color: '#FF0000', // 散点颜色
 						shadowBlur: 10, // 散点阴影模糊大小,

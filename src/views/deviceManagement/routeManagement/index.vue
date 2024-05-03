@@ -48,11 +48,23 @@
 				</el-table>
 			</div>
 
-			<div class="contentPage">
+			<!-- <div class="contentPage">
 				<button class="button" @click="setPagination('lastPage')">上一页</button>
 				<div class="info">{{ listData.page }}/{{ listData.totalPages }}</div>
 				<button class="button" @click="setPagination('nextPage')">下一页</button>
-			</div>
+			</div> -->
+
+			<el-pagination
+				v-model:currentPage="listData.page"
+				v-model:page-size="listData.pageSize"
+				:total="listData.totalPages"
+				:page-sizes="[10, 20, 50, 100]"
+				small
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				layout="total, sizes, prev, pager, next, jumper"
+			/>
 		</div>
 
 		<AddTowerPole ref="addPole" :voltageLevels="state.voltageLevels" :countys="state.countys" @complete="search" />
@@ -83,7 +95,7 @@ const state = reactive({
 });
 
 const { leftData, getSpecificTreeShape } = terrInfo();
-const { listData, search, reset, setPagination } = listInfo(state);
+const { listData, search, reset, setPagination, handleSizeChange, handleCurrentChange } = listInfo(state);
 
 onBeforeMount(() => {
 	getAllVoltageList(); // 获取全部电压等级

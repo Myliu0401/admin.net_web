@@ -23,7 +23,7 @@
 
 
 <script name="MultiGridVideo">
-import { defineProps, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed } from 'vue';
+import { defineProps, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed, watch } from 'vue';
 import { Close, CaretRight } from '@element-plus/icons-vue';
 import { getMyPlaybackURL } from '/@/api/realTimeVideo/index.js';
 
@@ -40,6 +40,18 @@ export default {
 			activeNum: null, // 当前选中的格子
 
 			videoInfos: {}, // 视频数据
+		});
+
+		watch(()=>{
+            return props.currentGrid
+		},()=>{
+			 const keys = Object.keys(state.videoInfos);
+			 
+			 for(let i=0; i < keys.length; i++){
+                  if(+keys[i] > +currentGridNum.value){
+					state.videoInfos[keys[i]].destroy();
+				  } 
+			 }
 		});
 
 		// 当前格子数量
@@ -72,7 +84,7 @@ export default {
 		// 取消选中
 		function deselect(e) {
 			state.activeNum = null;
-		}
+		};
 
 		// 选中格子
 		function selectGrid(num) {
@@ -81,7 +93,7 @@ export default {
 			} else {
 				state.activeNum = num;
 			}
-		}
+		};
 
 		// 关闭视频
 		function closeVideo(key) {
@@ -90,7 +102,7 @@ export default {
 			emit('deleteVideo', state.videoInfos[key].currentNodeId); // 删除视频
 
 			delete state.videoInfos[key];
-		}
+		};
 
 		// 播放视频
 		async function playVideo(num) {
@@ -317,8 +329,8 @@ export default {
 
 		// 全屏
 		function fullScreen() {
-			const example = state.videoInfos[state.activeNum || getDuiYin()];
-
+			const example = state.videoInfos[state.activeNum || geta()];
+         
 			example && example.setFullscreen();
 		}
 
@@ -331,14 +343,14 @@ export default {
 
 		// 调节音量
 		function adjustingVolume(value) {
-			const example = state.videoInfos[state.activeNum || getDuiYin()];
+			const example = state.videoInfos[state.activeNum || geta()];
 
 			example && example.adjustingVolume(value);
 		}
 
 		// 录制视频
 		function startRecord() {
-			const example = state.videoInfos[state.activeNum || getDuiYin()];
+			const example = state.videoInfos[state.activeNum || geta()];
 
 			example && example.startRecord();
 

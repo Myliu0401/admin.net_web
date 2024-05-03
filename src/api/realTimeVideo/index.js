@@ -22,7 +22,7 @@ export function getMyTreeNodes(data = {}){
 // 获取实时播放的url
 export function getMyPlaybackURL(data = {}){
    return request({
-      url: '/api/sysChannel/channelRealPlay',
+      url: '/api/sysChannel/realPlay',
       method: 'post',
       data
    });

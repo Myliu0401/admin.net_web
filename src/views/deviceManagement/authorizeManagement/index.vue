@@ -17,11 +17,23 @@
                 </el-table-column>
 			</el-table>
 
-			<div class="contentPage">
+			<!-- <div class="contentPage">
 				<button class="button" @click="setPagination('lastPage')">上一页</button>
 				<div class="info">{{ listData.page }}/{{ listData.totalPages }}</div>
 				<button class="button" @click="setPagination('nextPage')">下一页</button>
-			</div>
+			</div> -->
+
+			<el-pagination
+				v-model:currentPage="listData.page"
+				v-model:page-size="listData.pageSize"
+				:total="listData.totalPages"
+				:page-sizes="[10, 20, 50, 100]"
+				small
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				layout="total, sizes, prev, pager, next, jumper"
+			/>
 		</div>
 
         <teleport to="#app">
@@ -39,7 +51,7 @@ import Drawer from './components/drawer.vue';
 
 const drawer = ref(null);
 
-const { listData, setPagination, search } = listInfo();
+const { listData, setPagination, search, handleSizeChange, handleCurrentChange } = listInfo();
 
 
 // 打开抽屉

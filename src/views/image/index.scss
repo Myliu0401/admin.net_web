@@ -184,9 +184,12 @@
 						max-height: 129px;
 						background-color: rgba(136, 136, 136, 1);
 						position: relative;
+						display: flex;
+						align-items: center;
+						justify-content: center;
 
 						.img {
-							width: 20%;
+							width: 100%;
 							transform: scale(1);
 							transition: all 0.3s ease-in-out;
 							position: absolute;

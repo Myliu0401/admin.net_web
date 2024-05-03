@@ -95,7 +95,7 @@ export default function (callback) {
 
 
     // 根据关键字过滤树形数据
-    function filterTreeData(treeData, keyword) {
+   /*  function filterTreeData(treeData, keyword) {
         
         return treeData.filter(node => {
             // 检查当前节点是否包含关键字
@@ -115,7 +115,26 @@ export default function (callback) {
             // 否则不保留当前节点
             return false;
         });
-    };
+    }; */
+
+    function filterTreeData(tree, keyword) {
+        var results = [];
+    
+        // 递归搜索函数
+        function search(node) {
+            if (node.name.includes(keyword)) {
+                results.push(node);
+            }
+            if (node.children) {
+                node.children.forEach(child => search(child));
+            }
+        }
+    
+        // 在树的每个根节点上调用搜索函数
+        tree.forEach(root => search(root));
+    
+        return results;
+    }
 
     return { treeData, search, handleNodeClick };
 };

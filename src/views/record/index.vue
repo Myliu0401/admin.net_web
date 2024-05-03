@@ -24,9 +24,9 @@
 
 				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px">搜索</el-button>
 
-				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px" @click="switchingTypes"
+				<!-- <el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px" @click="switchingTypes"
 					><el-icon><ele-Sort /></el-icon>文本切换</el-button
-				>
+				> -->
 			</div>
 
 			<div class="videoRecordingManagement_contentBox" :class="{ tableType: state.conetntType === 'table' }">
@@ -35,32 +35,43 @@
 					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
 					<el-table-column prop="address" label="地址"> </el-table-column>
 				</el-table>
-				<div v-else-if="state.conetntType === 'imgBoxs'" class="imgBoxs" ref="imgBoxDom">
-					<el-empty v-if="false" :description="listState" />
+				<div v-else-if="state.conetntType === 'imgBoxs'" class="imgBoxs" ref="imgBoxDom" v-loading="listData.loading">
+					<el-empty v-if="!listData.lists.length" :description="listState" />
 
-					 <ul class="ul">
-                        <li class="li" v-for="(item, index) in state.imgs" :key="index" @click="openWindow">
-                            <div class="li_content">
-                                <img class="img" src="../../assets/videoRecordingManagement/bofan.png" />
-                            </div>
-                            <p class="li_text">{{ item.date }}</p>
-                        </li>
-                        <li class="li" v-for="item in state.quantityPerRow" :key="item + ']'"></li>
-                    </ul>
+					<ul class="ul">
+						<li class="li" v-for="item in listData.lists" :key="item.id" @click="openWindow(item)">
+							<div class="li_content">
+								<img class="img" src="../../assets/videoRecordingManagement/bofan.png" />
+							</div>
+							<p class="li_text">{{ item.startTime }}</p>
+						</li>
+						<li class="li" v-for="item in state.quantityPerRow" :key="item + ']'"></li>
+					</ul>
 				</div>
 			</div>
 
-			<div class="contentPage">
+			<!-- <div class="contentPage">
 				<button class="button">上一页</button>
 				<div class="info">1/2</div>
 				<button class="button">下一页</button>
-			</div>
+			</div> -->
+			<el-pagination
+				style="display: flex; justify-content: flex-end; padding-right: 20px"
+				v-model:currentPage="listData.page"
+				v-model:page-size="listData.pageSize"
+				:total="listData.totalPages"
+				:page-sizes="[10]"
+				small
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				layout="total, sizes, prev, pager, next, jumper"
+			/>
 		</div>
 
-
-        <teleport to="#app">
-            <MyVideo ref="myVideo" />
-        </teleport>
+		<teleport to="#app">
+			<MyVideo ref="myVideo" />
+		</teleport>
 	</div>
 </template>
 
@@ -237,9 +248,9 @@ onBeforeUnmount(() => {
 });
 
 const { treeData, search, handleNodeClick } = treeInfo(() => {
-	return { getPages, listData };
+	return { getPages, listData, getQuantityPerRow };
 });
-const { listData, getPages } = listInfo(treeData);
+const { listData, getPages, handleSizeChange, handleCurrentChange } = listInfo(treeData, getQuantityPerRow);
 
 // 列表状态
 const listState = computed(() => {
@@ -258,7 +269,7 @@ function change(e) {
 
 // 获取每行的数量
 function getQuantityPerRow() {
-	if (!imgBoxDom.value || state.imgs.length <= 0) {
+	if (!imgBoxDom.value || listData.lists.length <= 0) {
 		return;
 	}
 
@@ -266,10 +277,10 @@ function getQuantityPerRow() {
 
 	const liwidth = imgBoxDom.value.children[0].children[0].offsetWidth;
 
-	state.quantityPerRow = state.imgs.length % Math.floor(width / liwidth);
+	state.quantityPerRow = listData.lists.length % Math.floor(width / liwidth);
 	state.quantityPerRow = Math.floor(width / liwidth) - state.quantityPerRow;
 
-	if (state.imgs.length <= Math.floor(width / liwidth)) {
+	if (listData.lists.length <= Math.floor(width / liwidth)) {
 		state.quantityPerRow = 0;
 	}
 }
@@ -277,12 +288,11 @@ function getQuantityPerRow() {
 // 切换类型
 function switchingTypes() {
 	state.conetntType = state.conetntType === 'imgBoxs' ? 'table' : 'imgBoxs';
-};
-
+}
 
 // 打开弹窗
-function openWindow(){
-    myVideo.value.open()
+function openWindow(item) {
+	myVideo.value.open(item);
 }
 </script>
 

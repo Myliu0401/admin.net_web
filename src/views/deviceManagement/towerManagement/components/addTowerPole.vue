@@ -13,6 +13,14 @@
 				<el-input v-model="form.orderNo" type="number" style="width: 150px" min="1" />
 			</el-form-item>
 
+			<el-form-item label="材质">
+				<el-input v-model="form.material"  style="width: 150px" min="1" />
+			</el-form-item>
+
+			<el-form-item label="性质">
+				<el-input v-model="form.property"  style="width: 150px" min="1" />
+			</el-form-item>
+
 			<el-form-item label="通用状态">
 				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.status" />
 			</el-form-item>
@@ -74,6 +82,8 @@ export default defineComponent({
 			lineId: undefined,
 			longitude: undefined,
 			latitude: undefined,
+			material: undefined, // 材质
+			property: undefined, // 性质
 		});
 
 		const rules = reactive({
@@ -105,8 +115,10 @@ export default defineComponent({
 				remark: form.remark,
 				status: form.status ? 1 : 2,
 				lineId: form.lineId,
-				longitude: +form.longitude,
-				latitude: +form.latitude
+				longitude: +form.longitude * 1000000,
+				latitude: +form.latitude * 1000000,
+				material: form.material,
+				property: form.property
 			});
 			this.loading = false;
 			emit('complete');

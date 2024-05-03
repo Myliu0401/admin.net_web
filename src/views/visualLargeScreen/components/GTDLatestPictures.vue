@@ -12,7 +12,11 @@
 			</div>
 		</div>
 
-		<div class="GTDetails_content"></div>
+		<div class="GTDetails_content">
+			<el-icon v-if="state.imgLoading"><ele-Loading /></el-icon>
+
+			<el-image v-if="state.imgSrc" style="width: 90%; max-height: 90%" :src="'http://8.134.249.156:5005/'+state.imgSrc" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="['http://8.134.249.156:5005/'+state.imgSrc]" :initial-index="0" fit="cover" />
+		</div>
 	</div>
 </template>
 
@@ -21,6 +25,7 @@
 import DropDownList from './DropDownList.vue';
 import { reactive, defineEmits, defineProps, onBeforeMount } from 'vue';
 import { getMyChannelList } from '/@/api/deviceManagement/index.js';
+import { getLatestPictures } from '/@/api/visualLargeScreen/index.js';
 
 const props = defineProps({
 	polesDevices: {
@@ -34,20 +39,26 @@ const state = reactive({
 	devicesName: '', // 设备名称
 	deviceId: '', // 设备id
 	passName: '', // 通道名称
+	passId: null, // 通道id
 	loading: false, // 是否加载中
 	passDatas: {},
+
+	imgLoading: false,
+	imgSrc: null
 });
 
+// 切换设备
 async function setSelectedDevice(name) {
 	const item = correspondingDevice(name);
 	state.devicesName = name;
 	state.deviceId = item.id;
-	if (state[item.id]) {
+	if (state.passDatas[item.id]) {
 		return;
 	}
 
 	state.loading = true;
 
+	// 获取通道
 	const channes = await getMyChannelList({
 		page: 1,
 		pageSize: 10000,
@@ -56,7 +67,7 @@ async function setSelectedDevice(name) {
 
 	state.loading = false;
 
-	console.log(channes.data.result);
+	state.passDatas[item.id] = channes.data.result;
 }
 
 // 过滤获取到对应设备
@@ -69,8 +80,17 @@ function correspondingDevice(name) {
 	}
 }
 
-function setSelectedPass(name) {
-	state.name = name;
+// 选择通道
+async function setSelectedPass(name) {
+	state.passName = name;
+	const items = state.passDatas[state.deviceId];
+	const findIndex = items.findIndex((item) => {
+		return item.name === name;
+	});
+	state.imgLoading = true;
+	const res = await getLatestPictures({ id: items[findIndex].id });
+	state.imgLoading = false;
+	state.imgSrc = res.data.result;
 }
 </script>
 
@@ -101,6 +121,15 @@ function setSelectedPass(name) {
 	.GTDetails_content {
 		margin-top: 20px;
 		height: calc(100% - 65px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+
+		.el-icon {
+			font-size: 30px;
+			color: #68c3c1;
+		}
 	}
 }
 </style>

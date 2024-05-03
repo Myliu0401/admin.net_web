@@ -63,4 +63,22 @@ export function getAllProle(data = {}){
     });
 }
 
+// 获取最新图片
+export function getLatestPictures(data = {}){
+    return request({
+        url: '/api/sysSnapshot/latest',
+        method: 'post',
+        data
+    });
+}
+
+
+// 播放视频
+export function getChannelVideo(data = {}){
+    return request({
+        url: '/api/sysChannel/realPlay',
+        method: 'post',
+        data
+    });
+}
 

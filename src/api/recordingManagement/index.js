@@ -9,3 +9,13 @@ export function getMyRecordings(data = {}){
         data
      });
 };
+
+
+// 获取播放文件
+export function getRecordSrc(data = {}){
+   return request({
+      url: '/api/sysRecord/playback',
+      method: 'post',
+      data
+   });
+}

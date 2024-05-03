@@ -39,7 +39,7 @@ export default function (state) {
             }
         });
         listData.loading = false;
-        listData.totalPages = res.data.result.totalPages;
+        listData.totalPages = res.data.result.total;
         listData.deviceList = res.data.result.items;
     };
 
@@ -89,10 +89,25 @@ export default function (state) {
         getMyDeviceList();
     };
 
+
+    function handleSizeChange(num){
+        listData.pageSize = num;
+        getMyDeviceList();
+    }
+
+
+    function handleCurrentChange(index){
+        
+         listData.page = index
+         getMyDeviceList()
+    }
+
     return {
         listData,
         search,
         reset,
-        setPagination
+        setPagination,
+        handleSizeChange,
+        handleCurrentChange
     }
 };

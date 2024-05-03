@@ -26,7 +26,7 @@ export default function () {
             pageSize: listData.pageSize
         });
         listData.loading = false;
-        listData.totalPages = res.data.result.totalPages;
+        listData.totalPages = res.data.result.total;
         listData.voltageList = res.data.result.items;
     };
 
@@ -42,10 +42,25 @@ export default function () {
         getVolList();
     };
 
+
+    function handleSizeChange(num){
+        listData.pageSize = num;
+        getVolList();
+    }
+
+
+    function handleCurrentChange(index){
+         
+         listData.page = index
+         getVolList()
+    }
+
     return {
         listData,
         getVolList,
-        setPagination
+        setPagination,
+        handleSizeChange,
+        handleCurrentChange
     }
 
 };

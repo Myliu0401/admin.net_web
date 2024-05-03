@@ -13,6 +13,38 @@
 				<el-input v-model="form.orderNo" type="number" style="width: 150px" min="1" />
 			</el-form-item>
 
+			<el-form-item label="IMEI/MEID">
+				<el-input v-model="form.imei" style="width: 150px" min="1" />
+			</el-form-item>
+
+			<el-form-item label="电话">
+				<el-input v-model="form.phone" style="width: 150px" min="1" />
+			</el-form-item>
+
+			<el-form-item label="类型">
+				<el-input v-model="form.type" style="width: 150px" min="1" />
+			</el-form-item>
+
+			<el-form-item label="静态类别">
+				<el-input v-model="form.lensType" style="width: 150px" min="1" />
+			</el-form-item>
+
+			<el-form-item label="装置型号">
+				<el-input v-model="form.model" style="width: 150px" min="1" />
+			</el-form-item>
+
+			<el-form-item label="网络类型">
+				<el-input v-model="form.networkType" style="width: 150px" min="1" />
+			</el-form-item>
+
+			<el-form-item label="生产厂家">
+				<el-input v-model="form.manufacturer" style="width: 150px" min="1" />
+			</el-form-item>
+
+			<el-form-item label="安装日期">
+				<el-date-picker style="width: 150px" v-model="form.installDate" type="date" placeholder="安装日期" />
+			</el-form-item>
+
 			<el-form-item label="上下线状态">
 				<el-switch inline-prompt active-text="上线" inactive-text="离线" v-model="form.onOffStatus" />
 			</el-form-item>
@@ -42,14 +74,13 @@ import { defineProps, reactive, defineComponent, ref, defineEmits } from 'vue';
 import { setDevice } from '/@/api/deviceManagement/index.js';
 
 export default {
-
-    props: {
-        towerPoles: {
-            default(){
-                return []
-            }
-        }
-    },
+	props: {
+		towerPoles: {
+			default() {
+				return [];
+			},
+		},
+	},
 
 	setup(props, { emit }) {
 		const ruleFormRef = ref(null);
@@ -58,17 +89,25 @@ export default {
 			dialogVisible: false,
 			loading: false,
 			id: undefined,
-			item: null
+			item: null,
 		});
 
 		const form = reactive({
 			name: undefined, // 塔杆名称
 			onOffStatus: false, // 上下线状态
-            okFailureStatus: false, // 设备故障状态
+			okFailureStatus: false, // 设备故障状态
 			remark: undefined, // 备注
 			orderNo: undefined, // 排序
-            poleId: undefined, // 直属塔杆
+			poleId: undefined, // 直属塔杆
 			status: undefined, // 通用状态
+			imei: undefined, // IMEI/MEID
+			phone: undefined, // 电话
+			type: undefined, // 类型
+			lensType: undefined, // 静态类别
+			model: undefined, // 装置型号
+			installDate: undefined, // 安装日期
+			networkType: undefined, // 网络类型
+			manufacturer: undefined, // 生产厂家
 		});
 
 		const rules = reactive({
@@ -87,29 +126,56 @@ export default {
 			form.onOffStatus = item.onOffStatus == 1 ? true : false;
 			form.okFailureStatus = item.okFailureStatus == 1 ? true : false;
 			form.status = item.status == 1 ? true : false;
-		};
+			form.imei = item.imei;
+			form.phone = item.phone;
+			form.type = item.type;
+			form.lensType = item.lensType;
+			form.model = item.model;
+			form.installDate = item.installDate;
+			form.networkType = item.networkType;
+			form.manufacturer = item.manufacturer;
+		}
 
 		// 关闭弹窗
 		function close() {
 			state.dialogVisible = false;
-		};
+		}
 
+		function formatDate(date) {
+			// 获取年、月、日
+			var year = date.getFullYear();
+			var month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1
+			var day = String(date.getDate()).padStart(2, '0');
 
-        async function submitForm(ruleFormRef) {
+			// 拼接成所需格式
+			var formattedDate = year + '-' + month + '-' + day;
+
+			return formattedDate;
+		}
+
+		async function submitForm(ruleFormRef) {
 			const bool = await ruleFormRef.validate();
 			if (!bool) {
 				return;
-			};
+			}
 			state.loading = true;
 			await setDevice({
 				id: state.id,
-                ...state.item,
+				...state.item,
 				name: form.name,
 				orderNo: form.orderNo,
 				remark: form.remark,
 				onOffStatus: form.status ? 1 : 2,
-                okFailureStatus: form.status ? 1 : 2,
-                poleId: form.poleId
+				okFailureStatus: form.status ? 1 : 2,
+				poleId: form.poleId,
+				imei: form.imei,
+				phone: form.phone,
+				type: form.type,
+				lensType: form.lensType,
+				model: form.model,
+				installDate: form.installDate ? formatDate(form.installDate) : undefined,
+				networkType: form.networkType,
+				manufacturer: form.manufacturer,
 			});
 			state.loading = false;
 			ElMessage({
@@ -117,13 +183,10 @@ export default {
 				type: 'success',
 			});
 			emit('complete');
-            close();
-
-
+			close();
 		}
 
-
-        return { state, open, close, form, rules, ruleFormRef, submitForm }
+		return { state, open, close, form, rules, ruleFormRef, submitForm };
 	},
 };
 </script>

@@ -21,15 +21,15 @@
 				</li>
 				<li class="ul_li">
 					<p class="left">镜头类型</p>
-					<p class="right"></p>
+					<p class="right">{{ state.currentDevice.lensType }}</p>
 				</li>
 				<li class="ul_li">
 					<p class="left">装置型号</p>
-					<p class="right"></p>
+					<p class="right">{{ state.currentDevice.model }}</p>
 				</li>
 				<li class="ul_li">
 					<p class="left">安装日期</p>
-					<p class="right">{{  state.currentDevice.createTime }}</p>
+					<p class="right">{{  state.currentDevice.installDate }}</p>
 				</li>
 				<li class="ul_li">
 					<p class="left">最后上传时间</p>
@@ -37,15 +37,15 @@
 				</li>
 				<li class="ul_li">
 					<p class="left">网络类型</p>
-					<p class="right"></p>
+					<p class="right">{{ state.currentDevice.networkType }}</p>
 				</li>
 				<li class="ul_li">
 					<p class="left">运行状态</p>
-					<p class="right"></p>
+					<p class="right">{{ state.currentDevice.onOffStatus == 1 ? '在线' : state.currentDevice.onOffStatus == 2 ? '离线' : '' }}</p>
 				</li>
 				<li class="ul_li">
 					<p class="left">生产厂家</p>
-					<p class="right"></p>
+					<p class="right">{{ state.currentDevice.manufacturer }}</p>
 				</li>
 			</ul>
 		</div>
@@ -77,6 +77,7 @@ function setSelected(name){
     state.devicesName = name;
     const item = correspondingDevice(name);
 	state.currentDevice = item;
+
 };
 
 // 过滤获取到对应设备

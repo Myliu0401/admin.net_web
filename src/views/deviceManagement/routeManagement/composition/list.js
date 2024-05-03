@@ -41,7 +41,7 @@ export default function (state) {
             }
         });
         listData.loading = false;
-        listData.totalPages = res.data.result.totalPages;
+        listData.totalPages = res.data.result.total;
         listData.lineList = res.data.result.items;
     };
 
@@ -79,10 +79,24 @@ export default function (state) {
         getMyLineList();
     };
 
+    function handleSizeChange(num){
+        listData.pageSize = num;
+        getMyLineList();
+    }
+
+
+    function handleCurrentChange(index){
+         
+         listData.page = index
+         getMyLineList()
+    }
+
     return {
         listData,
         search,
         reset,
-        setPagination
+        setPagination,
+        handleSizeChange,
+        handleCurrentChange
     }
 };

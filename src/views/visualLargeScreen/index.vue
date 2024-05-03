@@ -46,12 +46,7 @@
 		<div class="visualLargeScreen_content">
 			<div class="contentTitleBox"></div>
 			<div class="optionSearchArea">
-				<DropDownList 
-				:lists="state.administrativeRegion" 
-				prompt="省" 
-				:activeTitle="state.selectRegions[0]"
-				 @setSelected="setSelected($event, '省')" 
-				 />
+				<DropDownList :lists="state.administrativeRegion" prompt="省" :activeTitle="state.selectRegions[0]" @setSelected="setSelected($event, '省')" />
 				<DropDownList
 					v-if="state.currentlySelectedMap === 'baiduMap'"
 					:lists="state.citys[state.selectRegions[0]]"
@@ -177,7 +172,6 @@ import carouselChart from './composition/carouselChart.js'; // 轮播图数据
 import { getOfDeviceStatuses, getTotalNumberOfLineTowers, getTotalNumberOfLines, getRegion } from '/@/api/visualLargeScreen/index.js';
 import { ElMessage } from 'element-plus';
 
-
 const router = useRouter();
 
 const deviceDom = ref(null);
@@ -215,7 +209,7 @@ const { initCarouselChart, switchingTheCarouselChart } = carouselChart();
 
 // 挂载前生命周期
 onBeforeMount(async () => {
-	document.documentElement.webkitRequestFullscreen(); // 进入大屏
+	//document.documentElement.webkitRequestFullscreen(); // 进入大屏
 
 	NextLoading.done(); // 移除加载中
 
@@ -302,13 +296,12 @@ async function init() {
 
 	// 渲染环形饼图
 	renderRateRingChart(chartDom.value, pieChartData);
-
 	// 渲染轮播图
 	initCarouselChart();
 
 	setTimeout(() => {
 		switchMaps('echarts'); // 渲染地图
-	}, 1300);
+	}, 300);
 }
 
 // 修改选中区域
@@ -316,17 +309,16 @@ async function setSelected(name, type) {
 	if (type === '省') {
 		state.selectRegions.length = 0;
 		state.selectRegions[0] = name;
-		if(!state.citys[name]){
+		if (!state.citys[name]) {
 			state.cityLoading = true;
-			const arr = await getPonding(getCorresponding(state.administrativeRegion ,name));
+			const arr = await getPonding(getCorresponding(state.administrativeRegion, name));
 			state.citys[name] = arr;
 			state.cityLoading = false;
 		}
-		
 	} else if (type === '市') {
 		state.selectRegions.length = 1;
 		state.selectRegions[1] = name;
-		if(!state.areas[name]){
+		if (!state.areas[name]) {
 			state.areasLoading = true;
 			const arr = await getPonding(getCorresponding(state.citys[state.selectRegions[0]], name));
 			state.areas[name] = arr;
@@ -335,15 +327,13 @@ async function setSelected(name, type) {
 	} else if (type === '区') {
 		state.selectRegions[2] = name;
 	}
-};
-
-// 获取对应行政区
-async function getPonding(id){
-  const res = await getRegion(id);
-  return res.data.result
 }
 
-
+// 获取对应行政区
+async function getPonding(id) {
+	const res = await getRegion(id);
+	return res.data.result;
+}
 
 // 搜索
 function search() {
@@ -364,9 +354,8 @@ function search() {
 		baiduMap.value.getSpecificTowerPoles(id);
 	} else if (state.currentlySelectedMap === 'echarts') {
 		//id = getCorresponding(state.administrativeRegion, state.selectRegions[0]);
-		echartsMap.value.reRendering(state.selectRegions[0])
+		echartsMap.value.reRendering(state.selectRegions[0]);
 	}
-	
 }
 
 // 获取对应行政区id

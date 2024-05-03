@@ -82,6 +82,9 @@ export default defineComponent({
 			} else {
 				renderBaiduMap(); // 渲染地图
 				const res = await getListOfTowerPoles({ page: 1, pageSize: 10000000 });
+				res.data.result.items = res.data.result.items.map((item) => {
+					return { ...item, longitude: item.longitude / 1000000, latitude: item.latitude / 1000000 };
+				});
 				window.poles = res.data.result.items;
 				state.poles = res.data.result.items;
 			}
@@ -110,6 +113,9 @@ export default defineComponent({
 			window.poles = undefined;
 			renderBaiduMap(); // 渲染地图
 			const res = await getListOfTowerPoles({ page: 1, pageSize: 10000000, treeNode: { id } });
+			res.data.result.items = res.data.result.items.map((item) => {
+				return { ...item, longitude: item.longitude / 1000000, latitude: item.latitude / 1000000 };
+			});
 			state.poles = res.data.result.items;
 			let lon = undefined;
 			let lat = undefined;

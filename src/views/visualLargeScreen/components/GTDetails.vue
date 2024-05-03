@@ -16,7 +16,7 @@
 
 		<GTDDetailsList v-if="state.currentType === 'GTDDetailsList'" :polesDevices="state.polesDevices"/>
 	    <GTDLatestPictures v-else-if="state.currentType === 'GTDLatestPictures'" :polesDevices="state.polesDevices"/>
-	    <GTDLatestVideo v-else-if="state.currentType === 'GTDLatestVideo'"/>
+	    <GTDLatestVideo v-else-if="state.currentType === 'GTDLatestVideo'" ref="" :polesDevices="state.polesDevices"/>
 	</div>
 </template>
 
@@ -77,6 +77,7 @@ async function getTowerPoles(){
 // 关闭弹窗
 function close(){
 	emit('closeGTD');
+
 };
 
 </script>

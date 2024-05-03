@@ -40,7 +40,10 @@ export default function (state) {
         });
 
         listData.loading = false;
-        listData.totalPages = res.data.result.totalPages;
+        listData.totalPages = res.data.result.total;
+        res.data.result.items = res.data.result.items.map((item)=>{
+            return { ...item,  longitude:item.longitude / 1000000, latitude: item.latitude / 1000000 }
+        });
         listData.deviceList = res.data.result.items;
 
         
@@ -75,13 +78,27 @@ export default function (state) {
             return;
         };
         type === 'lastPage' ? listData.page-- : listData.page++;
-        getMyDeviceList();
+        getMyTowerPole();
     };
+
+    function handleSizeChange(num){
+        listData.pageSize = num;
+        getMyTowerPole();
+    }
+
+
+    function handleCurrentChange(index){
+         
+         listData.page = index
+         getMyTowerPole()
+    }
 
     return {
         listData,
         search,
         reset,
-        setPagination
+        setPagination,
+        handleSizeChange,
+        handleCurrentChange
     }
 };

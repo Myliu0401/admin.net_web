@@ -13,10 +13,14 @@
 		</div>
 
 		<div class="GTDetails_content">
+			<el-icon v-if="state.videoLoading"><ele-Loading /></el-icon>
 			<el-button v-if="example && isPlaying()" style="z-index: 111" :icon="Close" circle @click.stop="closeVideo()" />
+			<el-button v-if="example && isPlaying()" style="z-index: 111; top: 52px" :icon="FullScreen" circle @click.stop="fullScreen()" />
+			/*
 			<div class="mongolianLayer" v-if="passId && !isPlaying()">
 				<el-button :icon="CaretRight" circle @click.stop="playVideo()" />
 			</div>
+			*/
 			<div class="content" ref="container"></div>
 		</div>
 	</div>
@@ -25,9 +29,11 @@
 
 <script setup>
 import DropDownList from './DropDownList.vue';
-import { reactive, defineEmits, defineProps, onBeforeMount, ref } from 'vue';
+import { reactive, defineEmits, defineProps, onBeforeMount, ref, onBeforeUnmount } from 'vue';
 import { getMyChannelList } from '/@/api/deviceManagement/index.js';
-import { Close, CaretRight } from '@element-plus/icons-vue';
+import { Close, CaretRight, FullScreen } from '@element-plus/icons-vue';
+import { getChannelVideo } from '/@/api/visualLargeScreen/index.js';
+
 const props = defineProps({
 	polesDevices: {
 		default() {
@@ -35,6 +41,11 @@ const props = defineProps({
 		},
 	},
 });
+
+
+onBeforeUnmount(()=>{
+	closeVideo()
+})
 
 const example = ref(null);
 const container = ref(null);
@@ -46,18 +57,23 @@ const state = reactive({
 	passId: '', // 通道id
 	loading: false, // 是否加载中
 	passDatas: {},
+
+	videoLoading: false,
+	videoScr: null,
 });
 
+// 选择设备
 async function setSelectedDevice(name) {
 	const item = correspondingDevice(name);
 	state.devicesName = name;
 	state.deviceId = item.id;
-	if (state[item.id]) {
+	if (state.passDatas[item.id]) {
 		return;
 	}
 
 	state.loading = true;
 
+	// 获取通道
 	const channes = await getMyChannelList({
 		page: 1,
 		pageSize: 10000,
@@ -66,7 +82,24 @@ async function setSelectedDevice(name) {
 
 	state.loading = false;
 
-	console.log(channes.data.result);
+	state.passDatas[item.id] = channes.data.result;
+}
+
+// 选择通道
+async function setSelectedPass(name) {
+	state.passName = name;
+	const items = state.passDatas[state.deviceId];
+	const findIndex = items.findIndex((item) => {
+		return item.name === name;
+	});
+
+	state.videoLoading = true;
+	const res = await getChannelVideo({ id: items[findIndex].id });
+	state.videoLoading = false;
+	state.videoScr = res.data.result;
+	closeVideo();
+	createDirect();
+	playVideo(state.videoScr);
 }
 
 // 过滤获取到对应设备
@@ -77,11 +110,6 @@ function correspondingDevice(name) {
 			return item;
 		}
 	}
-}
-
-// 选中对应的通道
-function setSelectedPass(name) {
-	state.passName = name;
 }
 
 // 创建视频
@@ -104,7 +132,7 @@ function createDirect() {
 }
 
 // 播放视频
-function playVideo() {
+function playVideo(url = '', options = {}) {
 	if (!example.value) {
 		return;
 	}
@@ -117,6 +145,16 @@ function closeVideo() {
 		return;
 	}
 	example.value.destroy();
+	state.passName = null;
+}
+
+// 进入全屏
+function fullScreen() {
+	if (!example.value) {
+		return;
+	}
+
+	example.value.setFullscreen(true)
 }
 
 // 返回是否正在播放中状态
@@ -156,6 +194,16 @@ function isPlaying() {
 		margin-top: 20px;
 		height: calc(100% - 65px);
 		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+
+		.el-icon {
+			font-size: 30px;
+			color: #68c3c1;
+			position: absolute;
+		}
 
 		.content {
 			width: 100%;
