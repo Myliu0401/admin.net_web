@@ -263,3 +263,51 @@ export function setInspectStrategyParameter(data = {}){
         data
      });
 };
+
+
+// 智能分析参数查询
+export function intelligentAnalysisParameter(data = {}){
+    return request({
+        url: '/api/sysNanWangDevice/intelligentAnalysisParameter',
+        method: 'post',
+        data
+     });
+};
+
+// 智能分析参数配置
+export function setIntelligentAnalysisParameter(data = {}){
+    return request({
+        url: '/api/sysNanWangDevice/setIntelligentAnalysisParameter',
+        method: 'post',
+        data
+     });
+};
+
+// 智能分析类型查询
+export function intelligentAnalysisTypes(data = {}){
+    return request({
+        url: '/api/sysNanWangDevice/intelligentAnalysisTypes',
+        method: 'post',
+        data
+     });
+};
+
+
+// 联动参数查询
+export function linkageParameter(data = {}){
+    return request({
+        url: '/api/sysNanWangDevice/linkageParameter',
+        method: 'post',
+        data
+     });
+};
+
+
+// 联动参数配置
+export function setLinkageParameter(data = {}){
+    return request({
+        url: '/api/sysNanWangDevice/setLinkageParameter',
+        method: 'post',
+        data
+     });
+};

@@ -13,7 +13,7 @@
 			<el-tab-pane label="短信" name="message">
                 <Message :deviceID="state.deviceID" v-if="state.type === 'message'"/>
             </el-tab-pane>
-            
+
             <el-tab-pane label="主站装置" name="mainStationDevice">Task</el-tab-pane>
 
             <el-tab-pane label="拍照时间表" name="photographySchedule">
@@ -41,6 +41,14 @@
             <el-tab-pane label="摄像机" name="Camera">
                 <Camera :deviceID="state.deviceID" v-if="state.type === 'Camera'"></Camera>
             </el-tab-pane>
+
+            <el-tab-pane label="智能" name="Intelligent">
+                <Intelligent :deviceID="state.deviceID" v-if="state.type === 'Intelligent'"></Intelligent>
+            </el-tab-pane>
+
+            <el-tab-pane label="联动" name="Linkage">
+                <Linkage :deviceID="state.deviceID" v-if="state.type === 'Linkage'"></Linkage>
+            </el-tab-pane>
 		</el-tabs>
 	</el-dialog>
 </template>
@@ -61,11 +69,13 @@ import VideoCapture from './VideoCapture.vue';
 import OSD from './OSD.vue';
 import Videotape from './Videotape.vue';
 import Camera from './Camera.vue';
+import Intelligent from './Intelligent.vue';
+import Linkage from './Linkage.vue';
 
 
 export default {
 
-    components: { BasicOperation, MasterStation, DeviceConfig, Message, PhotographySchedule, MainStationIssuesPara, MainStationDeviceFileList, ShortVideo, VideoCapture, OSD, Videotape, Camera },
+    components: { BasicOperation, MasterStation, DeviceConfig, Message, PhotographySchedule, MainStationIssuesPara, MainStationDeviceFileList, ShortVideo, VideoCapture, OSD, Videotape, Camera, Intelligent, Linkage },
 
 	setup(props, { emit }) {
 		const state = reactive({
