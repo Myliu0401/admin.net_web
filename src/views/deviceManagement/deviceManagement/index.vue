@@ -58,6 +58,7 @@
 							<el-text style="margin-right: 5px" @click="openPopup('set', scope.row)" class="mx-1" type="primary">修改</el-text>
 							<el-text style="margin-right: 5px" class="mx-1" type="danger" @click="myDeleteDevice(scope.row)">删除</el-text>
 							<el-text class="mx-1" type="primary" @click="openChannel(scope.row)">设备通道</el-text>
+							<el-text class="mx-1" type="primary" @click="openTheConfig(scope.row)">参数管理</el-text>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -85,6 +86,7 @@
 		<AddDevice ref="addDevic" :towerPoles="state.towerPoles" @complete="mySearch" />
 		<SetDevice ref="setDevic" :towerPoles="state.towerPoles" @complete="mySearch" />
 		<DeviceChannel ref="channel" :deviceList="state.allDevices" />
+		<ParamMans ref="paramMans" />
 	</div>
 </template>
 
@@ -98,10 +100,12 @@ import AddDevice from './components/addDevice.vue';
 import SetDevice from './components/setDevice.vue';
 import DeviceChannel from './components/deviceChannel.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import ParamMans from './components/paramMans/index.vue';
 
 const addDevic = ref(null);
 const setDevic = ref(null);
 const channel = ref(null);
+const paramMans = ref(null);
 
 const state = reactive({
 	dialogVisible: false, // 弹框
@@ -194,7 +198,12 @@ async function getAllDevices() {
 			label: item.name,
 		};
 	});
-}
+};
+
+// 打开配置弹窗
+function openTheConfig(item){
+    paramMans.value.open(item);
+};
 </script>
 
 

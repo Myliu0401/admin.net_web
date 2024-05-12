@@ -17,6 +17,10 @@
 				<div class="myVideo"></div>
 			</li>
 		</ul>
+
+		<teleport to="#app">
+			<PullFrame :videoInfos="state.videoInfos" :activeNum="state.activeNum" :currentGrid="currentGrid" />
+		</teleport>
 	</div>
 </template>
 
@@ -26,8 +30,11 @@
 import { defineProps, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed, watch } from 'vue';
 import { Close, CaretRight } from '@element-plus/icons-vue';
 import { getMyPlaybackURL } from '/@/api/realTimeVideo/index.js';
+import PullFrame from './pullFrame.vue';
 
 export default {
+	components: { PullFrame },
+
 	props: {
 		// 当前格子
 		currentGrid: {
@@ -42,17 +49,20 @@ export default {
 			videoInfos: {}, // 视频数据
 		});
 
-		watch(()=>{
-            return props.currentGrid
-		},()=>{
-			 const keys = Object.keys(state.videoInfos);
-			 
-			 for(let i=0; i < keys.length; i++){
-                  if(+keys[i] > +currentGridNum.value){
-					state.videoInfos[keys[i]].destroy();
-				  } 
-			 }
-		});
+		watch(
+			() => {
+				return props.currentGrid;
+			},
+			() => {
+				const keys = Object.keys(state.videoInfos);
+
+				for (let i = 0; i < keys.length; i++) {
+					if (+keys[i] > +currentGridNum.value) {
+						state.videoInfos[keys[i]].destroy();
+					}
+				}
+			}
+		);
 
 		// 当前格子数量
 		const currentGridNum = computed(() => {
@@ -84,7 +94,7 @@ export default {
 		// 取消选中
 		function deselect(e) {
 			state.activeNum = null;
-		};
+		}
 
 		// 选中格子
 		function selectGrid(num) {
@@ -93,7 +103,7 @@ export default {
 			} else {
 				state.activeNum = num;
 			}
-		};
+		}
 
 		// 关闭视频
 		function closeVideo(key) {
@@ -102,7 +112,7 @@ export default {
 			emit('deleteVideo', state.videoInfos[key].currentNodeId); // 删除视频
 
 			delete state.videoInfos[key];
-		};
+		}
 
 		// 播放视频
 		async function playVideo(num) {
@@ -175,6 +185,11 @@ export default {
 
 				// 录制是否结束
 				this.example.on('recordEnd', () => {});
+
+				// 是否是全屏
+				this.example.on('fullscreen', function (flag) {
+					window.fullscreen = flag;
+				});
 			}
 
 			// 调节音量
@@ -330,7 +345,7 @@ export default {
 		// 全屏
 		function fullScreen() {
 			const example = state.videoInfos[state.activeNum || geta()];
-         
+
 			example && example.setFullscreen();
 		}
 
