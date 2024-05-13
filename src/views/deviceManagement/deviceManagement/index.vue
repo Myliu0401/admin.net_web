@@ -87,6 +87,7 @@
 		<SetDevice ref="setDevic" :towerPoles="state.towerPoles" @complete="mySearch" />
 		<DeviceChannel ref="channel" :deviceList="state.allDevices" />
 		<ParamMans ref="paramMans" />
+        <GbProtocol ref="gbProtocol"/>
 	</div>
 </template>
 
@@ -101,11 +102,13 @@ import SetDevice from './components/setDevice.vue';
 import DeviceChannel from './components/deviceChannel.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import ParamMans from './components/paramMans/index.vue';
+import GbProtocol from './components/gbProtocol/index.vue'
 
 const addDevic = ref(null);
 const setDevic = ref(null);
 const channel = ref(null);
 const paramMans = ref(null);
+const gbProtocol = ref(null);
 
 const state = reactive({
 	dialogVisible: false, // 弹框
@@ -202,7 +205,8 @@ async function getAllDevices() {
 
 // 打开配置弹窗
 function openTheConfig(item){
-    paramMans.value.open(item);
+   // paramMans.value.open(item);
+   gbProtocol.value.open(item);
 };
 </script>
 

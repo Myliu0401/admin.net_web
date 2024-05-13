@@ -311,3 +311,44 @@ export function setLinkageParameter(data = {}){
         data
      });
 };
+
+
+// 重启设备
+export function rebootDevice(data = {}){
+    return request({
+        url: '/api/sysGb28181Device/reboot',
+        method: 'post',
+        data
+     });
+};
+
+// 强制关键帧
+export function forceKeyframes(data = {}){
+    return request({
+        url: '/api/sysGb28181Device/forceIFrame',
+        method: 'post',
+        data
+     });
+};
+
+
+// 开始录像
+export function startRecording(data = {}){
+    return request({
+        url: '/api/sysGb28181Device/startRecord',
+        method: 'post',
+        data
+     });
+};
+
+
+// 结束录像
+export function endRecording(data = {}){
+    return request({
+        url: '/api/sysGb28181Device/stopRecord',
+        method: 'post',
+        data
+     });
+};
+
+
