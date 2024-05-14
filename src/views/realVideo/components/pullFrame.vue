@@ -15,7 +15,8 @@
 
 <script>
 import { defineProps, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed, watch } from 'vue';
-import { conformsTo } from 'lodash-es';
+import { dragZoom } from '/@/api/allocation/index.js';
+import { ElMessage, ElMessageBox } from 'element-plus';
 export default {
 	props: {
 		videoInfos: {
@@ -94,6 +95,16 @@ export default {
 				const c = s.endX - (state.pressX < state.moveX ? state.moveX : state.pressX);
 				const d = s.endY - (state.pressY < state.moveY ? state.moveY : state.pressY);
 				console.log(a, b, c, d);
+
+				myDragZoom({ 
+					startX: a, 
+					startY: b, 
+					endX: c, 
+					endY: d, 
+					contentActualWidth: s.contentActualWidth, 
+					contentActualHeight: s.contentActualHeight,
+					id: s.id
+				});
 			}
 
 			state.isPress = false;
@@ -102,7 +113,8 @@ export default {
 			state.pressY = null;
 			state.moveX = null;
 			state.moveY = null;
-		}
+		};
+
 
 		function calculateTheDistance() {
 			const multiGridVideo_uls = document.querySelectorAll('.multiGridVideo_ul .ul_li');
@@ -127,10 +139,13 @@ export default {
 
 			if (state.pressX > obj.x1 && state.pressX < obj.x2 && state.pressY > obj.y1 && state.pressY < obj.y2) {
 				return {
-					startX: x1,
-					startY: y1,
-					endX: x2,
-					endY: y2,
+					startX: obj.x1,
+					startY: obj.y1,
+					endX: obj.x2,
+					endY: obj.y2,
+					contentActualHeight: obj.contentActualHeight,
+					contentActualWidth: obj.contentActualWidth,
+					id: props.currentGrid === '1x1' ? props.videoInfos[1].id : props.videoInfos[props.activeNum].id
 				};
 			}
 
@@ -192,8 +207,43 @@ export default {
 				y1,
 				x2,
 				y2,
+				contentActualWidth,
+				contentActualHeight
 			};
-		}
+		};
+
+
+        // 进行拉框缩放
+		async function myDragZoom(obj){
+
+			let startX = obj.startX < 0 ? 0 : obj.startX;
+			let startY = obj.startY < 0 ? 0 : obj.startY;
+			let endX = obj.endX < 0 ? 0 : obj.endX;
+			let endY = obj.endY < 0 ? 0 : obj.endY;
+
+			endX = obj.contentActualWidth - (obj.contentActualWidth - endX);
+			endY = obj.contentActualHeight - (obj.contentActualHeight - endY);
+
+            await dragZoom({
+                channelId: obj.id,
+				displayBoxWidth: obj.contentActualWidth,
+				displayBoxHeight: obj.contentActualHeight,
+				selectionStartPoint: {
+					x: startX,
+					y: startY
+				},
+				selectionEndPoint: {
+					x: endX,
+					y: endY
+				}
+			});
+
+			ElMessage({
+				message: '成功',
+				type: 'success',
+			});
+
+		};
 
 		return { state };
 	},

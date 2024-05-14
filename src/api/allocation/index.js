@@ -352,3 +352,31 @@ export function endRecording(data = {}){
 };
 
 
+// 拉框缩放
+export function dragZoom(data = {}){
+    return request({
+        url: '/api/sysChannel/dragZoom',
+        method: 'post',
+        data
+     });
+};
+
+
+// 图像采集配置
+export function setImageCollectionParameter(data = {}){
+    return request({
+        url: '/api/sysNanWangDevice/setImageCollectionParameter',
+        method: 'post',
+        data
+     });
+};
+
+
+// 拍照时间表设置
+export function setPhotoTimeTable(data = {}){
+    return request({
+        url: '/api/sysNanWangDevice/setPhotoTimeTable',
+        method: 'post',
+        data
+     });
+};

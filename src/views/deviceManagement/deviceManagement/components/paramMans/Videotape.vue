@@ -209,7 +209,7 @@ export default {
 
 		// 通道录像状态查询
 		async function myVideoRecordingStatusQuery() {
-            if (!state.channelId || !state.streamType) {
+            if (!(state.channelId + '') || !(state.streamType + '')) {
 				ElMessage({
 					message: '必须选择通道和类型',
 					type: 'warning',
@@ -231,7 +231,7 @@ export default {
 
 		// 录像策略查询
 		async function myRecordStrategyParameter() {
-            if (!state1.channelId || !state1.streamType) {
+            if (!(state1.channelId + '') || !(state1.streamType + '')) {
 				ElMessage({
 					message: '必须选择通道和类型',
 					type: 'warning',
@@ -254,7 +254,7 @@ export default {
 
         // 设置
         async function mySetRecordStrategyParameter(){
-            if (!state2.channelId || !state2.streamType) {
+            if (!(state2.channelId + '') || !(state2.streamType + '')) {
 				ElMessage({
 					message: '必须选择通道和类型',
 					type: 'warning',

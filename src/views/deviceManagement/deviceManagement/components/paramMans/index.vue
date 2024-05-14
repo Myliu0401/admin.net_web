@@ -49,6 +49,10 @@
             <el-tab-pane label="联动" name="Linkage">
                 <Linkage :deviceID="state.deviceID" v-if="state.type === 'Linkage'"></Linkage>
             </el-tab-pane>
+
+            <el-tab-pane label="图像采集" name="ImageAcquisition">
+                <ImageAcquisition :deviceID="state.deviceID" v-if="state.type === 'ImageAcquisition'"></ImageAcquisition>
+            </el-tab-pane>
 		</el-tabs>
 	</el-dialog>
 </template>
@@ -71,11 +75,12 @@ import Videotape from './Videotape.vue';
 import Camera from './Camera.vue';
 import Intelligent from './Intelligent.vue';
 import Linkage from './Linkage.vue';
+import ImageAcquisition from './ImageAcquisition.vue';
 
 
 export default {
 
-    components: { BasicOperation, MasterStation, DeviceConfig, Message, PhotographySchedule, MainStationIssuesPara, MainStationDeviceFileList, ShortVideo, VideoCapture, OSD, Videotape, Camera, Intelligent, Linkage },
+    components: { BasicOperation, MasterStation, DeviceConfig, Message, PhotographySchedule, MainStationIssuesPara, MainStationDeviceFileList, ShortVideo, VideoCapture, OSD, Videotape, Camera, Intelligent, Linkage, ImageAcquisition },
 
 	setup(props, { emit }) {
 		const state = reactive({
