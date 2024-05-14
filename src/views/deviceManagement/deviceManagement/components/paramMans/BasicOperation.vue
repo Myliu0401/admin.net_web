@@ -121,7 +121,7 @@ export default {
         // 设置装置密码
         async function mySetDevicePassword(){
             state.deviceLoading = true;
-            const res = await sendSMS({ deviceId: props.deviceID, oldPassword: state.devicePassword1, newPassword: state.devicePassword2 });
+            const res = await setDevicePassword({ deviceId: props.deviceID, oldPassword: state.devicePassword1, newPassword: state.devicePassword2 });
             state.deviceLoading = false;
             ElMessage({
 				message: '设置成功',

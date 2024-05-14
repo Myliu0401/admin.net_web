@@ -2,7 +2,8 @@
 	<div class="Message">
 		<div class="item">
 			<span class="title">唤醒短信</span>
-			<el-button type="primary" :loading="state.loading" style="margin-top: 10px" @click="myWakeUpSMS">唤醒</el-button>
+			<el-button type="primary" :loading="state.loading" style="margin-top: 10px"
+				@click="myWakeUpSMS">唤醒</el-button>
 		</div>
 
 		<div class="item">
@@ -11,7 +12,8 @@
 				<span class="itemBox_title">发送信息</span>
 				<el-input v-model="state1.phone" placeholder="短信内容" />
 			</div>
-			<el-button type="primary" :loading="state1.loading" style="margin-top: 10px" @click="mySendSMS">发送</el-button>
+			<el-button type="primary" :loading="state1.loading" style="margin-top: 10px"
+				@click="mySendSMS">发送</el-button>
 		</div>
 	</div>
 </template>
@@ -44,7 +46,7 @@ export default {
 		// 查询
 		async function myWakeUpSMS() {
 			state.loading = true;
-			const res = await queryMainSiteInfo({ deviceId: props.deviceID });
+			const res = await wakeUpSMS({ deviceId: props.deviceID });
 			state.loading = false;
 			ElMessage({
 				message: '唤醒成功',
@@ -54,8 +56,15 @@ export default {
 
 		// 设置
 		async function mySendSMS() {
+			if (!state1.phone) {
+				ElMessage({
+					message: '必须填写短信内容',
+					type: 'warning',
+				});
+				return
+			}
 			state1.loading = true;
-			const res = await setMasterStationInfo({ deviceId: props.deviceID, phone: state1.phone });
+			const res = await sendSMS({ deviceId: props.deviceID, phone: state1.phone });
 			state1.loading = false;
 			ElMessage({
 				message: '发送成功',
@@ -80,6 +89,7 @@ export default {
 	height: 100%;
 	display: flex;
 	flex-wrap: wrap;
+
 	.item {
 		width: 50%;
 		height: 100%;
@@ -92,8 +102,7 @@ export default {
 			border-right: 1px solid #ccc;
 		}
 
-		&:nth-child(2) {
-		}
+		&:nth-child(2) {}
 
 		&:nth-child(3) {
 			border-top: 1px solid #ccc;
@@ -112,6 +121,7 @@ export default {
 			display: flex;
 			align-items: center;
 			margin-top: 10px;
+
 			.itemBox_title {
 				font-size: 12px;
 				white-space: pre;

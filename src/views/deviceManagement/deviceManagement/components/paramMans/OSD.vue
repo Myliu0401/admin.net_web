@@ -118,7 +118,7 @@ export default {
 		// 设置
 		async function mySetOsdParam() {
 			state1.loading = true;
-			const res = await mySetOsdParam({ channelId: state1.channelId, timeShow: state1.timeShow, textShow: state1.textShow, text: state1.text });
+			const res = await setOsdParam({ channelId: state1.channelId, timeShow: state1.timeShow, textShow: state1.textShow, text: state1.text });
 			state1.loading = false;
 			ElMessage({
 				message: '设置成功',

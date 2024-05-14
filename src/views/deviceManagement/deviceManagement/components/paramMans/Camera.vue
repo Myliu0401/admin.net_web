@@ -80,10 +80,10 @@
 		<div class="item" v-if="state.type == 3">
 			<div class="itemBox" style="width: 100%">
 				<span class="itemBox_title">设备通道</span>
-				<el-select v-model="state.channelId" placeholder="请选择" style="width: 150px">
+				<el-select v-model="state2.channelId" placeholder="请选择" style="width: 150px">
 					<el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
-				<el-button type="primary" style="margin-left: 15px" :loading="state.loading" @click="myInspectParameter">查询</el-button>
+				<el-button type="primary" style="margin-left: 15px" :loading="state2.loading" @click="myInspectParameter">查询</el-button>
 			</div>
 			<el-table :data="state2.lists" v-loading="state2.loading" border style="width: 100%; margin-top: 15px" max-height="50vh">
 				<el-table-column prop="id" label="巡检组号" align="center" />

@@ -264,7 +264,7 @@ export default {
 
 		// 智能分析参数查询
 		async function myIntelligentAnalysisParameter() {
-			if (!state.channelId || !state.preset) {
+			if (!(state.channelId + '') || !(state.preset + '')) {
 				ElMessage({
 					message: '必须选择通道和预置位号',
 					type: 'warning',

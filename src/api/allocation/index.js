@@ -286,7 +286,7 @@ export function setIntelligentAnalysisParameter(data = {}){
 // 智能分析类型查询
 export function intelligentAnalysisTypes(data = {}){
     return request({
-        url: '/api/sysNanWangDevice/intelligentAnalysisTypes',
+        url: '/api/sysNanWangDevice/intelligentAnalysisType',
         method: 'post',
         data
      });

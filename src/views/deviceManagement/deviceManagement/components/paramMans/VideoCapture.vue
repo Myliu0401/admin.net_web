@@ -116,7 +116,8 @@ export default {
 
 		// 查询
 		async function myVideoCapture() {
-            if (!state.channelId || !state.streamType) {
+			
+            if (!(state.channelId + '') || !(state.type + '')) {
 				ElMessage({
 					message: '必须选择通道和采集类型',
 					type: 'warning',
@@ -136,10 +137,12 @@ export default {
 			const item = res.data.result;
 			state.frameRate = item.frameRate;
 			state.iFrameInterval = item.iFrameInterval;
-			state.encoding = item.encoding;
+			state.encoding = item.encoding + '';
 			state.bitRate = item.bitRate;
-			state.cbrVbr = item.cbrVbr;
-			state.resolution = item.resolution;
+			state.cbrVbr = item.cbrVbr + '';
+			state.resolution = item.resolution + '';
+
+			console.log(state)
 		}
 
 		// 设置

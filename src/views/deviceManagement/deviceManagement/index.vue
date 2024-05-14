@@ -205,8 +205,12 @@ async function getAllDevices() {
 
 // 打开配置弹窗
 function openTheConfig(item){
-   // paramMans.value.open(item);
-   gbProtocol.value.open(item);
+	if(item.protocol == 1){
+		paramMans.value.open(item);
+	}else if(item.protocol == 2){
+		gbProtocol.value.open(item);
+	}
+   
 };
 </script>
 

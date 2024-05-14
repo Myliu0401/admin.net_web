@@ -4,15 +4,15 @@
 			<span class="title">查询主站信息</span>
 			<div class="itemBox">
 				<span class="itemBox_title">IP地址</span>
-				<el-input v-model="state.IPAddress" placeholder="装置时间" />
+				<el-input v-model="state.IPAddress" placeholder="IP地址" />
 			</div>
 			<div class="itemBox">
 				<span class="itemBox_title">端口号</span>
-				<el-input v-model="state.portNumber" placeholder="装置时间" />
+				<el-input v-model="state.portNumber" placeholder="端口号" />
 			</div>
 			<div class="itemBox">
 				<span class="itemBox_title">卡号</span>
-				<el-input v-model="state.cardNumber" placeholder="装置时间" />
+				<el-input v-model="state.cardNumber" placeholder="卡号" />
 			</div>
 			<el-button type="primary" :loading="state.loading" style="margin-top: 10px" @click="myQueryMainSiteInfo">查询</el-button>
 		</div>
@@ -20,15 +20,15 @@
 			<span class="title">设置主站信息</span>
 			<div class="itemBox">
 				<span class="itemBox_title">IP地址</span>
-				<el-input v-model="state1.IPAddress" placeholder="装置时间" />
+				<el-input v-model="state1.IPAddress" placeholder="IP地址" />
 			</div>
 			<div class="itemBox">
 				<span class="itemBox_title">端口号</span>
-				<el-input v-model="state1.portNumber" placeholder="装置时间" />
+				<el-input v-model="state1.portNumber" placeholder="端口号" />
 			</div>
 			<div class="itemBox">
 				<span class="itemBox_title">卡号</span>
-				<el-input v-model="state1.cardNumber" placeholder="装置时间" />
+				<el-input v-model="state1.cardNumber" placeholder="卡号" />
 			</div>
 			<el-button type="primary" :loading="state1.loading" style="margin-top: 10px" @click="mySetMasterStationInfo">设置</el-button>
 		</div>
@@ -68,8 +68,8 @@ export default {
 			const res = await queryMainSiteInfo({ deviceId: props.deviceID });
 			state.loading = false;
 			state.IPAddress = res.data.result.ip;
-			state.portNumber = res.data.port;
-			state.cardNumber = res.data.phone;
+			state.portNumber = res.data.result.port;
+			state.cardNumber = res.data.result.phone;
 			ElMessage({
 				message: '查询成功',
 				type: 'success',

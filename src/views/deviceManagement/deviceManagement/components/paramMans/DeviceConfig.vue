@@ -14,6 +14,22 @@
 				<span class="itemBox_title">视频监测功能</span>
 				<el-switch v-model="state.videoMonitoring" size="small" active-text="开启" inactive-text="关闭" />
 			</div>
+			<div class="itemBox">
+				<span class="itemBox_title">心跳间隔</span>
+				<el-text class="mx-1" size="small" style="width: 120px;">{{ state.keepAliveInterval }}</el-text>
+			</div>
+			<div class="itemBox">
+				<span class="itemBox_title">采集间隔</span>
+				<el-text class="mx-1" size="small" style="width: 120px;">{{ state.collectionInterval }}</el-text>
+			</div>
+			<div class="itemBox">
+				<span class="itemBox_title">休眠时长</span>
+				<el-text class="mx-1" size="small" style="width: 120px;">{{ state.sleepDuration }}</el-text>
+			</div>
+			<div class="itemBox">
+				<span class="itemBox_title">在线时长</span>
+				<el-text class="mx-1" size="small" style="width: 120px;">{{ state.onlineDuration }}</el-text>
+			</div>
 			<el-button type="primary" :loading="state.loading" style="margin-top: 10px" @click="myQueryDeviceConfig">查询</el-button>
 		</div>
 
@@ -53,6 +69,10 @@ export default {
 			fileTransfer: false,
 			imageMonitoring: false,
 			videoMonitoring: false,
+			keepAliveInterval: '',
+			collectionInterval: '',
+			sleepDuration: '',
+			onlineDuration: '',
 			loading: false,
 		});
 
@@ -66,11 +86,15 @@ export default {
 		// 查询
 		async function myQueryDeviceConfig() {
 			state.loading = true;
-			const res = await queryMainSiteInfo({ deviceId: props.deviceID });
+			const res = await queryDeviceConfig({ deviceId: props.deviceID });
 			state.loading = false;
             state.fileTransfer = res.data.result.fileTransfer;
             state.imageMonitoring = res.data.result.imageMonitoring;
             state.videoMonitoring = res.data.result.videoMonitoring;
+			state.keepAliveInterval = res.data.result.keepAliveInterval;
+			state.collectionInterval = res.data.result.collectionInterval;
+			state.sleepDuration = res.data.result.sleepDuration;
+			state.onlineDuration = res.data.result.onlineDuration;
 			ElMessage({
 				message: '查询成功',
 				type: 'success',
@@ -80,7 +104,12 @@ export default {
 		// 设置
 		async function mySetDeviceConfig() {
 			state1.loading = true;
-			const res = await setMasterStationInfo({ deviceId: props.deviceID, fileTransfer: state1.fileTransfer, imageMonitoring: state1.imageMonitoring, videoMonitoring: state1.videoMonitoring });
+			const res = await setDeviceConfig({ 
+				deviceId: props.deviceID, 
+				fileTransfer: state1.fileTransfer, 
+				imageMonitoring: state1.imageMonitoring, 
+				videoMonitoring: state1.videoMonitoring 
+			});
 			state1.loading = false;
 			ElMessage({
 				message: '查询成功',
