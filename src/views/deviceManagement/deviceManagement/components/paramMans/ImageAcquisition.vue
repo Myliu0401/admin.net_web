@@ -1,8 +1,8 @@
 <template>
 	<div class="VideoCapture">
 		<div class="item">
-			<span class="title" style="width: 100%; text-align: center;">图像采集信息</span>
-            <div class="itemBox">
+			<span class="title" style="width: 100%; text-align: center">图像采集信息</span>
+			<div class="itemBox">
 				<span class="itemBox_title">channel1Config</span>
 			</div>
 			<div class="itemBox">
@@ -14,26 +14,29 @@
 			</div>
 			<div class="itemBox">
 				<span class="itemBox_title">分辨率</span>
-				<el-radio-group v-model="state.channel1Config.imageSize" class="ml-4">
+				<!-- <el-radio-group v-model="state.channel1Config.imageSize" class="ml-4">
 					<el-radio v-for="item in resolvingPower" :key="item.id" :value="item.id" size="small">{{ item.text }}</el-radio>
-				</el-radio-group>
+				</el-radio-group> -->
+				<el-select v-model="state.channel1Config.imageSize" placeholder="请选择" style="width: 170px">
+					<el-option v-for="item in resolvingPower" :key="item.id" :label="item.text" :value="item.id" />
+				</el-select>
 			</div>
 			<div class="itemBox">
 				<span class="itemBox_title">亮度</span>
-				<el-slider v-model="state.channel1Config.brightness" style="width: 170px;"/>
+				<el-slider v-model="state.channel1Config.brightness" style="width: 170px" />
 			</div>
-            <div class="itemBox">
+			<div class="itemBox">
 				<span class="itemBox_title">对比度</span>
-				<el-slider v-model="state.channel1Config.contrast" style="width: 170px;"/>
+				<el-slider v-model="state.channel1Config.contrast" style="width: 170px" />
 			</div>
-            <div class="itemBox">
+			<div class="itemBox">
 				<span class="itemBox_title">饱和度</span>
-				<el-slider v-model="state.channel1Config.saturation" style="width: 170px;"/>
+				<el-slider v-model="state.channel1Config.saturation" style="width: 170px" />
 			</div>
-            <div class="itemBox">
+			<div class="itemBox">
 				<span class="itemBox_title">channel2Config</span>
 			</div>
-            <div class="itemBox">
+			<div class="itemBox">
 				<span class="itemBox_title">色彩类型</span>
 				<el-radio-group v-model="state.channel2Config.colorSelect" class="ml-4">
 					<el-radio value="0" size="small">黑白</el-radio>
@@ -42,23 +45,26 @@
 			</div>
 			<div class="itemBox">
 				<span class="itemBox_title">分辨率</span>
-				<el-radio-group v-model="state.channel2Config.imageSize" class="ml-4">
+				<!-- <el-radio-group v-model="state.channel2Config.imageSize" class="ml-4">
 					<el-radio v-for="item in resolvingPower" :key="item.id" :value="item.id" size="small">{{ item.text }}</el-radio>
-				</el-radio-group>
+				</el-radio-group> -->
+				<el-select v-model="state.channel2Config.imageSize" placeholder="请选择" style="width: 170px">
+					<el-option v-for="item in resolvingPower" :key="item.id" :label="item.text" :value="item.id" />
+				</el-select>
 			</div>
 			<div class="itemBox">
 				<span class="itemBox_title">亮度</span>
-				<el-slider v-model="state.channel2Config.brightness" style="width: 170px;"/>
+				<el-slider v-model="state.channel2Config.brightness" style="width: 170px" />
 			</div>
-            <div class="itemBox">
+			<div class="itemBox">
 				<span class="itemBox_title">对比度</span>
-				<el-slider v-model="state.channel2Config.contrast" style="width: 170px;"/>
+				<el-slider v-model="state.channel2Config.contrast" style="width: 170px" />
 			</div>
-            <div class="itemBox">
+			<div class="itemBox">
 				<span class="itemBox_title">饱和度</span>
-				<el-slider v-model="state.channel2Config.saturation" style="width: 170px;"/>
+				<el-slider v-model="state.channel2Config.saturation" style="width: 170px" />
 			</div>
-			<div style="display: flex; margin: 0 auto;">
+			<div style="display: flex; margin: 0 auto">
 				<el-button type="primary" :loading="state.loading" style="margin-top: 10px" @click="mySetImageCollectionParameter">设置</el-button>
 			</div>
 		</div>
@@ -88,13 +94,12 @@ export default {
 				saturation: 0, // 饱和度
 			},
 			channel2Config: {
-                colorSelect: '', // 色彩
+				colorSelect: '', // 色彩
 				imageSize: '', // 分辨率
 				brightness: 0, // 亮度
 				contrast: 0, // 对比度
 				saturation: 0, // 饱和度
-
-            },
+			},
 		});
 
 		const resolvingPower = ref([
@@ -180,26 +185,37 @@ export default {
 			},
 		]);
 
-
-        // 设置
-        async function mySetImageCollectionParameter(){
-              state.loading = true;
-              await setImageCollectionParameter({
-                deviceId: props.deviceID,
-                channel1Config: state.channel1Config,
-                channel2Config: state.channel2Config
-              });
-              state.loading = false;
-              ElMessage({
+		// 设置
+		async function mySetImageCollectionParameter() {
+			state.loading = true;
+			await setImageCollectionParameter({
+				deviceId: props.deviceID,
+				channel1Config: {
+					colorSelect: state.channel1Config.colorSelect === '' ? undefined : +state.channel1Config.colorSelect,
+					imageSize: state.channel1Config.imageSize == '' ? undefined : +state.channel1Config.imageSize,
+					brightness: state.channel1Config.brightness == '' ? undefined : +state.channel1Config.brightness,
+					contrast: state.channel1Config.contrast == '' ? undefined : +state.channel1Config.contrast,
+					saturation: state.channel1Config.saturation == '' ? undefined : +state.channel1Config.saturation,
+				},
+				channel2Config: {
+					colorSelect: state.channel2Config.colorSelect === '' ? undefined : +state.channel2Config.colorSelect,
+					imageSize: state.channel2Config.imageSize == '' ? undefined : +state.channel2Config.imageSize,
+					brightness: state.channel2Config.brightness == '' ? undefined : +state.channel2Config.brightness,
+					contrast: state.channel2Config.contrast == '' ? undefined : +state.channel2Config.contrast,
+					saturation: state.channel2Config.saturation == '' ? undefined : +state.channel2Config.saturation,
+				},
+			});
+			state.loading = false;
+			ElMessage({
 				message: '设置成功',
 				type: 'success',
 			});
-        };
+		}
 
 		return {
 			state,
 			resolvingPower,
-            mySetImageCollectionParameter
+			mySetImageCollectionParameter,
 		};
 	},
 };
@@ -212,7 +228,7 @@ export default {
 	height: 100%;
 	display: flex;
 	flex-wrap: wrap;
-    overflow: auto;
+	overflow: auto;
 	.item {
 		width: 100%;
 		display: flex;

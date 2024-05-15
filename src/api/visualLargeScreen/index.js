@@ -12,7 +12,7 @@ export function getOfDeviceStatuses(){
 // 获取最新数据
 export function getTheLatestAlarms(){
     return request({
-        url: '/api/sysDevice/latestAlarm',
+        url: '/api/sysAlarm/latestAlarm',
         method: 'get'
     });
 };

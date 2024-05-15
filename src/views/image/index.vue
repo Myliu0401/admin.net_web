@@ -42,7 +42,7 @@
 						<li class="li" v-for="item in listData.lists" :key="item.id">
 							<!-- <div class="li_content"> -->
 								<div class="demo-image__preview">
-									<el-image class="img" style="width: 100%" :src="'http://8.134.249.156:5005' + item.filePath" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="['http://8.134.249.156:5005' + item.filePath]" :initial-index="0" fit="cover" />
+									<el-image class="img" style="width: 100%" :src="'http://8.134.249.156:30000' + item.filePath" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="['http://8.134.249.156:5005' + item.filePath]" :initial-index="0" fit="cover" />
 								</div>
 								
 								<!-- <img class="img" :src="'http://8.134.249.156:5005' + item.filePath" /> -->

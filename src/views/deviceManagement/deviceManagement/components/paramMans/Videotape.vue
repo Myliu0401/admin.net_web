@@ -263,8 +263,8 @@ export default {
 			}
             state2.loading = true;
             const res = await setRecordStrategyParameter({
-				channelId: state1.channelId,
-				streamType: state1.streamType,
+				channelId: state2.channelId,
+				streamType: state2.streamType,
                 strategys: state2.strategys
 			});
             state2.loading = false;

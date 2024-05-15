@@ -1,6 +1,5 @@
 <template>
-	<el-dialog title="修改通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%"
-		:before-close="close">
+	<el-dialog title="修改通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="100px">
 			<el-form-item label="设备名称" prop="name">
 				<el-input v-model="form.name" />
@@ -36,10 +35,9 @@
 
 			<el-form-item label="截图时段" v-if="form.enableSnapshot">
 				<div class="itemBox">
-					<el-time-picker v-model="snapStartTime" placeholder="起始时间" style="width: 150px;"/>至
-					<el-time-picker v-model="snapEndTime" placeholder="终止时间" style="width: 150px;"/>
+					<el-time-picker v-model="snapStartTime" placeholder="起始时间" style="width: 150px" />至
+					<el-time-picker v-model="snapEndTime" placeholder="终止时间" style="width: 150px" />
 				</div>
-
 			</el-form-item>
 
 			<el-form-item label="截图间隔" v-if="form.enableSnapshot">
@@ -61,13 +59,12 @@ import { setChannel } from '/@/api/deviceManagement/index.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
-
 	props: {
 		deviceList: {
 			default() {
-				return []
-			}
-		}
+				return [];
+			},
+		},
 	},
 
 	setup(props, { emit }) {
@@ -79,10 +76,10 @@ export default {
 			id: undefined,
 			deviceName: undefined,
 			deviceId: undefined,
-			item: null
+			item: null,
 		});
 
-		const snapStartTime = ref(); // 起始时间
+		const snapStartTime = ref(new Date()); // 起始时间
 		const snapEndTime = ref(); // 结束时间
 
 		const form = reactive({
@@ -120,12 +117,14 @@ export default {
 			form.snapStartTime = item.snapStartTime;
 			form.snapEndTime = item.snapEndTime;
 			form.snapInterval = item.snapInterval;
+			snapStartTime.value = item.snapStartTime ? zhuanhuan(item.snapStartTime) : undefined;
+			snapEndTime.value = item.snapEndTime ? zhuanhuan(item.snapEndTime) : undefined;
 		}
 
 		// 关闭弹窗
 		function close() {
 			state.dialogVisible = false;
-		};
+		}
 
 		// 转换日期格式
 		function formatTime(date) {
@@ -135,12 +134,26 @@ export default {
 			return hours + ':' + minutes + ':' + seconds;
 		}
 
-        // 提交
+		function zhuanhuan(timeString) {
+			// 将时间字符串拆分为小时、分钟和秒
+			const [hours, minutes, seconds] = timeString.split(':').map(Number);
+
+			// 获取当前日期
+			const now = new Date();
+
+			// 使用当前日期和解析出的时间创建一个新的 Date 实例
+			const dateWithTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, seconds);
+		    
+			return dateWithTime;
+		}
+
+		// 提交
 		async function submitForm(ruleFormRef) {
 			const bool = await ruleFormRef.validate();
+
 			if (!bool) {
 				return;
-			};
+			}
 			state.loading = true;
 			await setChannel({
 				id: state.id,
@@ -164,9 +177,7 @@ export default {
 			});
 			emit('complete');
 			close();
-
-
-		};
+		}
 
 		return { ruleFormRef, state, form, rules, open, close, submitForm, snapStartTime, snapEndTime };
 	},

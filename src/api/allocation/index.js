@@ -380,3 +380,13 @@ export function setPhotoTimeTable(data = {}){
         data
      });
 };
+
+
+// 获取短视频分页列表
+export function sysShortVideo(data = {}){
+    return request({
+        url: '/api/sysShortVideo/page',
+        method: 'post',
+        data
+     });
+};

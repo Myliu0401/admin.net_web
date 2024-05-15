@@ -21,9 +21,9 @@
 
 			<el-table :data="state.lists" v-loading="state.loading" border style="width: 100%; margin-top: 15px" max-height="47vh">
 				<el-table-column prop="type" label="类型" align="center">
-					<template #default="scope">
+					<!-- <template #default="scope">
 						<el-text class="mx-1" size="small">{{ types[scope.row.type] }}</el-text>
-					</template>
+					</template> -->
 				</el-table-column>
 				<el-table-column prop="action" label="联动动作" align="center">
 					<template #default="scope">
@@ -38,7 +38,7 @@
 		<div class="item" v-if="state.type == '2'" style="height: 47vh; overflow: auto">
 			<div class="itemBox" style="width: 100%">
 				<span class="itemBox_title">设备通道</span>
-				<el-select v-model="state1.channelId" placeholder="请选择" style="width: 150px; margin-right: 20px">
+				<el-select v-model="state1.channelId" placeholder="请选择" style="width: 150px; margin-right: 20px" @change="changeType">
 					<el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
 
@@ -57,7 +57,7 @@
 					<div class="itemBox" style="width: 100%">
 						<span class="itemBox_title">类型</span>
 						<el-radio-group v-model="item.type" class="ml-4">
-							<el-radio v-for="(value, key) in types" :value="key" size="small" :key="key">{{ value }}</el-radio>
+							<el-radio v-for="(value, key) in types1" :value="key" size="small" :key="key">{{ value }}</el-radio>
 						</el-radio-group>
 					</div>
 
@@ -89,7 +89,7 @@
 
 <script>
 import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
-import { getChannelList, linkageParameter, setLinkageParameter } from '/@/api/allocation/index.js';
+import { getChannelList, linkageParameter, setLinkageParameter, intelligentAnalysisTypes } from '/@/api/allocation/index.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
 export default {
 	props: {
@@ -156,6 +156,8 @@ export default {
 			],
 		});
 
+		const types1 = ref([]);
+
 		onBeforeMount(() => {
 			myGetChannelList();
 		});
@@ -218,8 +220,15 @@ export default {
 			state1.loading = true;
 			const res = await setLinkageParameter({
 				channelId: state1.channelId,
-				preset: state1.preset,
-				links: state1.links,
+				preset: state1.preset == '' ? undefined : +state1.preset,
+				links: state1.links.map((item) => {
+					return {
+						type: item.type == '' ? undefined : +item.type,
+						action: item.action == '' ? undefined : +item.action,
+						argument1: item.argument1 == '' ? undefined : +item.argument1,
+						argument2: item.argument2 == '' ? undefined : +item.argument2,
+					};
+				}),
 			});
 			state1.loading = false;
 			ElMessage({
@@ -228,16 +237,30 @@ export default {
 			});
 		}
 
+		function changeType() {
+			myIntelligentAnalysisTypes();
+		}
+
+		// 获取类型
+		async function myIntelligentAnalysisTypes() {
+			const res = await intelligentAnalysisTypes({
+				channelId: state1.channelId,
+			});
+			types1.value = res.data.result.types;
+		}
+
 		return {
 			state,
 			channels,
 			myLinkageParameter,
 			types,
+			types1,
 			actions,
 			state1,
 			addItem,
 			deleteItem,
 			mySetLinkageParameter,
+			changeType,
 		};
 	},
 };

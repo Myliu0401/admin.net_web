@@ -120,9 +120,15 @@ export default {
 				return;
 			}
 			state.videoInfos[num].loading = true;
-			const res = await getMyPlaybackURL({
-				id: state.videoInfos[num].id,
-			});
+			let res = null;
+			try {
+				res = await getMyPlaybackURL({
+					id: state.videoInfos[num].id,
+				});
+			} catch (err) {
+				state.videoInfos[num].loading = false;
+				return;
+			}
 
 			state.videoInfos[num].create(num);
 			state.videoInfos[num].play(res.data.result);

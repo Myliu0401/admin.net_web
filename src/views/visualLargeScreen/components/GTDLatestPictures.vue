@@ -15,7 +15,7 @@
 		<div class="GTDetails_content">
 			<el-icon v-if="state.imgLoading"><ele-Loading /></el-icon>
 
-			<el-image v-if="state.imgSrc" style="width: 90%; max-height: 90%" :src="'http://8.134.249.156:5005/'+state.imgSrc" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="['http://8.134.249.156:5005/'+state.imgSrc]" :initial-index="0" fit="cover" />
+			<el-image v-if="state.imgSrc" style="width: 90%; max-height: 90%" :src="'http://8.134.249.156:30000/'+state.imgSrc" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="['http://8.134.249.156:5005/'+state.imgSrc]" :initial-index="0" fit="cover" />
 		</div>
 	</div>
 </template>

@@ -87,22 +87,27 @@ export default {
 
 			const s = calculateTheDistance();
 
-			if (s) {
-				let a = s.startX - (state.pressX < state.moveX ? state.pressX : state.moveX);
-				a = a < 0 ? Math.abs(a) : -1 * a;
-				let b = s.startY - (state.pressY < state.moveY ? state.pressY : state.moveY);
-				b = b < 0 ? Math.abs(b) : -1 * b;
-				const c = s.endX - (state.pressX < state.moveX ? state.moveX : state.pressX);
-				const d = s.endY - (state.pressY < state.moveY ? state.moveY : state.pressY);
-				console.log(a, b, c, d);
+			if (s) {	
 
+				let x = state.pressX < s.startX ? s.startX : state.pressX > s.endX ? s.endX : state.pressX;
+				let y = state.pressY < s.startY ? s.startY : state.pressY > s.endY ? s.endY : state.pressY;
+				let x1 = state.moveX < s.startX ? s.startX : state.moveX > s.endX ? s.endX : state.moveX;
+				let y1 = state.moveY < s.startY ? s.startY : state.moveY > s.endY ? s.endY : state.moveY;
+				
+
+				let xz = x - s.startX;
+				let yx = y - s.startY;
+				let xz1 = x1 - s.startX;
+				let yz1 = y1 - s.startY;
+
+               
 				myDragZoom({ 
-					startX: a, 
-					startY: b, 
-					endX: c, 
-					endY: d, 
-					contentActualWidth: s.contentActualWidth, 
-					contentActualHeight: s.contentActualHeight,
+					startX: Math.round(xz), 
+					startY: Math.round(yx), 
+					endX: Math.round(xz1), 
+					endY: Math.round(yz1), 
+					contentActualWidth: Math.round(s.contentActualWidth), 
+					contentActualHeight: Math.round(s.contentActualHeight),
 					id: s.id
 				});
 			}

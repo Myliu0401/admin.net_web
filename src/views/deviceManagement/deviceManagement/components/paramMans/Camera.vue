@@ -58,22 +58,24 @@
 				<span class="itemBox_title" style="width: 80px">巡航组号</span>
 				<el-input v-model="state1.groupId" placeholder="取值范围1-16" type="number" :min="1" :max="16" />
 			</div>
-			<div class="itemBox" style="width: 100%">
-				<span class="itemBox_title" style="width: 80px">巡航点序号</span>
-				<el-input v-model="state1.pointId" placeholder="取值范围1-32" type="number" :min="1" :max="32" />
-			</div>
-			<div class="itemBox" style="width: 100%">
-				<span class="itemBox_title" style="width: 80px">预置位号</span>
-				<el-input v-model="state1.preset" placeholder="取值范围1-254" type="number" :min="1" :max="254" />
-			</div>
-			<div class="itemBox" style="width: 100%">
-				<span class="itemBox_title" style="width: 80px">巡航停留时间</span>
-				<el-input v-model="state1.dwellTime" placeholder="取值范围3-255" type="number" :min="3" :max="255" />
-			</div>
-			<div class="itemBox" style="width: 100%">
-				<span class="itemBox_title" style="width: 80px">巡航速率</span>
-				<el-input v-model="state1.cruiseSpeed" placeholder="取值范围1-100,值越小，速率越慢，值越大，速率越快" type="number" :min="1" :max="100" />
-			</div>
+			<template v-if="state1.action == '' || state1.action != 4">
+				<div class="itemBox" style="width: 100%">
+					<span class="itemBox_title" style="width: 80px">巡航点序号</span>
+					<el-input v-model="state1.pointId" placeholder="取值范围1-32" type="number" :min="1" :max="32" />
+				</div>
+				<div class="itemBox" style="width: 100%">
+					<span class="itemBox_title" style="width: 80px">预置位号</span>
+					<el-input v-model="state1.preset" placeholder="取值范围1-254" type="number" :min="1" :max="254" />
+				</div>
+				<div class="itemBox" style="width: 100%">
+					<span class="itemBox_title" style="width: 80px">巡航停留时间</span>
+					<el-input v-model="state1.dwellTime" placeholder="取值范围3-255" type="number" :min="3" :max="255" />
+				</div>
+				<div class="itemBox" style="width: 100%">
+					<span class="itemBox_title" style="width: 80px">巡航速率</span>
+					<el-input v-model="state1.cruiseSpeed" placeholder="取值范围1-100,值越小，速率越慢，值越大，速率越快" type="number" :min="1" :max="100" />
+				</div>
+			</template>
 			<el-button type="primary" style="margin-top: 15px" :loading="state1.loading" @click="mySetCruiseParameter">设置</el-button>
 		</div>
 
@@ -86,8 +88,16 @@
 				<el-button type="primary" style="margin-left: 15px" :loading="state2.loading" @click="myInspectParameter">查询</el-button>
 			</div>
 			<el-table :data="state2.lists" v-loading="state2.loading" border style="width: 100%; margin-top: 15px" max-height="50vh">
-				<el-table-column prop="id" label="巡检组号" align="center" />
-				<el-table-column prop="inspectIdCount" label="巡检点数量" align="center" />
+				<el-table-column prop="id" label="巡检组号" align="center">
+					<template #default="scope">
+						<el-text class="mx-1" size="small">{{ scope.row.id }}</el-text>
+					</template>
+				</el-table-column>
+				<el-table-column prop="inspectIdCount" label="巡检点数量" align="center" >
+					<template #default="scope">
+						<el-text class="mx-1" size="small">{{ scope.row.inspectIdCount }}</el-text>
+					</template>
+				</el-table-column>
 			</el-table>
 		</div>
 
@@ -141,7 +151,7 @@
 				</el-select>
 			</div>
 
-			<div class="" style="margin-top: 20px; width: 100%;">
+			<div class="" style="margin-top: 20px; width: 100%">
 				<el-icon
 					size="20"
 					style="margin-right: 15px"
@@ -152,8 +162,8 @@
 				/></el-icon>
 				<el-icon size="20" style="cursor: pointer" @click="addItem"><ele-CirclePlusFilled /></el-icon>
 			</div>
-			<div style="width: 100%; height: 35vh; overflow: auto;">
-				<div v-for="(item, index) in state5.strategys" :key="index" style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+			<div style="width: 100%; height: 35vh; overflow: auto">
+				<div v-for="(item, index) in state5.strategys" :key="index" style="border-bottom: 1px solid #ccc; padding-bottom: 10px">
 					<div class="itemBox">
 						<span class="itemBox_title" style="width: 70px">检组号</span>
 						<el-input v-model="item.id" placeholder="巡检组号码，1-4" style="width: 100px" :min="1" :max="4" type="number" />
@@ -166,20 +176,20 @@
 						<span class="itemBox_title" style="width: 70px">巡检使能</span>
 						<el-switch v-model="item.enable" size="small" active-text="开" inactive-text="关" />
 					</div>
-                    <div class="itemBox">
+					<div class="itemBox">
 						<span class="itemBox_title" style="width: 70px">时</span>
 						<el-input v-model="item.start.hour" placeholder="时" style="width: 100px" :min="1" :max="24" type="number" />
 					</div>
-                    <div class="itemBox">
+					<div class="itemBox">
 						<span class="itemBox_title" style="width: 70px">分</span>
 						<el-input v-model="item.start.minute" placeholder="分" style="width: 100px" :min="1" :max="60" type="number" />
 					</div>
-                    <div class="itemBox">
+					<div class="itemBox">
 						<span class="itemBox_title" style="width: 70px">秒</span>
 						<el-input v-model="item.start.second" placeholder="秒" style="width: 100px" :min="1" :max="60" type="number" />
 					</div>
 				</div>
-                <el-button type="primary" style="margin-top: 15px; margin-left: 50%" :loading="state5.loading" @click="mySetInspectStrategyParameter">设置</el-button>
+				<el-button type="primary" style="margin-top: 15px; margin-left: 50%" :loading="state5.loading" @click="mySetInspectStrategyParameter">设置</el-button>
 			</div>
 		</div>
 	</div>
@@ -296,7 +306,7 @@ export default {
 
 		// 查询
 		async function myCruiseParameter() {
-            if (!state.channelId) {
+			if (!state.channelId) {
 				ElMessage({
 					message: '必须选择通道',
 					type: 'warning',
@@ -313,7 +323,7 @@ export default {
 
 		// 设置
 		async function mySetCruiseParameter() {
-            if (!state1.channelId) {
+			if (!state1.channelId) {
 				ElMessage({
 					message: '必须选择通道',
 					type: 'warning',
@@ -323,12 +333,12 @@ export default {
 			state1.loading = true;
 			const res = await setCruiseParameter({
 				channelId: state1.channelId,
-				action: state1.action,
-				groupId: state1.groupId,
-				pointId: state1.pointId,
-				preset: state1.preset,
-				dwellTime: state1.dwellTime,
-				cruiseSpeed: state1.cruiseSpeed,
+				action: state1.action == '' ? undefined : +state1.action,
+				groupId: state1.groupId == '' ? undefined : +state1.groupId,
+				pointId: state1.pointId == '' ? undefined : +state1.pointId,
+				preset: state1.preset == '' ? undefined : +state1.preset,
+				dwellTime: state1.dwellTime == '' ? undefined : +state1.dwellTime,
+				cruiseSpeed: state1.cruiseSpeed == '' ? undefined : +state1.cruiseSpeed,
 			});
 			state1.loading = false;
 			ElMessage({
@@ -339,7 +349,7 @@ export default {
 
 		// 巡检查询
 		async function myInspectParameter() {
-            if (!state2.channelId) {
+			if (!state2.channelId) {
 				ElMessage({
 					message: '必须选择通道',
 					type: 'warning',
@@ -349,12 +359,12 @@ export default {
 			state2.loading = true;
 			const res = await inspectParameter({ channelId: state2.channelId });
 			state2.loading = false;
-			state2.lists = res.data.result;
+			state2.lists = res.data.result.inspectGroup;
 		}
 
 		//  巡检设置
 		async function mySetInspectParameter() {
-            if (!state3.channelId) {
+			if (!state3.channelId) {
 				ElMessage({
 					message: '必须选择通道',
 					type: 'warning',
@@ -372,7 +382,7 @@ export default {
 
 		// 巡检策略查询
 		async function myInspectStrategyParameter() {
-            if (!state4.channelId) {
+			if (!state4.channelId) {
 				ElMessage({
 					message: '必须选择通道',
 					type: 'warning',
@@ -383,21 +393,21 @@ export default {
 			const res = await inspectStrategyParameter({ channelId: state4.channelId });
 			state4.loading = false;
 			state4.lists = res.data.result.strategys;
-		};
+		}
 
-        // 巡检策略设置
-        async function mySetInspectStrategyParameter(){
-            state5.loading = true;
-            const res = await setInspectStrategyParameter({
-                channelId: state5.channelId,
-                strategys: state5.strategys
-            });
-            state5.loading = false;
-            ElMessage({
+		// 巡检策略设置
+		async function mySetInspectStrategyParameter() {
+			state5.loading = true;
+			const res = await setInspectStrategyParameter({
+				channelId: state5.channelId,
+				strategys: state5.strategys,
+			});
+			state5.loading = false;
+			ElMessage({
 				message: '设置成功',
 				type: 'success',
 			});
-        };
+		}
 
 		return {
 			state,
@@ -416,7 +426,7 @@ export default {
 			myInspectStrategyParameter,
 			deleteItem,
 			addItem,
-            mySetInspectStrategyParameter
+			mySetInspectStrategyParameter,
 		};
 	},
 };

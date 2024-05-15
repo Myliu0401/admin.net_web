@@ -57,7 +57,7 @@
 		<div class="item" v-if="state.type == '2'" style="height: 53vh; overflow: auto">
 			<div class="itemBox" style="width: 100%">
 				<div class="itemBox_title">设备通道</div>
-				<el-select v-model="state1.channelId" placeholder="请选择" style="width: 150px; margin-right: 20px">
+				<el-select v-model="state1.channelId" placeholder="请选择" style="width: 150px; margin-right: 20px" @change="changeType">
 					<el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
 			</div>
@@ -87,7 +87,7 @@
 				<div class="itemBox" style="width: 100%">
 					<div class="itemBox_title">枚举类型</div>
 					<el-radio-group v-model="item.type" class="ml-4">
-						<el-radio v-for="(value, key) in types" :key="key" :value="value" size="small">{{ value }}</el-radio>
+						<el-radio v-for="(value, key) in types1" :value="key" size="small" :key="key">{{ value }}</el-radio>
 					</el-radio-group>
 				</div>
 				<div class="itemBox" style="width: 100%">
@@ -248,6 +248,8 @@ export default {
 			loading: false,
 		});
 
+		const types1 = ref([]);
+
 		onBeforeMount(() => {
 			myGetChannelList();
 		});
@@ -371,6 +373,18 @@ export default {
 			state2.lists = res.data.result.types;
 		}
 
+		function changeType() {
+			myIntelligentAnalysisTypes();
+		}
+
+		// 获取类型
+		async function myIntelligentAnalysisTypes() {
+			const res = await intelligentAnalysisTypes({
+				channelId: state1.channelId,
+			});
+			types1.value = res.data.result.types;
+		}
+
 		return {
 			state,
 			channels,
@@ -386,6 +400,8 @@ export default {
 			mySetIntelligentAnalysisParameter,
 			state2,
 			myIntelligentAnalysisTypes,
+			changeType,
+			types1,
 		};
 	},
 };
