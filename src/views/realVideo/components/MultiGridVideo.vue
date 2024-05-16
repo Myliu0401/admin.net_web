@@ -8,7 +8,7 @@
 				:class="{ yige: currentGridNum === 1, liange: currentGridNum === 4, shangge: currentGridNum === 9, active: state.activeNum === num }"
 				@click.stop="selectGrid(num)"
 			>
-				<el-button style="z-index: 111" :icon="Close" circle @click.stop="closeVideo(num)" v-if="state.videoInfos[num] && state.videoInfos[num].isPlaying()" />
+				<el-button style="z-index: 111" :icon="Close" circle @click.stop="closeVideo(num)" v-if="state.videoInfos[num]" />
 
 				<div class="mongolianLayer" v-if="state.videoInfos[num] && !state.videoInfos[num].isPlaying()">
 					<el-button v-if="!state.videoInfos[num].loading" :icon="CaretRight" circle @click.stop="playVideo(num)" />

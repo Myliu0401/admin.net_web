@@ -4,7 +4,7 @@
 			<el-radio-group v-model="state.type" class="ml-4">
 				<el-radio value="1" size="small">智能分析参数查询</el-radio>
 				<el-radio value="2" size="small">智能分析参数配置</el-radio>
-				<el-radio value="3" size="small">智能分析类型查询</el-radio>
+				<!-- <el-radio value="3" size="small">智能分析类型查询</el-radio> -->
 			</el-radio-group>
 		</div>
 
@@ -143,7 +143,7 @@
 			<el-button type="primary" :loading="state1.loading" style="margin-top: 10px" @click="mySetIntelligentAnalysisParameter">设置</el-button>
 		</div>
 
-		<div class="item" v-if="state.type == '3'" style="height: 50vh; overflow: auto">
+		<!-- <div class="item" v-if="state.type == '3'" style="height: 50vh; overflow: auto">
 			<div class="itemBox" style="width: 100%">
 				<span class="itemBox_title">设备通道</span>
 				<el-select v-model="state2.channelId" placeholder="请选择" style="width: 150px; margin-right: 20px">
@@ -160,7 +160,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
-		</div>
+		</div> -->
 	</div>
 </template>
 

@@ -25,7 +25,8 @@
 				<span class="itemBox_title">录像状态</span>
 				<el-switch style="width: 152px" v-model="state.status" size="small" active-text="开" inactive-text="关" />
 			</div>
-			<el-button type="primary" :loading="state.loading" style="margin-top: 10px" @click="myVideoRecordingStatusQuery">查询</el-button>
+			<el-button type="primary" :loading="state.loading" style="margin-top: 10px"
+				@click="myVideoRecordingStatusQuery">查询</el-button>
 		</div>
 
 		<div class="item" v-if="state.type == 2">
@@ -41,24 +42,25 @@
 				</el-select>
 				<el-button type="primary" :loading="state1.loading" @click="myRecordStrategyParameter">查询</el-button>
 			</div>
-			<el-table :data="state1.lists" v-loading="state1.loading" border style="width: 100%; margin-top: 15px" max-height="50vh">
+			<el-table :data="state1.lists" v-loading="state1.loading" border style="width: 100%; margin-top: 15px"
+				max-height="50vh">
 				<el-table-column prop="id" label="id" align="center" />
 				<el-table-column prop="action" label="动作类别" align="center" />
-				<el-table-column  label="时" align="center" >
-                    <template #default="scope">
+				<el-table-column label="时" align="center">
+					<template #default="scope">
 						<el-text class="mx-1" size="small">{{ scope.row.start.hour }}</el-text>
 					</template>
-                </el-table-column>
-				<el-table-column label="分" align="center" >
-                    <template #default="scope">
+				</el-table-column>
+				<el-table-column label="分" align="center">
+					<template #default="scope">
 						<el-text class="mx-1" size="small">{{ scope.row.start.minute }}</el-text>
 					</template>
-                </el-table-column>
-				<el-table-column label="持续时间" align="center" >
-                    <template #default="scope">
+				</el-table-column>
+				<el-table-column label="持续时间" align="center">
+					<template #default="scope">
 						<el-text class="mx-1" size="small">{{ scope.row.start.duration }}</el-text>
 					</template>
-                </el-table-column>
+				</el-table-column>
 			</el-table>
 		</div>
 
@@ -76,18 +78,15 @@
 			</div>
 			<div class="" style="width: 100%">
 				<div class="" style="margin-top: 20px">
-					<el-icon
-						size="20"
-						style="margin-right: 15px"
+					<el-icon size="20" style="margin-right: 15px"
 						:style="{ cursor: state2.strategys.length === 1 ? 'no-drop' : 'pointer' }"
 						:color="state2.strategys.length === 1 ? '#ccc' : ''"
-						@click="deleteItem"
-						><ele-RemoveFilled
-					/></el-icon>
+						@click="deleteItem"><ele-RemoveFilled /></el-icon>
 					<el-icon size="20" style="cursor: pointer" @click="addItem"><ele-CirclePlusFilled /></el-icon>
 				</div>
 				<div style="height: 45vh; overflow: auto; padding-bottom: 20px">
-					<div v-for="(item, index) in state2.strategys" :key="index" style="border-bottom: 1px solid #ccc; padding-bottom: 10px">
+					<div v-for="(item, index) in state2.strategys" :key="index"
+						style="border-bottom: 1px solid #ccc; padding-bottom: 10px">
 						<div class="itemBox">
 							<span class="itemBox_title"> 动作类别 </span>
 							<el-radio-group v-model="item.action" class="ml-4">
@@ -97,32 +96,33 @@
 							</el-radio-group>
 						</div>
 						<div class="itemBox">
-							<span class="itemBox_title"> id </span>
-							<el-radio-group v-model="item.id" class="ml-4">
-								<el-radio value="0" size="small">置位号</el-radio>
-								<el-radio value="1" size="small">航组号</el-radio>
-								<el-radio value="2" size="small">检组号</el-radio>
-							</el-radio-group>
+							<span class="itemBox_title">{{ getActionText(item.action) }}</span>
+							<el-input v-model="item.id" placeholder="号" style="width: 100px" type="number" />
 						</div>
 						<div class="itemBox">
 							<span class="itemBox_title"> 时 </span>
-							<el-input v-model="item.start.hour" placeholder="时" style="width: 100px" :min="1" :max="24" type="number" />
+							<el-input v-model="item.start.hour" placeholder="时" style="width: 100px" :min="1" :max="24"
+								type="number" />
 						</div>
 						<div class="itemBox">
 							<span class="itemBox_title"> 分 </span>
-							<el-input v-model="item.start.minute" placeholder="分" style="width: 100px" :min="1" :max="60" type="number" />
+							<el-input v-model="item.start.minute" placeholder="分" style="width: 100px" :min="1"
+								:max="60" type="number" />
 						</div>
 						<div class="itemBox">
 							<span class="itemBox_title"> 秒 </span>
-							<el-input v-model="item.start.second" placeholder="秒" style="width: 100px" :min="1" :max="60" type="number" />
+							<el-input v-model="item.start.second" placeholder="秒" style="width: 100px" :min="1"
+								:max="60" type="number" />
 						</div>
 						<div class="itemBox">
 							<span class="itemBox_title"> 持续时间 </span>
-							<el-input v-model="item.start.duration" placeholder="秒" style="width: 100px" :min="1" :max="60" type="number" />
+							<el-input v-model="item.start.duration" placeholder="秒" style="width: 100px" :min="1"
+								:max="60" type="number" />
 						</div>
 					</div>
 
-                    <el-button type="primary" :loading="state2.loading" style="margin-top: 20px;" @click="mySetRecordStrategyParameter">配置</el-button>
+					<el-button type="primary" :loading="state2.loading" style="margin-top: 20px;"
+						@click="mySetRecordStrategyParameter">配置</el-button>
 				</div>
 
 
@@ -164,7 +164,7 @@ export default {
 			streamType: '',
 			strategys: [
 				{
-					action: '',
+					action: 0,
 					id: '',
 					start: {
 						hour: '',
@@ -209,7 +209,7 @@ export default {
 
 		// 通道录像状态查询
 		async function myVideoRecordingStatusQuery() {
-            if (!(state.channelId + '') || !(state.streamType + '')) {
+			if (!(state.channelId + '') || !(state.streamType + '')) {
 				ElMessage({
 					message: '必须选择通道和类型',
 					type: 'warning',
@@ -231,7 +231,7 @@ export default {
 
 		// 录像策略查询
 		async function myRecordStrategyParameter() {
-            if (!(state1.channelId + '') || !(state1.streamType + '')) {
+			if (!(state1.channelId + '') || !(state1.streamType + '')) {
 				ElMessage({
 					message: '必须选择通道和类型',
 					type: 'warning',
@@ -252,27 +252,38 @@ export default {
 		};
 
 
-        // 设置
-        async function mySetRecordStrategyParameter(){
-            if (!(state2.channelId + '') || !(state2.streamType + '')) {
+		// 设置
+		async function mySetRecordStrategyParameter() {
+			if (!(state2.channelId + '') || !(state2.streamType + '')) {
 				ElMessage({
 					message: '必须选择通道和类型',
 					type: 'warning',
 				});
 				return;
 			}
-            state2.loading = true;
-            const res = await setRecordStrategyParameter({
+			state2.loading = true;
+			const res = await setRecordStrategyParameter({
 				channelId: state2.channelId,
 				streamType: state2.streamType,
-                strategys: state2.strategys
+				strategys: state2.strategys.map((item) => {
+					return {
+						action: item.action == '' ? undefined : +item.action,
+						id: item.id == '' ? undefined : +item.id,
+						start: {
+							hour: item.start.hour == '' ? undefined : +item.start.hour,
+							minute: item.start.minute == '' ? undefined : +item.start.minute,
+							second: item.start.second == '' ? undefined : +item.start.second,
+						},
+						duration: item.duration == '' ? undefined : +item.duration,
+					}
+				})
 			});
-            state2.loading = false;
-            ElMessage({
+			state2.loading = false;
+			ElMessage({
 				message: '配置成功',
 				type: 'success',
 			});
-        };
+		};
 
 		// 删除
 		function deleteItem() {
@@ -294,6 +305,17 @@ export default {
 				},
 				duration: '',
 			});
+		};
+
+		// 获取文本
+		function getActionText(type) {
+			if (type == 0) {
+				return '预置位号';
+			} else if (type == 1) {
+				return '航组号';
+			} else if (type == 2) {
+				return '检组号';
+			}
 		}
 
 		return {
@@ -304,9 +326,10 @@ export default {
 			state2,
 			myVideoRecordingStatusQuery,
 			myRecordStrategyParameter,
-            mySetRecordStrategyParameter,
+			mySetRecordStrategyParameter,
 			deleteItem,
 			addItem,
+			getActionText
 		};
 	},
 };
@@ -319,6 +342,7 @@ export default {
 	height: 100%;
 	display: flex;
 	flex-wrap: wrap;
+
 	.item {
 		width: 100%;
 		height: 100%;
@@ -331,8 +355,7 @@ export default {
 			border-right: 1px solid #ccc;
 		}
 
-		&:nth-child(2) {
-		}
+		&:nth-child(2) {}
 
 		&:nth-child(3) {
 			border-top: 1px solid #ccc;
@@ -351,6 +374,7 @@ export default {
 			display: flex;
 			align-items: center;
 			margin-top: 10px;
+
 			.itemBox_title {
 				font-size: 12px;
 				white-space: pre;

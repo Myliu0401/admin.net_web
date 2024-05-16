@@ -57,7 +57,7 @@
 					<div class="itemBox" style="width: 100%">
 						<span class="itemBox_title">类型</span>
 						<el-radio-group v-model="item.type" class="ml-4">
-							<el-radio v-for="(value, key) in types1" :value="key" size="small" :key="key">{{ value }}</el-radio>
+							<el-radio v-for="(value, key) in types1" :value="key" size="small" :key="key">{{ types[value] || value}}</el-radio>
 						</el-radio-group>
 					</div>
 
