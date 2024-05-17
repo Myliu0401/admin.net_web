@@ -16,8 +16,10 @@
 				</el-select>
 
 				<span class="itemBox_title">预置位号</span>
-				<el-input v-model="state.preset" placeholder="255：查询所有预置位" style="width: 120px" :min="0" :max="255" type="number" />
-				<el-button type="primary" :loading="state.loading" style="margin-left: 10px" @click="myIntelligentAnalysisParameter">查询</el-button>
+				<el-input v-model="state.preset" placeholder="255：查询所有预置位" style="width: 120px" :min="0" :max="255"
+					type="number" />
+				<el-button type="primary" :loading="state.loading" style="margin-left: 10px"
+					@click="myIntelligentAnalysisParameter">查询</el-button>
 			</div>
 
 			<el-table :data="state.lists" max-height="45vh" style="width: 100%; margin-top: 20px">
@@ -57,7 +59,8 @@
 		<div class="item" v-if="state.type == '2'" style="height: 53vh; overflow: auto">
 			<div class="itemBox" style="width: 100%">
 				<div class="itemBox_title">设备通道</div>
-				<el-select v-model="state1.channelId" placeholder="请选择" style="width: 150px; margin-right: 20px" @change="changeType">
+				<el-select v-model="state1.channelId" placeholder="请选择" style="width: 150px; margin-right: 20px"
+					@change="changeType">
 					<el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id" />
 				</el-select>
 			</div>
@@ -72,45 +75,41 @@
 			<div class="itemBox" style="width: 100%">
 				<div class="itemBox_title">告警类型</div>
 				<div style="position: relative; top: 3px">
-					<el-icon
-						@click="deleteAlarmTypeItem"
-						size="20"
-						style="margin-right: 15px"
+					<el-icon @click="deleteAlarmTypeItem" size="20" style="margin-right: 15px"
 						:color="state1.analyse.alarmTypes.length == 1 ? '#ccc' : ''"
-						:style="{ cursor: state1.analyse.alarmTypes.length == 1 ? 'no-drop' : 'pointer' }"
-						><ele-RemoveFilled
-					/></el-icon>
-					<el-icon size="20" style="cursor: pointer" @click="addAlarmTypeItem"><ele-CirclePlusFilled /></el-icon>
+						:style="{ cursor: state1.analyse.alarmTypes.length == 1 ? 'no-drop' : 'pointer' }"><ele-RemoveFilled /></el-icon>
+					<el-icon size="20" style="cursor: pointer"
+						@click="addAlarmTypeItem"><ele-CirclePlusFilled /></el-icon>
 				</div>
 			</div>
-			<div style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px" v-for="(item, index) in state1.analyse.alarmTypes" :key="index">
+			<div style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px"
+				v-for="(item, index) in state1.analyse.alarmTypes" :key="index">
 				<div class="itemBox" style="width: 100%">
 					<div class="itemBox_title">枚举类型</div>
 					<el-radio-group v-model="item.type" class="ml-4">
-						<el-radio v-for="(value, key) in types1" :value="key" size="small" :key="key">{{ value }}</el-radio>
+						<el-radio v-for="(value, key) in types1" :value="key" size="small" :key="key">{{ types[value] ||
+							value }}</el-radio>
 					</el-radio-group>
 				</div>
 				<div class="itemBox" style="width: 100%">
 					<div class="itemBox_title">告警阈值</div>
-					<el-input v-model="item.threshold" placeholder="取值范围[1 - 100]，告警识别的置信度大于设置的阈值，才上报告警" type="number" :min="1" :max="100" />
+					<el-input v-model="item.threshold" placeholder="取值范围[1 - 100]，告警识别的置信度大于设置的阈值，才上报告警" type="number"
+						:min="1" :max="100" />
 				</div>
 			</div>
 
 			<div class="itemBox" style="width: 100%">
 				<div class="itemBox_title">告警区域</div>
 				<div style="position: relative; top: 3px">
-					<el-icon
-						@click="deleteAlarmAreasItem"
-						size="20"
-						style="margin-right: 15px"
+					<el-icon @click="deleteAlarmAreasItem" size="20" style="margin-right: 15px"
 						:color="state1.analyse.alarmAreas.length == 1 ? '#ccc' : ''"
-						:style="{ cursor: state1.analyse.alarmAreas.length == 1 ? 'no-drop' : 'pointer' }"
-						><ele-RemoveFilled
-					/></el-icon>
-					<el-icon size="20" style="cursor: pointer" @click="addAlarmAreasItem"><ele-CirclePlusFilled /></el-icon>
+						:style="{ cursor: state1.analyse.alarmAreas.length == 1 ? 'no-drop' : 'pointer' }"><ele-RemoveFilled /></el-icon>
+					<el-icon size="20" style="cursor: pointer"
+						@click="addAlarmAreasItem"><ele-CirclePlusFilled /></el-icon>
 				</div>
 			</div>
-			<div v-for="(item, index) in state1.analyse.alarmAreas" :key="index" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px">
+			<div v-for="(item, index) in state1.analyse.alarmAreas" :key="index"
+				style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px">
 				<div class="itemBox">
 					<div class="itemBox_title">启用标志</div>
 					<el-switch v-model="item.enable" size="small" active-text="启用" inactive-text="禁用" />
@@ -118,18 +117,15 @@
 				<div class="itemBox">
 					<div class="itemBox_title">告警坐标</div>
 					<div style="position: relative; top: 3px">
-						<el-icon
-							@click="deletePointsItem(index)"
-							size="20"
-							style="margin-right: 15px"
+						<el-icon @click="deletePointsItem(index)" size="20" style="margin-right: 15px"
 							:color="item.points.length == 1 ? '#ccc' : ''"
-							:style="{ cursor: item.points.length == 1 ? 'no-drop' : 'pointer' }"
-							><ele-RemoveFilled
-						/></el-icon>
-						<el-icon size="20" style="cursor: pointer" @click="addPointsItem(index)"><ele-CirclePlusFilled /></el-icon>
+							:style="{ cursor: item.points.length == 1 ? 'no-drop' : 'pointer' }"><ele-RemoveFilled /></el-icon>
+						<el-icon size="20" style="cursor: pointer"
+							@click="addPointsItem(index)"><ele-CirclePlusFilled /></el-icon>
 					</div>
 				</div>
-				<div v-for="(item1, index1) in item.points" :key="index1" style="padding-bottom: 7px; border-bottom: 1px dotted #ccc">
+				<div v-for="(item1, index1) in item.points" :key="index1"
+					style="padding-bottom: 7px; border-bottom: 1px dotted #ccc">
 					<div class="itemBox">
 						<div class="itemBox_title">x坐标</div>
 						<el-input v-model="item1.x" placeholder="x坐标" type="number" />
@@ -140,7 +136,8 @@
 					</div>
 				</div>
 			</div>
-			<el-button type="primary" :loading="state1.loading" style="margin-top: 10px" @click="mySetIntelligentAnalysisParameter">设置</el-button>
+			<el-button type="primary" :loading="state1.loading" style="margin-top: 10px"
+				@click="mySetIntelligentAnalysisParameter">设置</el-button>
 		</div>
 
 		<!-- <div class="item" v-if="state.type == '3'" style="height: 50vh; overflow: auto">
@@ -219,21 +216,21 @@ export default {
 		const state1 = reactive({
 			channelId: '',
 			analyse: {
-				enable: false,
-				id: '',
-				alarmTypes: [
+				enable: false, // 启用标志
+				id: '', // 预置位号
+				alarmTypes: [ // 告警类型
 					{
-						type: '',
-						threshold: '',
+						type: '', // 枚举类型
+						threshold: '', // 告警阈值
 					},
 				],
-				alarmAreas: [
+				alarmAreas: [ // 告警区域
 					{
-						enable: false,
+						enable: false, // 启用标志
 						points: [
 							{
-								x: '',
-								y: '',
+								x: '', // 坐标
+								y: '', // 坐标
 							},
 						],
 					},
@@ -347,7 +344,28 @@ export default {
 			state1.loading = true;
 			const res = await setIntelligentAnalysisParameter({
 				channelId: state1.channelId,
-				analyse: state1.analyse,
+				analyse: {
+						enable: state1.analyse.enable,
+						id: state1.analyse.id == '' ? undefined : +state1.analyse.id,
+						alarmTypes: state1.analyse.alarmTypes.map((item1) => {
+							return {
+								type: item1.type == '' ? undefined : +item1.type,
+								threshold: item1.threshold == '' ? undefined : +item1.threshold,
+							}
+						}),
+						alarmAreas: state1.analyse.alarmAreas.map((item1) => {
+							return {
+								enable: item1.enable,
+								points: item1.points.map((item2) => {
+									return {
+										x: item2.x == '' ? undefined : +item2.x,
+										y: item2.y == '' ? undefined : +item2.y,
+									}
+								}),
+							}
+						}),
+					}
+				
 			});
 			state1.loading = false;
 			ElMessage({
@@ -414,6 +432,7 @@ export default {
 	height: 100%;
 	display: flex;
 	flex-wrap: wrap;
+
 	.item {
 		width: 100%;
 		height: 100%;
@@ -426,8 +445,7 @@ export default {
 			border-right: 1px solid #ccc;
 		}
 
-		&:nth-child(2) {
-		}
+		&:nth-child(2) {}
 
 		&:nth-child(3) {
 			border-top: 1px solid #ccc;
@@ -446,6 +464,7 @@ export default {
 			display: flex;
 			align-items: center;
 			margin-top: 10px;
+
 			.itemBox_title {
 				font-size: 12px;
 				white-space: pre;

@@ -164,7 +164,7 @@ export default {
 			streamType: '',
 			strategys: [
 				{
-					action: 0,
+					action: '',
 					id: '',
 					start: {
 						hour: '',
