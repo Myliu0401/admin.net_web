@@ -26,6 +26,7 @@
 			<div class="cotentMain_table">
 				<el-table :data="listData.deviceList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
 					<el-table-column prop="id" label="设备id" width="70" :align="'center'"> </el-table-column>
+					<el-table-column prop="code" label="code" width="70" :align="'center'"> </el-table-column>
 					<el-table-column prop="createTime" label="创建日期" width="180" :align="'center'"> </el-table-column>
 					<el-table-column prop="name" label="设备名称"  :align="'center'"> </el-table-column>
 

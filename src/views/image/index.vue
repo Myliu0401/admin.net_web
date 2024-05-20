@@ -2,51 +2,56 @@
 	<div class="videoRecordingManagement">
 		<div class="videoRecordingManagement_leftNavs">
 			<div class="searchArea">
-				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search"></el-input>
+				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search"
+					@change="search"></el-input>
 			</div>
 
 			<div class="accordion">
-				<el-tree :key="treeData.myKey" :data="treeData.myTrees" :props="treeData.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick" />
+				<el-tree :key="treeData.myKey" :data="treeData.myTrees" :props="treeData.defaultProps"
+					:highlight-current="true" accordion @node-click="handleNodeClick" />
 			</div>
 		</div>
 
 		<div class="mainContent">
 			<div class="selectionArea">
-				<el-date-picker
-					style="margin-right: 10px; margin-top: 6px"
-					size="small"
-					v-model="listData.times"
-					type="datetimerange"
-					range-separator="至"
-					start-placeholder="开始时间"
-					end-placeholder="结束时间"
-				/>
+				<el-date-picker style="margin-right: 10px; margin-top: 6px" size="small" v-model="listData.times"
+					type="datetimerange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" />
 
-				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px" @click="conditionSearch">搜索</el-button>
+				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px"
+					@click="conditionSearch">搜索</el-button>
 
-				<!-- <el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px" @click="switchingTypes"
-					><el-icon><ele-Sort /></el-icon>文本切换</el-button
-				> -->
+				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px"
+					@click="switchingTypes"><el-icon><ele-Sort /></el-icon>文本切换</el-button>
 			</div>
 
 			<div class="videoRecordingManagement_contentBox" :class="{ tableType: state.conetntType === 'table' }">
-				<el-table v-if="state.conetntType === 'table'" :data="state.tableData" height="100%" border style="width: 100%">
-					<el-table-column prop="date" label="日期" width="180"> </el-table-column>
-					<el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-					<el-table-column prop="address" label="地址"> </el-table-column>
+				<el-table v-if="state.conetntType === 'table'" :data="listData.lists" height="100%" border
+					style="width: 100%" v-loading="listData.loading">
+					<el-table-column prop="id" label="id" align="center" />
+					<el-table-column prop="snapTime" label="时间" align="center" />
+					<el-table-column label="图片" align="center" width="70px">
+						<template #default="scope">
+							<el-tooltip :content="`<img style='max-width: 800px; max-height: 800px;'
+								src=${state.ipurl + scope.row.filePath} />`" raw-content>
+								<img style="width: 35px; height: 35px; border-radius: 4px; cursor: pointer;"
+									:src="state.ipurl + scope.row.filePath" />
+							</el-tooltip>
+						</template>
+					</el-table-column>
 				</el-table>
-				<div v-else-if="state.conetntType === 'imgBoxs'" class="imgBoxs" ref="imgBoxDom" v-loading="listData.loading">
+				<div v-else-if="state.conetntType === 'imgBoxs'" class="imgBoxs" ref="imgBoxDom"
+					v-loading="listData.loading">
 					<el-empty v-if="!listData.lists.length" :description="listState" />
 
 					<ul class="ul">
 						<li class="li" v-for="item in listData.lists" :key="item.id">
-							<!-- <div class="li_content"> -->
-								<div class="demo-image__preview">
-									<el-image class="img" style="width: 100%" :src="state.ipurl + item.filePath" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[state.ipurl + item.filePath]" :initial-index="0" fit="cover" />
-								</div>
-								
-								<!-- <img class="img" :src="'http://8.134.249.156:5005' + item.filePath" /> -->
-							<!-- </div> -->
+
+							<div class="demo-image__preview">
+								<el-image class="img" style="width: 100%" :src="state.ipurl + item.filePath"
+									:zoom-rate="1.2" :max-scale="7" :min-scale="0.2"
+									:preview-src-list="[state.ipurl + item.filePath]" :initial-index="0" fit="cover" />
+							</div>
+
 							<p class="li_text">{{ item.snapTime }}</p>
 						</li>
 						<li class="li" v-for="item in state.quantityPerRow" :key="item + ']'"></li>
@@ -54,24 +59,10 @@
 				</div>
 			</div>
 
-			<!-- <div class="contentPage">
-				<button class="button">上一页</button>
-				<div class="info">1/2</div>
-				<button class="button">下一页</button>
-			</div> -->
-
-			<el-pagination
-				style="display: flex; justify-content: end; padding-right: 20px"
-				v-model:currentPage="listData.page"
-				v-model:page-size="listData.pageSize"
-				:total="listData.totalPages"
-				:page-sizes="[10]"
-				small
-				background
-				@size-change="handleSizeChange"
-				@current-change="handleCurrentChange"
-				layout="total, sizes, prev, pager, next, jumper"
-			/>
+			<el-pagination style="display: flex; justify-content: end; padding-right: 20px; margin-top: 20px;"
+				v-model:currentPage="listData.page" v-model:page-size="listData.pageSize" :total="listData.totalPages"
+				:page-sizes="[10, 12, 15, 20, 30]" small background @size-change="handleSizeChange"
+				@current-change="handleCurrentChange" layout="total, sizes, prev, pager, next, jumper" />
 		</div>
 	</div>
 </template>
@@ -292,8 +283,8 @@ function switchingTypes() {
 };
 
 // 获取ip地址
-function getIP(){
-    return location.origin
+function getIP() {
+	return location.origin
 };
 </script>
 

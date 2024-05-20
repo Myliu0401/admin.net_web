@@ -4,7 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default function (treeData, multiGridVideo) {
     const gimbalData = reactive({
-        speed: 1, // 移动速度
+        speed: 127, // 移动速度
         Up: undefined, // 上
         UpLeft: undefined, // 左上
         UpRight: undefined, // 右上
@@ -66,6 +66,7 @@ export default function (treeData, multiGridVideo) {
                 break;
             case 'Iris2': key = 'Iris2'; value = 14;
                 break;
+            case 'Stop': key = 'Stop'; value = 0;
         };
 
         await myPanTiltControl({

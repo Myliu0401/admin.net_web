@@ -10,7 +10,7 @@ export default function (treeData, getQuantityPerRow) {
         loading: false,
         times: [new Date(Date.now() - (24 * 60 * 60 * 1000)), new Date()],
         page: 1,
-        pageSize: 12,
+        pageSize: 10,
         totalPages: 0, 
     });
 

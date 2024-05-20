@@ -16,6 +16,8 @@
 						<el-icon v-for="text in ['Up', 'UpRight', 'Right', 'DownRight', 'Down', 'Left', 'DownLeft', 'UpLeft']" :size="27" :key="text" color="#ccc" @click="clickGimbal(text)">
 							<ele-CaretTop />
 						</el-icon>
+
+						<el-button class="cease" circle @click="clickGimbal('Stop')">停止</el-button>
 					</div>
 
 					<ul class="liest">
