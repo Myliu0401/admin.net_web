@@ -61,7 +61,7 @@
 
 			<el-pagination style="display: flex; justify-content: end; padding-right: 20px; margin-top: 20px;"
 				v-model:currentPage="listData.page" v-model:page-size="listData.pageSize" :total="listData.totalPages"
-				:page-sizes="[10, 12, 15, 20, 30]" small background @size-change="handleSizeChange"
+				:page-sizes="[10, 20, 50, 100]" small background @size-change="handleSizeChange"
 				@current-change="handleCurrentChange" layout="total, sizes, prev, pager, next, jumper" />
 		</div>
 	</div>

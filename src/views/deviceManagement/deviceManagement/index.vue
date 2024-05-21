@@ -25,19 +25,19 @@
 
 			<div class="cotentMain_table">
 				<el-table :data="listData.deviceList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
-					<el-table-column prop="id" label="设备id" width="70" :align="'center'"> </el-table-column>
-					<el-table-column prop="code" label="code" width="70" :align="'center'"> </el-table-column>
+					<el-table-column prop="code" label="设备id" width="70" :align="'center'"> </el-table-column>
+					<!-- <el-table-column prop="code" label="code" width="70" :align="'center'"> </el-table-column> -->
 					<el-table-column prop="createTime" label="创建日期" width="180" :align="'center'"> </el-table-column>
-					<el-table-column prop="name" label="设备名称"  :align="'center'"> </el-table-column>
+					<el-table-column prop="name" label="设备名称" :align="'center'"> </el-table-column>
 
-					<el-table-column prop="imei" label="IMEI/MEID"  :align="'center'"> </el-table-column>
-					<el-table-column prop="phone" label="电话"  :align="'center'"> </el-table-column>
-					<el-table-column prop="type" label="类型"  :align="'center'"> </el-table-column>
-					<el-table-column prop="lensType" label="静态类别"  :align="'center'"> </el-table-column>
-					<el-table-column prop="model" label="装置型号"  :align="'center'"> </el-table-column>
-					<el-table-column prop="installDate" label="安装日期"  :align="'center'"> </el-table-column>
-					<el-table-column prop="networkType" label="网络类型"  :align="'center'"> </el-table-column>
-					<el-table-column prop="manufacturer" label="生产厂家"  :align="'center'"> </el-table-column>
+					<el-table-column prop="imei" label="IMEI/MEID" :align="'center'"> </el-table-column>
+					<el-table-column prop="phone" label="电话" :align="'center'"> </el-table-column>
+					<el-table-column prop="type" label="类型" :align="'center'"> </el-table-column>
+					<el-table-column prop="lensType" label="静态类别" :align="'center'"> </el-table-column>
+					<el-table-column prop="model" label="装置型号" :align="'center'"> </el-table-column>
+					<el-table-column prop="installDate" label="安装日期" :align="'center'"> </el-table-column>
+					<el-table-column prop="networkType" label="网络类型" :align="'center'"> </el-table-column>
+					<el-table-column prop="manufacturer" label="生产厂家" :align="'center'"> </el-table-column>
 
 					<el-table-column label="通用状态" :align="'center'">
 						<template #default="scope">
@@ -65,12 +65,6 @@
 				</el-table>
 			</div>
 
-			<!-- <div class="contentPage">
-				<button class="button" @click="setPagination('lastPage')">上一页</button>
-				<div class="info">{{ listData.page }}/{{ listData.totalPages }}</div>
-				<button class="button" @click="setPagination('nextPage')">下一页</button>
-			</div> -->
-
 			<el-pagination
 				v-model:currentPage="listData.page"
 				v-model:page-size="listData.pageSize"
@@ -84,11 +78,11 @@
 			/>
 		</div>
 
-		<AddDevice ref="addDevic" :towerPoles="state.towerPoles" @complete="mySearch" />
-		<SetDevice ref="setDevic" :towerPoles="state.towerPoles" @complete="mySearch" />
+		<AddDevice ref="addDevic" @complete="mySearch" :towerTress="state.towerTress"/>
+		<SetDevice ref="setDevic" @complete="mySearch" :towerTress="state.towerTress"/>
 		<DeviceChannel ref="channel" :deviceList="state.allDevices" />
 		<ParamMans ref="paramMans" />
-        <GbProtocol ref="gbProtocol"/>
+		<GbProtocol ref="gbProtocol" />
 	</div>
 </template>
 
@@ -97,13 +91,13 @@
 import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import leftInfo from './composition/tree.js';
 import listInfo from './composition/list.js';
-import { getListOfTowerPoles, getDeviceList, deleteDevice } from '/@/api/deviceManagement/index.js';
+import { getListOfTowerPoles, getDeviceList, deleteDevice, getPoleTree } from '/@/api/deviceManagement/index.js';
 import AddDevice from './components/addDevice.vue';
 import SetDevice from './components/setDevice.vue';
 import DeviceChannel from './components/deviceChannel.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import ParamMans from './components/paramMans/index.vue';
-import GbProtocol from './components/gbProtocol/index.vue'
+import GbProtocol from './components/gbProtocol/index.vue';
 
 const addDevic = ref(null);
 const setDevic = ref(null);
@@ -116,14 +110,18 @@ const state = reactive({
 	treeNode: {}, // 选中的树节点
 	towerPoles: [], // 塔杆列表
 	allDevices: [], // 所有设备
+
+	towerTress: [], // 塔杆上级树
 });
 
 const { leftData, getSpecificTreeShape } = leftInfo();
 const { listData, search, reset, setPagination, handleSizeChange, handleCurrentChange } = listInfo(state);
 
 onBeforeMount(() => {
-	getAllTowerPole(); // 获取所有塔杆
+	//getAllTowerPole(); // 获取所有塔杆
 	getAllDevices(); // 获取所有设备
+
+	getSuperiorTower(); // 获取塔杆上级
 });
 
 // 选中树节点
@@ -202,17 +200,37 @@ async function getAllDevices() {
 			label: item.name,
 		};
 	});
-};
+}
 
 // 打开配置弹窗
-function openTheConfig(item){
-	if(item.protocol == 1){
+function openTheConfig(item) {
+	if (item.protocol == 1) {
 		paramMans.value.open(item);
-	}else if(item.protocol == 2){
+	} else if (item.protocol == 2) {
 		gbProtocol.value.open(item);
 	}
-   
-};
+}
+
+// 获取塔杆上级
+async function getSuperiorTower() {
+	const res = await getPoleTree({
+		showDeviceNode: true,
+		showUnmoutNode: true,
+	});
+	convertKeyValues(res.data.result);
+	state.towerTress = res.data.result;
+}
+
+// 转换属性名
+function convertKeyValues(datas) {
+	for (let item of datas) {
+		item.label = item.name;
+		item.value = item.id;
+		if (item.children) {
+			convertKeyValues(item.children);
+		}
+	}
+}
 </script>
 
 

@@ -1,8 +1,16 @@
 <template>
 	<el-dialog title="修改设备" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="100px">
-			<el-form-item label="设备名称" prop="name">
-				<el-input v-model="form.name" />
+			<el-form-item label="设备名称" prop="name" >
+				<el-input v-model="form.name"/>
+			</el-form-item>
+
+			<el-form-item label="自定义名称" prop="customName">
+				<el-input v-model="form.customName" />
+			</el-form-item>
+
+			<el-form-item label="code" prop="code">
+				<el-input v-model="form.code" />
 			</el-form-item>
 
 			<el-form-item label="备注">
@@ -54,9 +62,13 @@
 			</el-form-item>
 
 			<el-form-item label="直属杆塔" prop="poleId">
-				<el-select v-model="form.poleId" clearable placeholder="塔杆" style="width: 240px">
-					<el-option v-for="item in towerPoles" :key="item.value" :label="item.label" :value="item.value" />
-				</el-select>
+				<div>
+					<el-tree-select v-model="state.towerLevel" :data="towerTress" filterable style="width: 170px" placeholder="上级" @change="towerPole" />
+					--
+					<el-select v-model="form.poleId" clearable placeholder="塔杆" style="width: 170px">
+						<el-option v-for="item in state.towerPoles" :key="item.value" :label="item.label" :value="item.value" />
+					</el-select>
+				</div>
 			</el-form-item>
 
 			<el-form-item class="dialog-footer">
@@ -90,6 +102,9 @@ export default {
 			loading: false,
 			id: undefined,
 			item: null,
+			towerLevel: '', // 塔杆上级
+			towerPoles: '', // 塔杆列表
+			lineId: '', // 线路
 		});
 
 		const form = reactive({
@@ -108,10 +123,14 @@ export default {
 			installDate: undefined, // 安装日期
 			networkType: undefined, // 网络类型
 			manufacturer: undefined, // 生产厂家
+			customName: '', // 自定义名称
+			code: '', // code
 		});
 
 		const rules = reactive({
 			name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }],
+			customName: [{ required: true, message: '必须输入自定义名称', trigger: 'blur' }],
+			code: [{ required: true, message: '必须输入code', trigger: 'blur' }]
 		});
 
 		// 开启弹窗
@@ -134,6 +153,8 @@ export default {
 			form.installDate = item.installDate;
 			form.networkType = item.networkType;
 			form.manufacturer = item.manufacturer;
+			form.code = item.code;
+			form.customName = item.customName;
 		}
 
 		// 关闭弹窗
@@ -142,6 +163,9 @@ export default {
 		}
 
 		function formatDate(date) {
+
+			date = typeof(date) === 'string' ? new Date(date) : date;
+
 			// 获取年、月、日
 			var year = date.getFullYear();
 			var month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1
@@ -176,6 +200,8 @@ export default {
 				installDate: form.installDate ? formatDate(form.installDate) : undefined,
 				networkType: form.networkType,
 				manufacturer: form.manufacturer,
+				code: form.code,
+				customName: form.customName
 			});
 			state.loading = false;
 			ElMessage({
@@ -186,7 +212,47 @@ export default {
 			close();
 		}
 
-		return { state, open, close, form, rules, ruleFormRef, submitForm };
+		// 获取塔杆
+		async function towerPole() {
+			if (!state.towerLevel) {
+				return;
+			}
+			form.poleId = null;
+			const item = getDuiyin(props.towerTress, state.towerLevel);
+
+			const res = await getListOfTowerPoles({
+				page: 1,
+				pageSize: 100000,
+
+				treeNode: {
+					id: item.id,
+					type: item.type,
+					extId: item.extId,
+				},
+			});
+			state.towerPoles = res.data.result.items.map((item) => {
+				return {
+					...item,
+					value: item.id,
+					label: item.name,
+				};
+			});
+		}
+
+		function getDuiyin(data, id) {
+			for (let i = 0; i < data.length; i++) {
+				if (data[i].id === id) {
+					return data[i];
+				} else if (data[i].children && data[i].children.length) {
+					const item = getDuiyin(data[i].children, id);
+					if (item) {
+						return item;
+					}
+				}
+			}
+		}
+
+		return { state, open, close, form, rules, ruleFormRef, submitForm, towerPole };
 	},
 };
 </script>

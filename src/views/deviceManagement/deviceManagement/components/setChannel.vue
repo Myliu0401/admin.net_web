@@ -93,6 +93,8 @@ export default {
 			status: undefined, // 通用状态
 			enableSnapshot: undefined, // 是否启用定时截图
 			snapInterval: undefined, // 定时截图的间隔时间，分钟数
+			code: undefined,
+			hasPtz: false
 		});
 
 		const rules = reactive({
@@ -119,6 +121,8 @@ export default {
 			form.snapInterval = item.snapInterval;
 			snapStartTime.value = item.snapStartTime ? zhuanhuan(item.snapStartTime) : undefined;
 			snapEndTime.value = item.snapEndTime ? zhuanhuan(item.snapEndTime) : undefined;
+			form.code = item.code;
+			form.hasPtz = item.hasPtz;
 		}
 
 		// 关闭弹窗
@@ -128,6 +132,7 @@ export default {
 
 		// 转换日期格式
 		function formatTime(date) {
+			date = typeof(date) === 'string' ? new Date(date) : date;
 			var hours = date.getHours().toString().padStart(2, '0');
 			var minutes = date.getMinutes().toString().padStart(2, '0');
 			var seconds = date.getSeconds().toString().padStart(2, '0');
@@ -169,6 +174,8 @@ export default {
 				snapStartTime: snapStartTime.value ? formatTime(snapStartTime.value) : undefined,
 				snapEndTime: snapEndTime.value ? formatTime(snapEndTime.value) : undefined,
 				snapInterval: form.snapInterval,
+				code: form.code,
+				hasPtz: from.hasPtz
 			});
 			state.loading = false;
 			ElMessage({

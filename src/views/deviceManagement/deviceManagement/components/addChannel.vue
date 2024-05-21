@@ -13,6 +13,14 @@
 				<el-input v-model="form.remark" />
 			</el-form-item>
 
+			<el-form-item label="code">
+				<el-input v-model="form.code" />
+			</el-form-item>
+
+			<el-form-item label="hasPtz">
+				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.hasPtz" />
+			</el-form-item>
+
 			<el-form-item label="排序">
 				<el-input v-model="form.orderNo" type="number" style="width: 150px" min="1" />
 			</el-form-item>
@@ -91,6 +99,8 @@ export default {
 			status: undefined, // 通用状态
 			enableSnapshot: undefined, // 是否启用定时截图
 			snapInterval: undefined, // 定时截图的间隔时间，分钟数
+			code: undefined,
+			hasPtz: false
 		});
 
 		const rules = reactive({
@@ -135,6 +145,8 @@ export default {
 				snapStartTime: snapStartTime.value ? formatTime(snapStartTime.value) : undefined,
 				snapEndTime: snapEndTime.value ? formatTime(snapEndTime.value) : undefined,
 				snapInterval: form.snapInterval ? formatTime(form.snapInterval) : undefined,
+				code: form.code,
+				hasPtz: form.hasPtz
 			});
 			state.loading = false;
 			ElMessage({
