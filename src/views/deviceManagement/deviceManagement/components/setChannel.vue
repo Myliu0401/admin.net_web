@@ -1,8 +1,12 @@
 <template>
 	<el-dialog title="修改通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="100px">
-			<el-form-item label="设备名称" prop="name">
-				<el-input v-model="form.name" />
+			<el-form-item label="设备名称">
+				<el-input v-model="form.name" disabled />
+			</el-form-item>
+
+			<el-form-item label="自定义名称" prop="customName">
+				<el-input v-model="form.customName" />
 			</el-form-item>
 
 			<el-form-item label="直属设备">
@@ -94,11 +98,12 @@ export default {
 			enableSnapshot: undefined, // 是否启用定时截图
 			snapInterval: undefined, // 定时截图的间隔时间，分钟数
 			code: undefined,
-			hasPtz: false
+			hasPtz: false,
 		});
 
 		const rules = reactive({
-			name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }],
+			/* name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }], */
+			customName: [{ required: true, message: '必须输入自定义名称', trigger: 'blur' }],
 		});
 
 		// 开启弹窗
@@ -123,6 +128,7 @@ export default {
 			snapEndTime.value = item.snapEndTime ? zhuanhuan(item.snapEndTime) : undefined;
 			form.code = item.code;
 			form.hasPtz = item.hasPtz;
+			form.customName = item.customName;
 		}
 
 		// 关闭弹窗
@@ -132,7 +138,7 @@ export default {
 
 		// 转换日期格式
 		function formatTime(date) {
-			date = typeof(date) === 'string' ? new Date(date) : date;
+			date = typeof date === 'string' ? new Date(date) : date;
 			var hours = date.getHours().toString().padStart(2, '0');
 			var minutes = date.getMinutes().toString().padStart(2, '0');
 			var seconds = date.getSeconds().toString().padStart(2, '0');
@@ -148,7 +154,7 @@ export default {
 
 			// 使用当前日期和解析出的时间创建一个新的 Date 实例
 			const dateWithTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, seconds);
-		    
+
 			return dateWithTime;
 		}
 
@@ -160,23 +166,30 @@ export default {
 				return;
 			}
 			state.loading = true;
-			await setChannel({
-				id: state.id,
-				...state.item,
-				deviceId: state.deviceId,
-				name: form.name,
-				orderNo: form.orderNo,
-				remark: form.remark,
-				status: form.status ? 1 : 2,
-				onOffStatus: form.onOffStatus ? 1 : 2,
-				okFailureStatus: form.okFailureStatus ? 1 : 2,
-				enableSnapshot: form.enableSnapshot,
-				snapStartTime: snapStartTime.value ? formatTime(snapStartTime.value) : undefined,
-				snapEndTime: snapEndTime.value ? formatTime(snapEndTime.value) : undefined,
-				snapInterval: form.snapInterval,
-				code: form.code,
-				hasPtz: from.hasPtz
-			});
+			try {
+				await setChannel({
+					id: state.id,
+					...state.item,
+					deviceId: state.deviceId,
+					name: form.name,
+					orderNo: form.orderNo,
+					remark: form.remark,
+					status: form.status ? 1 : 2,
+					onOffStatus: form.onOffStatus ? 1 : 2,
+					okFailureStatus: form.okFailureStatus ? 1 : 2,
+					enableSnapshot: form.enableSnapshot,
+					snapStartTime: snapStartTime.value ? formatTime(snapStartTime.value) : undefined,
+					snapEndTime: snapEndTime.value ? formatTime(snapEndTime.value) : undefined,
+					snapInterval: form.snapInterval,
+					code: form.code,
+					hasPtz: form.hasPtz,
+					customName: form.customName,
+				});
+			} catch (err) {
+				state.loading = false;
+				return;
+			}
+
 			state.loading = false;
 			ElMessage({
 				message: '修改成功',

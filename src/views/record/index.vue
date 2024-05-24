@@ -6,7 +6,13 @@
 			</div>
 
 			<div class="accordion">
-				<el-tree :key="treeData.myKey" :data="treeData.myTrees" :props="treeData.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick" />
+				<el-tree :key="treeData.myKey" :data="treeData.myTrees" :props="treeData.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick" >
+					<template v-slot="{ node, data }">
+						<p class="custom-tree-node" :title="data.code" style="width: 100%;">
+							{{ data.name }}
+						</p>
+					</template>
+				</el-tree>
 			</div>
 		</div>
 

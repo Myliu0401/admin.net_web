@@ -1,8 +1,12 @@
 <template>
 	<el-dialog title="添加通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="150px">
-			<el-form-item label="设备名称" prop="name">
+			<!-- <el-form-item label="通道名称" prop="name">
 				<el-input v-model="form.name" />
+			</el-form-item> -->
+
+			<el-form-item label="自定义名称" prop="customName">
+				<el-input v-model="form.customName" />
 			</el-form-item>
 
 			<el-form-item label="直属设备">
@@ -43,10 +47,9 @@
 
 			<el-form-item label="截图时段" v-if="form.enableSnapshot">
 				<div class="itemBox">
-					<el-time-picker v-model="snapStartTime" placeholder="起始时间" style="width: 150px;"/>至
-					<el-time-picker v-model="snapEndTime" placeholder="终止时间" style="width: 150px;"/>
+					<el-time-picker v-model="snapStartTime" placeholder="起始时间" style="width: 150px" />至
+					<el-time-picker v-model="snapEndTime" placeholder="终止时间" style="width: 150px" />
 				</div>
-
 			</el-form-item>
 
 			<el-form-item label="截图间隔" v-if="form.enableSnapshot">
@@ -100,11 +103,13 @@ export default {
 			enableSnapshot: undefined, // 是否启用定时截图
 			snapInterval: undefined, // 定时截图的间隔时间，分钟数
 			code: undefined,
-			hasPtz: false
+			hasPtz: false,
+			customName: undefined, // 自定义名称
 		});
 
 		const rules = reactive({
-			name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }],
+			/* name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }], */
+			customName: [{ required: true, message: '必须输入自定义名称', trigger: 'blur' }],
 		});
 
 		// 开启弹窗
@@ -133,21 +138,29 @@ export default {
 				return;
 			}
 			state.loading = true;
-			await addChannel({
-				deviceId: state.deviceId,
-				name: form.name,
-				orderNo: form.orderNo,
-				remark: form.remark,
-				status: form.status ? 1 : 2,
-				onOffStatus: form.onOffStatus ? 1 : 2,
-				okFailureStatus: form.okFailureStatus ? 1 : 2,
-				enableSnapshot: form.enableSnapshot,
-				snapStartTime: snapStartTime.value ? formatTime(snapStartTime.value) : undefined,
-				snapEndTime: snapEndTime.value ? formatTime(snapEndTime.value) : undefined,
-				snapInterval: form.snapInterval ? formatTime(form.snapInterval) : undefined,
-				code: form.code,
-				hasPtz: form.hasPtz
-			});
+			try {
+				await addChannel({
+					deviceId: state.deviceId,
+					//name: form.name,
+					orderNo: form.orderNo,
+					remark: form.remark,
+					status: form.status ? 1 : 2,
+					onOffStatus: form.onOffStatus ? 1 : 2,
+					okFailureStatus: form.okFailureStatus ? 1 : 2,
+					enableSnapshot: form.enableSnapshot,
+					snapStartTime: snapStartTime.value ? formatTime(snapStartTime.value) : undefined,
+					snapEndTime: snapEndTime.value ? formatTime(snapEndTime.value) : undefined,
+					snapInterval: form.snapInterval,
+					code: form.code,
+					hasPtz: form.hasPtz,
+					customName: form.customName,
+					
+				});
+			} catch (err) {
+				state.loading = false;
+				return
+			}
+
 			state.loading = false;
 			ElMessage({
 				message: '添加成功',

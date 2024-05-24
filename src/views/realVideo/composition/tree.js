@@ -31,6 +31,7 @@ export default function (state, multiGridVideo) {
         const res = await getMyTreeNodes({ showUnmoutNode: true });
         treeData.data = res.data.result;
         tianjia(treeData.data);
+        
     };
 
 

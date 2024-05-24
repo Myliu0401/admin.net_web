@@ -1,6 +1,10 @@
 <template>
 	<el-drawer v-model="state.show" size="56%" :close-on-click-modal="false" direction="rtl" :title="`设备通道 ---- ${state.deviceName}`">
-		<div class="deviceChannelTop"><el-button plain size="small" @click="openClose('add')">添加通道</el-button></div>
+		<div class="deviceChannelTop">
+			<el-button plain size="small" @click="openClose('add')" style="margin-right: 10px;">添加通道</el-button>
+			<el-text class="mx-1" size="default" style="margin-right: 20px">无线信号强度: {{ state.signalStrength }}</el-text>
+			<el-text class="mx-1" size="default">电池电压单位: {{ state.batteryVoltage }}</el-text>
+		</div>
 		<div class="deviceChannelMain">
 			<el-table :data="state.channelList" :border="true" empty-text="暂无数据" max-height="60vh" style="width: 100%" v-loading="state.loading">
 				<el-table-column prop="id" label="id" :align="'center'" />
@@ -78,6 +82,8 @@ export default {
 			state.show = true;
 			state.id = item.id;
 			state.deviceName = item.name;
+			state.signalStrength = item.signalStrength;
+			state.batteryVoltage = item.batteryVoltage;
 			getChannelList();
 		};
 

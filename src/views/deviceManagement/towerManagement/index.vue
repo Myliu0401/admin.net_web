@@ -5,7 +5,14 @@
 				<el-input v-model="leftData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="getSpecificTreeShape"></el-input>
 			</div>
 			<div class="accordion">
-				<el-tree :data="leftData.myTrees" :props="leftData.defaultProps" :highlight-current="true" node-key="id" :current-node-key="'2104'" accordion @node-click="handleNodeClick" />
+				<el-tree :data="leftData.myTrees" :props="leftData.defaultProps" :highlight-current="true" 
+				node-key="id" :current-node-key="'2104'" accordion @node-click="handleNodeClick" >
+				<template v-slot="{ node, data }">
+						<p class="custom-tree-node" :title="data.code" style="width: 100%;">
+							{{ data.label }}
+						</p>
+					</template>
+			</el-tree>
 			</div>
 		</div>
 

@@ -1,9 +1,9 @@
 <template>
 	<el-dialog title="添加设备" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="100px">
-			<el-form-item label="设备名称" prop="name">
+			<!-- <el-form-item label="设备名称" prop="name">
 				<el-input v-model="form.name" />
-			</el-form-item>
+			</el-form-item> -->
 
 			<el-form-item label="自定义名称" prop="customName">
 				<el-input v-model="form.customName" />
@@ -11,6 +11,13 @@
 
 			<el-form-item label="code" prop="code">
 				<el-input v-model="form.code" />
+			</el-form-item>
+
+			<el-form-item label="通讯协议类型" prop="protocol">
+				<el-radio-group v-model="form.protocol" class="ml-4">
+					<el-radio :value="1" size="small">南方电网</el-radio>
+					<el-radio :value="2" size="small">GB28181</el-radio>
+				</el-radio-group>
 			</el-form-item>
 
 			<el-form-item label="备注">
@@ -135,10 +142,11 @@ export default {
 			manufacturer: undefined, // 生产厂家
 			customName: '', // 自定义名称
 			code: '', // code
+			protocol: 1
 		});
 
 		const rules = reactive({
-			name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }],
+			/* name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }], */
 			customName: [{ required: true, message: '必须输入自定义名称', trigger: 'blur' }],
 			code: [{ required: true, message: '必须输入code', trigger: 'blur' }],
 		});
@@ -172,13 +180,13 @@ export default {
 			}
 			state.loading = true;
 			await addDevice({
-				name: form.name,
+				//name: form.name,
 				orderNo: form.orderNo,
 				remark: form.remark,
 				onOffStatus: form.status ? 1 : 2,
 				okFailureStatus: form.status ? 1 : 2,
 				status: form.status ? 1 : 2,
-				poleId: form.poleId,
+				poleId: form.poleId ? form.poleId : 0,
 				imei: form.imei,
 				phone: form.phone,
 				type: form.type,
@@ -189,6 +197,7 @@ export default {
 				manufacturer: form.manufacturer,
 				customName: form.customName,
 				code: form.code,
+				protocol: form.protocol
 			});
 			state.loading = false;
 			ElMessage({

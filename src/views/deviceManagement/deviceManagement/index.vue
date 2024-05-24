@@ -5,7 +5,13 @@
 				<el-input v-model="leftData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="getSpecificTreeShape"></el-input>
 			</div>
 			<div class="accordion">
-				<el-tree :data="leftData.myTrees" :props="leftData.defaultProps" :highlight-current="true" node-key="id" :current-node-key="'2104'" accordion @node-click="handleNodeClick" />
+				<el-tree :data="leftData.myTrees" :props="leftData.defaultProps" :highlight-current="true" node-key="id" :current-node-key="'2104'" accordion @node-click="handleNodeClick">
+					<template v-slot="{ node, data }">
+						<p class="custom-tree-node" :title="data.code" style="width: 100%;">
+							{{ data.label }}
+						</p>
+					</template>
+				</el-tree>
 			</div>
 		</div>
 
@@ -25,19 +31,20 @@
 
 			<div class="cotentMain_table">
 				<el-table :data="listData.deviceList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
-					<el-table-column prop="code" label="设备id" width="70" :align="'center'"> </el-table-column>
+					<el-table-column prop="code" label="设备id" width="70" :align="'center'" />
 					<!-- <el-table-column prop="code" label="code" width="70" :align="'center'"> </el-table-column> -->
-					<el-table-column prop="createTime" label="创建日期" width="180" :align="'center'"> </el-table-column>
-					<el-table-column prop="name" label="设备名称" :align="'center'"> </el-table-column>
-
-					<el-table-column prop="imei" label="IMEI/MEID" :align="'center'"> </el-table-column>
-					<el-table-column prop="phone" label="电话" :align="'center'"> </el-table-column>
-					<el-table-column prop="type" label="类型" :align="'center'"> </el-table-column>
-					<el-table-column prop="lensType" label="静态类别" :align="'center'"> </el-table-column>
-					<el-table-column prop="model" label="装置型号" :align="'center'"> </el-table-column>
-					<el-table-column prop="installDate" label="安装日期" :align="'center'"> </el-table-column>
-					<el-table-column prop="networkType" label="网络类型" :align="'center'"> </el-table-column>
-					<el-table-column prop="manufacturer" label="生产厂家" :align="'center'"> </el-table-column>
+					<el-table-column prop="createTime" label="创建日期" width="180" :align="'center'" />
+					<el-table-column prop="name" label="设备名称" :align="'center'" />
+					<el-table-column prop="signalStrength" label="无线信号强度" :align="'center'" width="110" />
+					<el-table-column prop="batteryVoltage" label="电池电压单位" :align="'center'" width="110" />
+					<el-table-column prop="imei" label="IMEI/MEID" :align="'center'" />
+					<el-table-column prop="phone" label="电话" :align="'center'" />
+					<el-table-column prop="type" label="类型" :align="'center'" />
+					<el-table-column prop="lensType" label="静态类别" :align="'center'" />
+					<el-table-column prop="model" label="装置型号" :align="'center'" />
+					<el-table-column prop="installDate" label="安装日期" :align="'center'" />
+					<el-table-column prop="networkType" label="网络类型" :align="'center'" />
+					<el-table-column prop="manufacturer" label="生产厂家" :align="'center'" />
 
 					<el-table-column label="通用状态" :align="'center'">
 						<template #default="scope">
@@ -78,8 +85,8 @@
 			/>
 		</div>
 
-		<AddDevice ref="addDevic" @complete="mySearch" :towerTress="state.towerTress"/>
-		<SetDevice ref="setDevic" @complete="mySearch" :towerTress="state.towerTress"/>
+		<AddDevice ref="addDevic" @complete="mySearch" :towerTress="state.towerTress" />
+		<SetDevice ref="setDevic" @complete="mySearch" :towerTress="state.towerTress" />
 		<DeviceChannel ref="channel" :deviceList="state.allDevices" />
 		<ParamMans ref="paramMans" />
 		<GbProtocol ref="gbProtocol" />

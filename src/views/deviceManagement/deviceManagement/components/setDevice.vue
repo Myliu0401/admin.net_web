@@ -1,8 +1,8 @@
 <template>
 	<el-dialog title="修改设备" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="100px">
-			<el-form-item label="设备名称" prop="name" >
-				<el-input v-model="form.name"/>
+			<el-form-item label="通道名称">
+				<el-input v-model="form.name" disabled/>
 			</el-form-item>
 
 			<el-form-item label="自定义名称" prop="customName">
@@ -11,6 +11,13 @@
 
 			<el-form-item label="code" prop="code">
 				<el-input v-model="form.code" />
+			</el-form-item>
+
+			<el-form-item label="通讯协议类型" prop="protocol">
+				<el-radio-group v-model="form.protocol" class="ml-4">
+					<el-radio :value="1" size="small">南方电网</el-radio>
+					<el-radio :value="2" size="small">GB28181</el-radio>
+				</el-radio-group>
 			</el-form-item>
 
 			<el-form-item label="备注">
@@ -125,12 +132,13 @@ export default {
 			manufacturer: undefined, // 生产厂家
 			customName: '', // 自定义名称
 			code: '', // code
+			protocol: 1, // 通讯协议类型 1 南网 2 2818
 		});
 
 		const rules = reactive({
-			name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }],
+			/* name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }], */
 			customName: [{ required: true, message: '必须输入自定义名称', trigger: 'blur' }],
-			code: [{ required: true, message: '必须输入code', trigger: 'blur' }]
+			code: [{ required: true, message: '必须输入code', trigger: 'blur' }],
 		});
 
 		// 开启弹窗
@@ -139,7 +147,7 @@ export default {
 			state.item = item;
 			state.id = item.id;
 			form.name = item.name;
-			form.poleId = item.poleId;
+			form.poleId = form.poleId ? form.poleId : 0;
 			form.remark = item.remark;
 			form.orderNo = item.orderNo;
 			form.onOffStatus = item.onOffStatus == 1 ? true : false;
@@ -155,6 +163,7 @@ export default {
 			form.manufacturer = item.manufacturer;
 			form.code = item.code;
 			form.customName = item.customName;
+			form.protocol = item.protocol;
 		}
 
 		// 关闭弹窗
@@ -163,8 +172,7 @@ export default {
 		}
 
 		function formatDate(date) {
-
-			date = typeof(date) === 'string' ? new Date(date) : date;
+			date = typeof date === 'string' ? new Date(date) : date;
 
 			// 获取年、月、日
 			var year = date.getFullYear();
@@ -201,7 +209,8 @@ export default {
 				networkType: form.networkType,
 				manufacturer: form.manufacturer,
 				code: form.code,
-				customName: form.customName
+				customName: form.customName,
+				protocol: form.protocol
 			});
 			state.loading = false;
 			ElMessage({
