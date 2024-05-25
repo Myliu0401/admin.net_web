@@ -1,5 +1,5 @@
 <template>
-	<el-dialog title="添加授权设备" v-model="state.show" :close-on-click-modal="false" width="50%">
+	<el-dialog :visible="state.show" title="添加授权设备" v-model="state.show" :close-on-click-modal="false" width="50%">
 		<div class="mainContent">
 			<div class="mainContent_searchArea">
 				<el-input v-model="state.name" suffix-icon="el-icon-search" placeholder="请输入设备名称" size="small"

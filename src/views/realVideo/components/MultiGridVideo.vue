@@ -380,14 +380,42 @@ export default {
 
 		// 停止录制并下载
 		function stopRecordAndSave() {
-			const keys = Object.keys(state.videoInfos);
 
-			for (let key in keys) {
-				if (state.videoInfos[key]) {
-					state.videoInfos[key].isRecording() && state.videoInfos[key].stopRecordAndSave();
+			const example = state.videoInfos[state.activeNum || geta()];
+
+			example && example.stopRecordAndSave();
+
+			return !!example;
+
+			/*
+			
+			  const keys = Object.keys(state.videoInfos);
+
+			 for (let key in keys) {
+				
+				if (state.videoInfos[keys[key]]) {
+					if(state.videoInfos[keys[key]].isRecording()){
+						
+						state.videoInfos[keys[key]].stopRecordAndSave();
+					}else {
+						
+						startRecord();
+					}
+					return
 				}
-			}
+			} */
 		}
+
+		function myIsRecording(){
+			const example = state.videoInfos[state.activeNum || geta()];
+
+			if(example){
+               return example.isRecording();
+			}
+
+			return undefined;
+			 
+		};
 
 		function geta() {
 			if (state.videoInfos['1']) {
@@ -419,6 +447,8 @@ export default {
 			}
 		}
 
+		
+
 		return {
 			state,
 			currentGridNum,
@@ -433,6 +463,7 @@ export default {
 			startRecord,
 			stopRecordAndSave,
 			currentId,
+			myIsRecording,
 			CaretRight,
 			createVideoInstance,
 		};

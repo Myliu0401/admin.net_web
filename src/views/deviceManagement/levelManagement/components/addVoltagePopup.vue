@@ -40,6 +40,7 @@ export default {
 
 		function close() {
 			state.dialogVisible = false;
+			wipeData();
 		}
 
 		async function submitForm(ruleFormRef) {
@@ -58,6 +59,13 @@ export default {
             close();
             
 		};
+
+		function wipeData(){
+			state.dialogVisible = false;
+			state.loading = false;
+
+			form.name = '';
+		} 
 
 		return {
 			state,

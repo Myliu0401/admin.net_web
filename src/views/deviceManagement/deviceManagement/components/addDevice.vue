@@ -142,7 +142,7 @@ export default {
 			manufacturer: undefined, // 生产厂家
 			customName: '', // 自定义名称
 			code: '', // code
-			protocol: 1
+			protocol: 1,
 		});
 
 		const rules = reactive({
@@ -159,6 +159,7 @@ export default {
 		// 关闭弹窗
 		function close() {
 			state.dialogVisible = false;
+			wipeData();
 		}
 
 		function formatDate(date) {
@@ -179,26 +180,32 @@ export default {
 				return;
 			}
 			state.loading = true;
-			await addDevice({
-				//name: form.name,
-				orderNo: form.orderNo,
-				remark: form.remark,
-				onOffStatus: form.status ? 1 : 2,
-				okFailureStatus: form.status ? 1 : 2,
-				status: form.status ? 1 : 2,
-				poleId: form.poleId ? form.poleId : 0,
-				imei: form.imei,
-				phone: form.phone,
-				type: form.type,
-				lensType: form.lensType,
-				model: form.model,
-				installDate: form.installDate ? formatDate(form.installDate) : undefined,
-				networkType: form.networkType,
-				manufacturer: form.manufacturer,
-				customName: form.customName,
-				code: form.code,
-				protocol: form.protocol
-			});
+			try {
+				await addDevice({
+					//name: form.name,
+					orderNo: form.orderNo,
+					remark: form.remark,
+					onOffStatus: form.status ? 1 : 2,
+					okFailureStatus: form.status ? 1 : 2,
+					status: form.status ? 1 : 2,
+					poleId: form.poleId ? form.poleId : 0,
+					imei: form.imei,
+					phone: form.phone,
+					type: form.type,
+					lensType: form.lensType,
+					model: form.model,
+					installDate: form.installDate ? formatDate(form.installDate) : undefined,
+					networkType: form.networkType,
+					manufacturer: form.manufacturer,
+					customName: form.customName,
+					code: form.code,
+					protocol: form.protocol,
+				});
+			} catch (err) {
+				state.loading = false;
+				return;
+			}
+
 			state.loading = false;
 			ElMessage({
 				message: '添加成功',
@@ -246,6 +253,31 @@ export default {
 					}
 				}
 			}
+		}
+
+		// 清空数据
+		function wipeData() {
+			state.dialogVisible = false;
+			state.loading = false;
+
+			form.name = undefined;
+			form.onOffStatus = false;
+			form.okFailureStatus = false;
+			form.remark = undefined;
+			form.orderNo = undefined;
+			form.poleId = undefined;
+			form.status = undefined;
+			form.imei = undefined;
+			form.phone = undefined;
+			form.type = undefined;
+			form.lensType = undefined;
+			form.model = undefined;
+			form.installDate = undefined;
+			form.networkType = undefined;
+			form.manufacturer = undefined;
+			form.customName = '';
+			form.code = '';
+			form.protocol = 1;
 		}
 
 		return { state, open, close, form, rules, ruleFormRef, submitForm, towerPole };

@@ -169,6 +169,8 @@ export default {
 		// 关闭弹窗
 		function close() {
 			state.dialogVisible = false;
+
+			wipeData();
 		}
 
 		function formatDate(date) {
@@ -191,7 +193,8 @@ export default {
 				return;
 			}
 			state.loading = true;
-			await setDevice({
+			try{
+				await setDevice({
 				id: state.id,
 				...state.item,
 				name: form.name,
@@ -212,6 +215,11 @@ export default {
 				customName: form.customName,
 				protocol: form.protocol
 			});
+			}catch(err){
+				state.loading = false;
+				return
+			}
+			
 			state.loading = false;
 			ElMessage({
 				message: '修改成功',
@@ -259,7 +267,33 @@ export default {
 					}
 				}
 			}
-		}
+		};
+
+		// 清空数据
+		function wipeData(){
+			state.dialogVisible = false;
+			state.loading = false;
+
+
+			form.name = undefined; 
+			form.onOffStatus= false;
+			form.okFailureStatus= false;
+			form.remark= undefined; 
+			form.orderNo= undefined; 
+			form.poleId= undefined; 
+			form.status= undefined;
+			form.imei= undefined;
+			form.phone= undefined; 
+			form.type= undefined; 
+			form.lensType= undefined;
+			form.model= undefined;
+			form.installDate= undefined; 
+			form.networkType= undefined; 
+			form.manufacturer= undefined; 
+			form.customName= ''; 
+			form.code = '';
+			form.protocol = 1;
+		} 
 
 		return { state, open, close, form, rules, ruleFormRef, submitForm, towerPole };
 	},

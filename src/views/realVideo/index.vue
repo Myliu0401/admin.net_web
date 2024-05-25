@@ -153,7 +153,8 @@ onMounted(() => {});
 
 // 录制与下载
 function recordingAndDownloading() {
-	if (state.isRecording) {
+
+	if (!multiGridVideo.value.myIsRecording()) {
 		startRecord();
 	} else {
 		stopRecordAndSave();
@@ -201,12 +202,12 @@ function adjustingVolume(value) {
 
 // 录制视频
 function startRecord() {
-	state.isRecording = multiGridVideo.value.startRecord();
+	/* state.isRecording =  */multiGridVideo.value.startRecord();
 }
 
 // 停止录制并下载
 function stopRecordAndSave() {
-	state.isRecording = false;
+	/* state.isRecording = false; */
 	multiGridVideo.value.stopRecordAndSave();
 }
 

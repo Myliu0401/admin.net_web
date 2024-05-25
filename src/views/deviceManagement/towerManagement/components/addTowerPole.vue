@@ -14,11 +14,11 @@
 			</el-form-item>
 
 			<el-form-item label="材质">
-				<el-input v-model="form.material"  style="width: 150px" min="1" />
+				<el-input v-model="form.material" style="width: 150px" min="1" />
 			</el-form-item>
 
 			<el-form-item label="性质">
-				<el-input v-model="form.property"  style="width: 150px" min="1" />
+				<el-input v-model="form.property" style="width: 150px" min="1" />
 			</el-form-item>
 
 			<el-form-item label="通用状态">
@@ -71,7 +71,7 @@ export default defineComponent({
 			dialogVisible: false,
 			loading: false,
 			keyword: undefined,
-			mapExample: null
+			mapExample: null,
 		});
 
 		const form = reactive({
@@ -95,12 +95,13 @@ export default defineComponent({
 		function open() {
 			state.dialogVisible = true;
 			setTimeout(initBaiduMap, 200);
-		};
+		}
 
 		// 关闭弹窗
 		function close() {
 			state.dialogVisible = false;
-		};
+			wipeData();
+		}
 
 		async function submitForm(ruleFormRef) {
 			const res = await ruleFormRef.validate();
@@ -118,7 +119,7 @@ export default defineComponent({
 				longitude: +form.longitude * 1000000,
 				latitude: +form.latitude * 1000000,
 				material: form.material,
-				property: form.property
+				property: form.property,
 			});
 			this.loading = false;
 			emit('complete');
@@ -127,7 +128,7 @@ export default defineComponent({
 				message: `添加塔杆 ${form.name}，成功`,
 				type: 'success',
 			});
-		};
+		}
 
 		// 初始化百度地图
 		function initBaiduMap() {
@@ -144,15 +145,32 @@ export default defineComponent({
 				var marker = new BMapGL.Marker(point); // 创建标注
 				state.mapExample.addOverlay(marker); // 将标注添加到地图中
 			});
-		};
+		}
 
 		// 搜索地区
-		function search(){
+		function search() {
 			var local = new BMapGL.LocalSearch(state.mapExample, {
 				renderOptions: { map: state.mapExample },
 			});
 			local.search(state.keyword);
-		};
+		}
+
+		function wipeData() {
+			state.dialogVisible = false;
+			state.loading = false;
+			state.keyword = undefined;
+			state.mapExample = null;
+
+			form.name = undefined;
+			form.status = false;
+			form.remark = undefined;
+			form.orderNo = undefined;
+			form.lineId = undefined;
+			form.longitude = undefined;
+			form.latitude = undefined;
+			form.material = undefined;
+			form.property = undefined;
+		}
 
 		return { state, open, close, form, rules, submitForm, ruleFormRef, search };
 	},

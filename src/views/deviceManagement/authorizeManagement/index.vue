@@ -17,12 +17,6 @@
                 </el-table-column>
 			</el-table>
 
-			<!-- <div class="contentPage">
-				<button class="button" @click="setPagination('lastPage')">上一页</button>
-				<div class="info">{{ listData.page }}/{{ listData.totalPages }}</div>
-				<button class="button" @click="setPagination('nextPage')">下一页</button>
-			</div> -->
-
 			<el-pagination
 				v-model:currentPage="listData.page"
 				v-model:page-size="listData.pageSize"

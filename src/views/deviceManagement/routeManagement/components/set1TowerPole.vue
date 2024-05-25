@@ -100,6 +100,7 @@ export default defineComponent({
 		// 关闭弹窗
 		function close() {
 			state.dialogVisible = false;
+			wipeData();
 		}
 
 		async function submitForm(ruleFormRef) {
@@ -126,7 +127,20 @@ export default defineComponent({
             close();
 
 
-		}
+		};
+
+
+		function wipeData(){
+			state.dialogVisible = false;
+			state.loading = false;
+
+			form.name = undefined;
+			form.status = false;
+			form.remark = undefined; 
+			form.orderNo = undefined;
+			form.voltageLevelId = ''; 
+			form.countyId = '';
+		};
 
 		return { state, open, close, form, rules, submitForm, ruleFormRef };
 	},

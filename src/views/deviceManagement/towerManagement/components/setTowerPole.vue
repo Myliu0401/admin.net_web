@@ -115,6 +115,7 @@ export default defineComponent({
 		// 关闭弹窗
 		function close(){
 			state.dialogVisible = false;
+			wipeData();
 		};
 
 		// 修改塔杆
@@ -181,6 +182,24 @@ export default defineComponent({
 			});
 			local.search(state.keyword);
 		};
+
+
+		function wipeData() {
+			state.dialogVisible = false;
+			state.loading = false;
+			state.keyword = undefined;
+			state.mapExample = null;
+
+			form.name = undefined;
+			form.status = false;
+			form.remark = undefined;
+			form.orderNo = undefined;
+			form.lineId = undefined;
+			form.longitude = undefined;
+			form.latitude = undefined;
+			form.material = undefined;
+			form.property = undefined;
+		}
 
 		return { state, open, close, form, rules, submitForm, ruleFormRef, search };
 	},

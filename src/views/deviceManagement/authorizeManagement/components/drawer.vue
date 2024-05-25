@@ -1,5 +1,5 @@
 <template>
-	<el-drawer v-model="state.show" :title="`已授权的设备列表---${state.nickName}`" :with-header="true" size="56%"
+	<el-drawer :visible="state.show" v-model="state.show" :title="`已授权的设备列表---${state.nickName}`" :with-header="true" size="56%"
 		:close-on-click-modal="false" direction="rtl">
 		<div class="drawer">
 			<div class="drawer_selectionArea">
@@ -87,7 +87,12 @@ export default {
 				return;
 			};
 			state.loading = true;
-			await unbindAuthorization({ userId: state.id, devices: [item.id] });
+			try{
+				await unbindAuthorization({ userId: state.id, devices: [item.id] });
+			}catch(err){
+				state.loading = false;
+              return
+			}
 			state.loading = false;
 			getAuthorizedDevices();
 			ElMessage({

@@ -1,5 +1,5 @@
 <template>
-	<el-drawer v-model="state.show" size="56%" :close-on-click-modal="false" direction="rtl" :title="`设备通道 ---- ${state.deviceName}`">
+	<el-drawer :visible="state.show" v-model="state.show" size="56%" :close-on-click-modal="false" direction="rtl" :title="`设备通道 ---- ${state.deviceName}`">
 		<div class="deviceChannelTop">
 			<el-button plain size="small" @click="openClose('add')" style="margin-right: 10px;">添加通道</el-button>
 			<el-text class="mx-1" size="default" style="margin-right: 20px">无线信号强度: {{ state.signalStrength }}</el-text>

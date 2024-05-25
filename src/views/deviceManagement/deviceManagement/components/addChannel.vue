@@ -122,6 +122,8 @@ export default {
 		// 关闭弹窗
 		function close() {
 			state.dialogVisible = false;
+
+			wipeData();
 		}
 
 		// 转换日期格式
@@ -154,11 +156,10 @@ export default {
 					code: form.code,
 					hasPtz: form.hasPtz,
 					customName: form.customName,
-					
 				});
 			} catch (err) {
 				state.loading = false;
-				return
+				return;
 			}
 
 			state.loading = false;
@@ -168,6 +169,25 @@ export default {
 			});
 			emit('complete');
 			close();
+		}
+
+		// 清空数据
+		function wipeData() {
+			state.dialogVisible = false;
+			state.loading = false;
+
+			form.name = undefined;
+			form.onOffStatus = false;
+			form.okFailureStatus = false;
+			form.remark = undefined;
+			form.orderNo = undefined;
+			form.deviceId = undefined;
+			form.status = undefined;
+			form.enableSnapshot = undefined;
+			form.snapInterval = undefined;
+			form.code = undefined;
+			form.hasPtz = false;
+			form.customName = undefined;
 		}
 
 		return { ruleFormRef, state, form, rules, open, close, submitForm, snapStartTime, snapEndTime };
