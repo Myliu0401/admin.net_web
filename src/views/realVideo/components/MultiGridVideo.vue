@@ -14,6 +14,7 @@
 					<el-button v-if="!state.videoInfos[num].loading" :icon="CaretRight" circle @click.stop="playVideo(num)" />
 					<el-icon v-else style="color: #fff; font-size: 30px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><ele-Loading /></el-icon>
 				</div>
+				<el-text v-if="state.videoInfos[num] && state.videoInfos[num].isBroadcasting" class="guanbo" type="danger" size="small">广播中...</el-text>
 				<div class="myVideo"></div>
 			</li>
 		</ul>
@@ -29,8 +30,9 @@
 <script name="MultiGridVideo">
 import { defineProps, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed, watch } from 'vue';
 import { Close, CaretRight } from '@element-plus/icons-vue';
-import { getMyPlaybackURL } from '/@/api/realTimeVideo/index.js';
+import { getMyPlaybackURL, getBroadcastAddress } from '/@/api/realTimeVideo/index.js';
 import PullFrame from './pullFrame.vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
 	components: { PullFrame },
@@ -164,6 +166,8 @@ export default {
 				this.currentNodeId = currentNodeId;
 				this.loading = false;
 				this.id = id;
+				this.player = null;
+				this.isBroadcasting = false; // 是否广播中
 				state.activeNum = null;
 			}
 
@@ -220,6 +224,7 @@ export default {
 					return;
 				}
 				this.example.close();
+				this.example.player && this.example.player.close();
 			}
 
 			// 关闭视频，释放底层资源
@@ -380,7 +385,6 @@ export default {
 
 		// 停止录制并下载
 		function stopRecordAndSave() {
-
 			const example = state.videoInfos[state.activeNum || geta()];
 
 			example && example.stopRecordAndSave();
@@ -406,16 +410,15 @@ export default {
 			} */
 		}
 
-		function myIsRecording(){
+		function myIsRecording() {
 			const example = state.videoInfos[state.activeNum || geta()];
 
-			if(example){
-               return example.isRecording();
+			if (example) {
+				return example.isRecording();
 			}
 
 			return undefined;
-			 
-		};
+		}
 
 		function geta() {
 			if (state.videoInfos['1']) {
@@ -447,7 +450,125 @@ export default {
 			}
 		}
 
-		
+		// 启用暂停广播
+		async function enablePauseBroadcast() {
+			const example = state.videoInfos[state.activeNum || geta()];
+
+			if (!example) {
+				return;
+			}
+
+			// 判断是否广播中
+			if (example.isBroadcasting && example.player) {
+				example.isBroadcasting = false;
+				example.player.close();
+				ElMessage({
+					message: '已关闭',
+					type: 'success',
+				});
+				return;
+			}
+
+			const res = await getBroadcastAddress({ id: example.id }); // 获取媒体流地址
+			const player = createPlayer(res.data.result, example);
+			example.player = player;
+		}
+
+		// 创建播放实例
+		function createPlayer(url, example) {
+			console.log(url)
+			const player = new ZLMRTCClient.Endpoint({
+				debug: true, // 是否打印日志
+				zlmsdpUrl: url, //流地址
+				simulecast: false,
+				useCamera: false,
+				audioEnable: true,
+				videoEnable: false,
+				recvOnly: false,
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, function (e) {
+				// ICE 协商出错
+				console.log('ICE 协商出错');
+				ElMessage({
+					message: 'ICE 协商出错',
+					type: 'warning',
+				});
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_REMOTE_STREAMS, function (e) {
+				//获取到了远端流，可以播放
+				console.log('播放成功', e.streams);
+				ElMessage({
+					message: '播放成功',
+					type: 'warning',
+				});
+				example.isBroadcasting = true;
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_OFFER_ANWSER_EXCHANGE_FAILED, function (e) {
+				// offer anwser 交换失败
+				console.log('offer anwser 交换失败', e);
+				ElMessage({
+					message: 'offer anwser 交换失败',
+					type: 'warning',
+				});
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_LOCAL_STREAM, function (s) {
+				// 获取到了本地流
+
+				document.getElementById('selfVideo').srcObject = s;
+				document.getElementById('selfVideo').muted = true;
+
+				//console.log('offer anwser 交换失败',e)
+			});
+
+			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, function (s) {
+				// 获取本地流失败
+
+				console.log('获取本地流失败');
+
+				ElMessage({
+					message: '获取本地流失败',
+					type: 'warning',
+				});
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_CONNECTION_STATE_CHANGE, function (state) {
+				// RTC 状态变化 ,详情参考 https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionState
+				console.log('当前状态==>', state);
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_OPEN, function (event) {
+				console.log('rtc datachannel 打开 :', event);
+				ElMessage({
+					message: 'rtc datachannel 打开',
+					type: 'warning',
+				});
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_MSG, function (event) {
+				console.log('rtc datachannel 消息 :', event.data);
+				document.getElementById('msgrecv').value = event.data;
+			});
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_ERR, function (event) {
+				console.log('rtc datachannel 错误 :', event);
+				ElMessage({
+					message: 'rtc datachannel 错误',
+					type: 'warning',
+				});
+			});
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_CLOSE, function (event) {
+				console.log('rtc datachannel 关闭 :', event);
+				ElMessage({
+					message: 'rtc datachannel 关闭',
+					type: 'warning',
+				});
+			});
+
+			return player;
+		}
 
 		return {
 			state,
@@ -464,6 +585,7 @@ export default {
 			stopRecordAndSave,
 			currentId,
 			myIsRecording,
+			enablePauseBroadcast,
 			CaretRight,
 			createVideoInstance,
 		};
@@ -600,6 +722,12 @@ export default {
 					width: 37px;
 					height: 37px;
 				}
+			}
+
+			.guanbo {
+				position: absolute;
+				top: 3px;
+				left: 3px;
 			}
 		}
 	}

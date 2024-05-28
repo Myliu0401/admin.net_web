@@ -83,9 +83,9 @@
 			</div>
 			<div class="domain">
 				<div class="domain_left">
-					<div class="item">
+					<!-- <div class="item">
 						<img class="weiduyip" src="../../assets/realTimeVideo/1.png" />
-					</div>
+					</div> -->
 
 					<div class="item">
 						<img class="weiduyip" src="../../assets/realTimeVideo/2.png" @click.stop="fullScreen" />
@@ -216,8 +216,9 @@ function fullScreen() {
 	multiGridVideo.value.fullScreen();
 }
 
+// 广播
 function recordingAudio() {
-	broadcastStatusClick();
+	multiGridVideo.value.enablePauseBroadcast();
 }
 
 const broadcastStatusClick = async () => {

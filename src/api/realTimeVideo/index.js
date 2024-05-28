@@ -36,3 +36,13 @@ export function myPanTiltControl(data = {}){
       data
    });
 };
+
+
+// 获取广播地址
+export function getBroadcastAddress(data = {}){
+   return request({
+      url: '/api/sysChannel/broadcastUrl',
+      method: 'post',
+      data
+   });
+}
