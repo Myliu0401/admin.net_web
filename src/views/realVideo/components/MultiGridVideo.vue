@@ -472,6 +472,7 @@ export default {
 			const res = await getBroadcastAddress({ id: example.id }); // 获取媒体流地址
 			const player = createPlayer(res.data.result, example);
 			example.player = player;
+			example.isBroadcasting = true;
 		}
 
 		// 创建播放实例
@@ -500,6 +501,7 @@ export default {
 			player.on(ZLMRTCClient.Events.WEBRTC_NOT_SUPPORT, (e) => {
 				// 获取到了本地流
 				console.error('不支持webrtc', e);
+				example.isBroadcasting = false;
 				ElMessage({
 					message: '不支持webrtc',
 					type: 'warning',
@@ -509,6 +511,7 @@ export default {
 			player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, (e) => {
 				// ICE 协商出错
 				console.error('ICE 协商出错');
+				example.isBroadcasting = false;
 				ElMessage({
 					message: 'ICE 协商出错',
 					type: 'warning',
@@ -518,6 +521,7 @@ export default {
 			player.on(ZLMRTCClient.Events.WEBRTC_OFFER_ANWSER_EXCHANGE_FAILED, (e) => {
 				// offer anwser 交换失败
 				console.error('offer anwser 交换失败', e);
+				example.isBroadcasting = false;
 				ElMessage({
 					message: 'offer anwser 交换失败',
 					type: 'warning',
@@ -526,10 +530,12 @@ export default {
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_CONNECTION_STATE_CHANGE, (e) => {
 				// offer anwser 交换失败
 				console.log('状态改变', e);
+				
 			});
 			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, (e) => {
 				// offer anwser 交换失败
 				console.log('捕获流失败', e);
+				example.isBroadcasting = false;
 				ElMessage({
 					message: '捕获流失败',
 					type: 'warning',
@@ -540,7 +546,7 @@ export default {
 				// 获取本地流失败
 
 				console.log('获取本地流失败');
-
+				example.isBroadcasting = false;
 				ElMessage({
 					message: '获取本地流失败',
 					type: 'warning',
