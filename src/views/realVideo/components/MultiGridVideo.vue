@@ -476,7 +476,7 @@ export default {
 
 		// 创建播放实例
 		function createPlayer(url, example) {
-			console.log(url)
+			console.log(url);
 			const player = new ZLMRTCClient.Endpoint({
 				debug: true, // 是否打印日志
 				zlmsdpUrl: url, //流地址
@@ -487,7 +487,67 @@ export default {
 				recvOnly: false,
 			});
 
-			player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, function (e) {
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_REMOTE_STREAMS, function (e) {
+				//获取到了远端流，可以播放
+				console.log('播放成功', e.streams);
+				ElMessage({
+					message: '播放成功',
+					type: 'success',
+				});
+				example.isBroadcasting = true;
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_NOT_SUPPORT, (e) => {
+				// 获取到了本地流
+				console.error('不支持webrtc', e);
+				ElMessage({
+					message: '不支持webrtc',
+					type: 'warning',
+				});
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, (e) => {
+				// ICE 协商出错
+				console.error('ICE 协商出错');
+				ElMessage({
+					message: 'ICE 协商出错',
+					type: 'warning',
+				});
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_OFFER_ANWSER_EXCHANGE_FAILED, (e) => {
+				// offer anwser 交换失败
+				console.error('offer anwser 交换失败', e);
+				ElMessage({
+					message: 'offer anwser 交换失败',
+					type: 'warning',
+				});
+			});
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_CONNECTION_STATE_CHANGE, (e) => {
+				// offer anwser 交换失败
+				console.log('状态改变', e);
+			});
+			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, (e) => {
+				// offer anwser 交换失败
+				console.log('捕获流失败', e);
+				ElMessage({
+					message: '捕获流失败',
+					type: 'warning',
+				});
+			});
+
+			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, function (s) {
+				// 获取本地流失败
+
+				console.log('获取本地流失败');
+
+				ElMessage({
+					message: '获取本地流失败',
+					type: 'warning',
+				});
+			});
+
+			/* player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, function (e) {
 				// ICE 协商出错
 				console.log('ICE 协商出错');
 				ElMessage({
@@ -565,7 +625,7 @@ export default {
 					message: 'rtc datachannel 关闭',
 					type: 'warning',
 				});
-			});
+			}); */
 
 			return player;
 		}

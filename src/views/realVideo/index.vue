@@ -219,12 +219,13 @@ function fullScreen() {
 // 广播
 function recordingAudio() {
 	multiGridVideo.value.enablePauseBroadcast();
+	//broadcastStatusClick();
 }
 
 const broadcastStatusClick = async () => {
 	state.broadcastRtc = new ZLMRTCClient.Endpoint({
 		debug: true, // 是否打印日志
-		zlmsdpUrl: 'https://8.134.249.156:30006/index/api/webrtc?app=broadcast&stream=34020000001320004006&type=push', //流地址
+		zlmsdpUrl: 'https://120.25.172.200:30006/index/api/webrtc?app=broadcast&stream=34020000001320004006&type=push', //流地址
 		simulecast: false,
 		useCamera: false,
 		audioEnable: true,
