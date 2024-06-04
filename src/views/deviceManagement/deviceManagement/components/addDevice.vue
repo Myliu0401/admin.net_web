@@ -60,13 +60,13 @@
 				<el-date-picker style="width: 150px" v-model="form.installDate" type="date" placeholder="安装日期" />
 			</el-form-item>
 
-			<el-form-item label="通用状态">
-				<el-switch inline-prompt active-text="上线" inactive-text="离线" v-model="form.status" />
+			<el-form-item label="是否启用">
+				<el-switch inline-prompt active-text="启用" inactive-text="停用" v-model="form.status" />
 			</el-form-item>
 
-			<el-form-item label="上下线状态">
+			<!-- <el-form-item label="上下线状态">
 				<el-switch inline-prompt active-text="上线" inactive-text="离线" v-model="form.onOffStatus" />
-			</el-form-item>
+			</el-form-item> -->
 
 			<el-form-item label="设备故障状态">
 				<el-switch inline-prompt active-text="启用" inactive-text="停用" v-model="form.okFailureStatus" />

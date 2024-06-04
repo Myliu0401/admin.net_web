@@ -29,21 +29,21 @@
 				<el-input v-model="form.orderNo" type="number" style="width: 150px" min="1" />
 			</el-form-item>
 
-			<el-form-item label="通用状态">
+			<el-form-item label="是否启用">
 				<el-switch inline-prompt active-text="启用" inactive-text="停用" v-model="form.status" />
 			</el-form-item>
 
-			<el-form-item label="上下线状态">
+			<!-- <el-form-item label="上下线状态">
 				<el-switch inline-prompt active-text="上线" inactive-text="离线" v-model="form.onOffStatus" />
-			</el-form-item>
+			</el-form-item> -->
 
 			<el-form-item label="设备故障状态">
 				<el-switch inline-prompt active-text="正常" inactive-text="故障" v-model="form.okFailureStatus" />
 			</el-form-item>
 
-			<el-form-item label="是否启用定时截图">
+			<!-- <el-form-item label="是否启用定时截图">
 				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.enableSnapshot" />
-			</el-form-item>
+			</el-form-item> -->
 
 			<el-form-item label="截图时段" v-if="form.enableSnapshot">
 				<div class="itemBox">
@@ -94,13 +94,13 @@ export default {
 
 		const form = reactive({
 			name: undefined, // 通道名称
-			onOffStatus: false, // 上下线状态
+			onOffStatus: true, // 上下线状态
 			okFailureStatus: false, // 设备故障状态
 			remark: undefined, // 备注
 			orderNo: undefined, // 排序
 			deviceId: undefined, // 直属设备id
 			status: undefined, // 通用状态
-			enableSnapshot: undefined, // 是否启用定时截图
+			enableSnapshot: true, // 是否启用定时截图
 			snapInterval: undefined, // 定时截图的间隔时间，分钟数
 			code: undefined,
 			hasPtz: false,
@@ -183,7 +183,7 @@ export default {
 			form.orderNo = undefined;
 			form.deviceId = undefined;
 			form.status = undefined;
-			form.enableSnapshot = undefined;
+			form.enableSnapshot = true;
 			form.snapInterval = undefined;
 			form.code = undefined;
 			form.hasPtz = false;
