@@ -1,20 +1,23 @@
 <template>
 	<div class="multiGridVideo">
 		<ul class="multiGridVideo_ul">
-			<li
-				v-for="num in currentGridNum"
-				:key="num"
-				class="ul_li"
-				:class="{ yige: currentGridNum === 1, liange: currentGridNum === 4, shangge: currentGridNum === 9, active: state.activeNum === num }"
-				@click.stop="selectGrid(num)"
-			>
-				<el-button style="z-index: 111" :icon="Close" circle @click.stop="closeVideo(num)" v-if="state.videoInfos[num]" />
+			<li v-for="num in currentGridNum" :key="num" class="ul_li" :class="{
+				yige: currentGridNum === 1,
+				liange: currentGridNum === 4,
+				shangge: currentGridNum === 9,
+				active: state.activeNum === num
+			}" @click.stop="selectGrid(num)">
+				<el-button style="z-index: 111" :icon="Close" circle @click.stop="closeVideo(num)"
+					v-if="state.videoInfos[num]" />
 
 				<div class="mongolianLayer" v-if="state.videoInfos[num] && !state.videoInfos[num].isPlaying()">
-					<el-button v-if="!state.videoInfos[num].loading" :icon="CaretRight" circle @click.stop="playVideo(num)" />
-					<el-icon v-else style="color: #fff; font-size: 30px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><ele-Loading /></el-icon>
+					<el-button v-if="!state.videoInfos[num].loading" :icon="CaretRight" circle
+						@click.stop="playVideo(num)" />
+					<el-icon v-else
+						style="color: #fff; font-size: 30px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><ele-Loading /></el-icon>
 				</div>
-				<el-text v-if="state.videoInfos[num] && state.videoInfos[num].isBroadcasting" class="guanbo" type="danger" size="small">广播中...</el-text>
+				<el-text v-if="state.videoInfos[num] && state.videoInfos[num].isBroadcasting" class="guanbo"
+					type="danger" size="small">广播中...</el-text>
 				<div class="myVideo"></div>
 			</li>
 		</ul>
@@ -127,6 +130,7 @@ export default {
 				res = await getMyPlaybackURL({
 					id: state.videoInfos[num].id,
 				});
+	
 			} catch (err) {
 				state.videoInfos[num].loading = false;
 				return;
@@ -134,7 +138,11 @@ export default {
 
 			state.videoInfos[num].create(num);
 			state.videoInfos[num].play(res.data.result);
-			state.videoInfos[num].loading = false;
+
+
+			setTimeout(() => {
+				state.videoInfos[num].loading = false;
+			}, 1000)
 		}
 
 		function getDuiYin() {
@@ -162,6 +170,11 @@ export default {
 		// 创建视频实例
 		class createVideoInstance {
 			constructor(currentNodeId, id) {
+
+				if (state.videoInfos[state.activeNum]) {
+					state.activeNum = null;
+				}
+
 				state.videoInfos[state.activeNum || getDuiYin()] = this;
 				this.currentNodeId = currentNodeId;
 				this.loading = false;
@@ -194,7 +207,7 @@ export default {
 				});
 
 				// 录制是否结束
-				this.example.on('recordEnd', () => {});
+				this.example.on('recordEnd', () => { });
 
 				// 是否是全屏
 				this.example.on('fullscreen', function (flag) {
@@ -304,6 +317,7 @@ export default {
 				if (!this.example) {
 					return;
 				}
+				
 				return this.example.isPlaying();
 			}
 
@@ -530,7 +544,7 @@ export default {
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_CONNECTION_STATE_CHANGE, (e) => {
 				// offer anwser 交换失败
 				console.log('状态改变', e);
-				
+
 			});
 			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, (e) => {
 				// offer anwser 交换失败
@@ -706,8 +720,7 @@ export default {
 					border-right: 1px solid #ccc;
 				}
 
-				&:nth-child(4) {
-				}
+				&:nth-child(4) {}
 			}
 
 			&.shangge {
@@ -751,8 +764,7 @@ export default {
 					border-right: 1px solid #ccc;
 				}
 
-				&:nth-child(9) {
-				}
+				&:nth-child(9) {}
 			}
 
 			&:hover {

@@ -87,7 +87,7 @@
 
 		<AddDevice ref="addDevic" @complete="mySearch" :towerTress="state.towerTress" />
 		<SetDevice ref="setDevic" @complete="mySearch" :towerTress="state.towerTress" />
-		<DeviceChannel ref="channel" :deviceList="state.allDevices" />
+		<DeviceChannel ref="channel" :deviceList="state.allDevices"/>
 		<ParamMans ref="paramMans" />
 		<GbProtocol ref="gbProtocol" />
 	</div>
@@ -237,6 +237,10 @@ function convertKeyValues(datas) {
 			convertKeyValues(item.children);
 		}
 	}
+}
+
+function getChannelList(){
+	console.log('========')
 }
 </script>
 

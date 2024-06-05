@@ -38,14 +38,14 @@
 			</el-table>
 		</div>
 
-		<AddChannel ref="addChannel"  @complete="getChannelList" />
-		<SetChannel ref="setChannel"  @complete="getChannelList" />
+		<AddChannel ref="addChannel"  @complete1="getChannelList" />
+		<SetChannel ref="setChannel"  @complete1="getChannelList" />
 	</el-drawer>
 </template>
 
 
 <script>
-import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, provide  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { getMyChannelList, delelteMyChannel } from '/@/api/deviceManagement/index.js';
 import AddChannel from './addChannel.vue';
@@ -65,7 +65,10 @@ export default {
 		},
 	},
 
-	setup(props) {
+	setup(props, { emit }) {
+
+		window.deviceChannelList = getChannelList;
+
 		const state = reactive({
 			show: false,
 			id: undefined,
@@ -94,6 +97,7 @@ export default {
 
 		// 获取通道列表
 		async function getChannelList() {
+			
 			state.loading = true;
 			const res = await getMyChannelList({ id: state.id });
 			state.loading = false;

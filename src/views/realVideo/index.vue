@@ -178,9 +178,9 @@ function switchGrid(text) {
 	state.currentGrid = text;
 
 	setTimeout(() => {
-		const s = multiGridVideo.value.cleanUp();
+		const s = multiGridVideo.value.cleanUp(); // 清除
 		s.forEach((currentNodeId) => {
-			cleanUp(currentNodeId);
+			cleanUp(currentNodeId); // 清空导航栏的选中
 		});
 	}, 16);
 }

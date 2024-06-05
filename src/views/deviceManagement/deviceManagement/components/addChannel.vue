@@ -1,5 +1,6 @@
 <template>
-	<el-dialog title="添加通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
+	<el-dialog title="添加通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%"
+		:before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="150px">
 			<!-- <el-form-item label="通道名称" prop="name">
 				<el-input v-model="form.name" />
@@ -66,7 +67,7 @@
 
 
 <script>
-import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted  } from 'vue';
 import { addChannel } from '/@/api/deviceManagement/index.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
@@ -82,8 +83,9 @@ export default {
 	setup(props, { emit }) {
 		const ruleFormRef = ref(null);
 
-		const snapStartTime = ref(); // 起始时间
-		const snapEndTime = ref(); // 结束时间
+		const snapStartTime = ref(new Date().setHours(0, 0, 0, 0));  // 创建新的日期对象
+
+		const snapEndTime = ref(new Date().setHours(23, 59, 59, 0)); // 结束时间
 
 		const state = reactive({
 			dialogVisible: false,
@@ -101,7 +103,7 @@ export default {
 			deviceId: undefined, // 直属设备id
 			status: undefined, // 通用状态
 			enableSnapshot: true, // 是否启用定时截图
-			snapInterval: undefined, // 定时截图的间隔时间，分钟数
+			snapInterval: 5, // 定时截图的间隔时间，分钟数
 			code: undefined,
 			hasPtz: false,
 			customName: undefined, // 自定义名称
@@ -135,6 +137,7 @@ export default {
 		}
 
 		async function submitForm(ruleFormRef) {
+		
 			const bool = await ruleFormRef.validate();
 			if (!bool) {
 				return;
@@ -157,6 +160,7 @@ export default {
 					hasPtz: form.hasPtz,
 					customName: form.customName,
 				});
+
 			} catch (err) {
 				state.loading = false;
 				return;
@@ -167,8 +171,8 @@ export default {
 				message: '添加成功',
 				type: 'success',
 			});
-			emit('complete');
 			close();
+			window.deviceChannelList();
 		}
 
 		// 清空数据

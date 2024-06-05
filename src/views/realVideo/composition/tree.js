@@ -1,121 +1,114 @@
 import { defineAsyncComponent, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { getMyTreeNodes } from '/@/api/realTimeVideo/index.js';
 
-
 export default function (state, multiGridVideo) {
-    const treeData = reactive({
-        keyword: '',  // 关键字
-        data: [],
-        myTrees: [],
-        defaultProps: {
-            children: 'children',
-            label: 'name',
-            isLeaf: 'leaf',
-            class: (data, node) => {
-                return data.currentNodeId;
-            }
-        },
-        myKey: 1,
-        passageway: [], // 选中的通道
+	const treeData = reactive({
+		keyword: '', // 关键字
+		data: [],
+		myTrees: [],
+		defaultProps: {
+			children: 'children',
+			label: 'name',
+			isLeaf: 'leaf',
+			class: (data, node) => {
+				return data.currentNodeId;
+			},
+		},
+		myKey: 1,
+		passageway: [], // 选中的通道
+	});
 
-    });
+	// 生命周期
+	onBeforeMount(async () => {
+		await getTreeNodes();
+		search();
+	});
 
-    // 生命周期
-    onBeforeMount(async () => {
-        await getTreeNodes();
-        search();
-    });
+	// 获取树形节点
+	async function getTreeNodes() {
+		const res = await getMyTreeNodes({ showUnmoutNode: true });
+		treeData.data = res.data.result;
+		tianjia(treeData.data);
+	}
 
-    // 获取树形节点
-    async function getTreeNodes() {
-        const res = await getMyTreeNodes({ showUnmoutNode: true });
-        treeData.data = res.data.result;
-        tianjia(treeData.data);
-        
-    };
+	// 添加属性
+	function tianjia(data = []) {
+		for (let i = 0; i < data.length; i++) {
+			data[i].currentNodeId = 'A' + Math.random().toString(36).slice(4);
+			if (!data[i].children || !data[i].children.length) {
+				data[i].leaf = true;
+			} else if (data[i].children.length) {
+				tianjia(data[i].children);
+			}
+		}
+	}
 
+	// 渲染树形
+	function loadNode(node, resolve) {
+		if (node.level === 0) {
+			resolve(treeData.myTrees);
+		} else if (node.data.children) {
+			resolve(node.data.children);
+		} else {
+			resolve([]);
+		}
+	}
 
-    // 添加属性
-    function tianjia(data = []) {
-        for (let i = 0; i < data.length; i++) {
-            data[i].currentNodeId = 'A' + Math.random().toString(36).slice(4);
-            if (!data[i].children || !data[i].children.length) {
-                data[i].leaf = true;
-            } else if (data[i].children.length) {
-                tianjia(data[i].children);
-            }
-        }
-    };
+	// 点击节点时触发
+	function handleNodeClick(a, b, c, d) {
+		const bo1 = a.children === null; // 点击项是否是通道
+		const bo2 = !treeData.passageway
+			.map((item) => {
+				return item.currentNodeId;
+			})
+			.includes(a.currentNodeId); // 数组中是否有选中的
+		const bo3 = treeData.passageway.length < zhuanhuan(); // 是否可以继续存储
 
-    // 渲染树形
-    function loadNode(node, resolve) {
-        if (node.level === 0) {
-            resolve(treeData.myTrees);
-        } else if (node.data.children) {
-            resolve(node.data.children);
-        } else {
-            resolve([]);
-        }
-    };
+		if (bo1 && bo2 && bo3) {
+			treeData.passageway.push(a);
+			new multiGridVideo.value.createVideoInstance(a.currentNodeId, a.id);
+		}
 
-    // 点击节点时触发
-    function handleNodeClick(a, b, c, d) {
+		setTimeout(addAClassToANode); // 添加样式
+	}
 
-        const bo1 = a.children === null ;
-        const bo2 = !treeData.passageway.map((item) => { return item.currentNodeId }).includes(a.currentNodeId);
-        const bo3 = treeData.passageway.length < zhuanhuan();
+	function zhuanhuan() {
+		switch (state.currentGrid) {
+			case '1x1':
+				return 1;
+			case '2x2':
+				return 4;
+			case '3x3':
+				return 9;
+		}
+	}
 
+	function cleanUp(currentNodeId) {
+		const index = treeData.passageway.findIndex((item) => {
+			return item.currentNodeId == currentNodeId;
+		});
 
-        if (bo1 && bo2 && bo3) {
-            treeData.passageway.push(a);
-            new multiGridVideo.value.createVideoInstance(a.currentNodeId, a.id);
-        };
+		treeData.passageway.splice(index, 1);
 
-        setTimeout(addAClassToANode);
+		const node = document.querySelector(`.${currentNodeId}`);
+		node && node.classList.remove('active');
 
-    };
+		//console.log(treeData.passageway, node)
+	}
 
-    function zhuanhuan() {
-        switch (state.currentGrid) {
-            case '1x1':
-                return 1;
-            case '2x2':
-                return 4;
-            case '3x3':
-                return 9;
-        }
-    };
+	// 搜索节点时触发
+	function search() {
+		treeData.myKey++;
+		if (!treeData.keyword) {
+			treeData.myTrees = treeData.data;
+			return;
+		}
 
+		treeData.myTrees = filterTreeData(treeData.data, treeData.keyword);
+	}
 
-    function cleanUp(currentNodeId) {
-        const index = treeData.passageway.findIndex((item) => {
-            return item.currentNodeId == currentNodeId;
-        });
-
-        treeData.passageway.splice(index, 1);
-
-        const node = document.querySelector(`.${currentNodeId}`);
-        node && node.classList.remove('active');
-
-        //console.log(treeData.passageway, node)
-
-    };
-
-
-    // 搜索节点时触发
-    function search() {
-        treeData.myKey++;
-        if (!treeData.keyword) {
-            treeData.myTrees = treeData.data;
-            return
-        }
-
-        treeData.myTrees = filterTreeData(treeData.data, treeData.keyword);
-    };
-
-
-    // 根据关键字过滤树形数据
-    /* function filterTreeData(treeData, keyword) {
+	// 根据关键字过滤树形数据
+	/* function filterTreeData(treeData, keyword) {
         return treeData.filter(node => {
             // 检查当前节点是否包含关键字
             const isMatched = node.label.includes(keyword);
@@ -136,44 +129,43 @@ export default function (state, multiGridVideo) {
         });
     }; */
 
-    function filterTreeData(tree, keyword) {
-        var results = [];
-    
-        // 递归搜索函数
-        function search(node) {
-            if (node.name.includes(keyword)) {
-                results.push(node);
-            }
-            if (node.children) {
-                node.children.forEach(child => search(child));
-            }
-        }
-    
-        // 在树的每个根节点上调用搜索函数
-        tree.forEach(root => search(root));
-    
-        return results;
-    };
+	function filterTreeData(tree, keyword) {
+		var results = [];
 
-    // 给选择的节点添加class
-    function addAClassToANode() {
-        if (!treeData.passageway.length) {
-            return;
-        };
+		// 递归搜索函数
+		function search(node) {
+			if (node.name.includes(keyword)) {
+				results.push(node);
+			}
+			if (node.children) {
+				node.children.forEach((child) => search(child));
+			}
+		}
 
+		// 在树的每个根节点上调用搜索函数
+		tree.forEach((root) => search(root));
 
-        // 添加
-        for (let i = 0; i < treeData.passageway.length; i++) {
-            const node = document.querySelector(`.${treeData.passageway[i].currentNodeId}`);
-            node && !node.classList.contains('active') && node.classList.add('active')
-        };
-    };
+		return results;
+	}
 
-    return {
-        treeData,
-        loadNode,
-        handleNodeClick,
-        search,
-        cleanUp
-    }
-};
+	// 给选择的节点添加class
+	function addAClassToANode() {
+		if (!treeData.passageway.length) {
+			return;
+		}
+
+		// 添加
+		for (let i = 0; i < treeData.passageway.length; i++) {
+			const node = document.querySelector(`.${treeData.passageway[i].currentNodeId}`);
+			node && !node.classList.contains('active') && node.classList.add('active');
+		}
+	}
+
+	return {
+		treeData,
+		loadNode,
+		handleNodeClick,
+		search,
+		cleanUp,
+	};
+}

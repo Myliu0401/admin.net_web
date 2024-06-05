@@ -1,5 +1,6 @@
 <template>
-	<el-dialog title="修改通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
+	<el-dialog title="修改通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%"
+		:before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="100px">
 			<el-form-item label="设备名称">
 				<el-input v-model="form.name" disabled />
@@ -83,7 +84,7 @@ export default {
 			item: null,
 		});
 
-		const snapStartTime = ref(new Date()); // 起始时间
+		const snapStartTime = ref(); // 起始时间
 		const snapEndTime = ref(); // 结束时间
 
 		const form = reactive({
@@ -162,6 +163,7 @@ export default {
 
 		// 提交
 		async function submitForm(ruleFormRef) {
+			
 			const bool = await ruleFormRef.validate();
 
 			if (!bool) {
@@ -197,8 +199,11 @@ export default {
 				message: '修改成功',
 				type: 'success',
 			});
-			emit('complete');
 			close();
+
+
+			window.deviceChannelList();
+
 		};
 
 

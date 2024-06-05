@@ -433,9 +433,12 @@ export default defineComponent({
 
 			const arr = [];
 
-			const s = goujian();
+			const s = goujian(); // 返回省份
+
+			
 
 			state.allCount.forEach((item) => {
+				item.name = item.name.includes('广东省') ? '广东省' : item.name;
 				if(province && item.name === province){
                     arr.push({ name: item.count, value: [...s[item.name], item.count > 100 ? 100 : 50] });
 				}else if(item.count != 0 && !province){

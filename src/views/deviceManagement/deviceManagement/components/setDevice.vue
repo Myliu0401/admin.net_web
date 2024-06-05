@@ -94,13 +94,20 @@
 <script>
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { defineProps, reactive, defineComponent, ref, defineEmits } from 'vue';
-import { setDevice } from '/@/api/deviceManagement/index.js';
+import { setDevice, getListOfTowerPoles } from '/@/api/deviceManagement/index.js';
 
 export default {
 	props: {
 		towerPoles: {
 			default() {
 				return [];
+			},
+		},
+		towerTress: {
+			default: {
+				default() {
+					return [];
+				},
 			},
 		},
 	},
@@ -229,8 +236,9 @@ export default {
 				message: '修改成功',
 				type: 'success',
 			});
-			emit('complete');
+			
 			close();
+			emit('complete');
 		}
 
 		// 获取塔杆
@@ -251,6 +259,7 @@ export default {
 					extId: item.extId,
 				},
 			});
+		
 			state.towerPoles = res.data.result.items.map((item) => {
 				return {
 					...item,
