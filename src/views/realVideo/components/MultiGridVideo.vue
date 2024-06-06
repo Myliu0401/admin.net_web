@@ -502,7 +502,7 @@ export default {
 				recvOnly: false,
 			});
 
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_REMOTE_STREAMS, function (e) {
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_REMOTE_STREAMS,  (e)=> {
 				//获取到了远端流，可以播放
 				console.log('播放成功', e.streams);
 				ElMessage({
@@ -556,7 +556,7 @@ export default {
 				});
 			});
 
-			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, function (s) {
+			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED,  (s)=> {
 				// 获取本地流失败
 
 				console.log('获取本地流失败');
@@ -567,6 +567,31 @@ export default {
 				});
 			});
 
+			player.on(ZLMRTCClient.Events.NEBRTC_NOT_SUPPORT, (e)=>{
+				console.log('NEBRTC_NOT_SUPPORT', e)
+			});
+
+			player.on(ZLMRTCClient.Events.NEBRTC_ON_LOCAL_STREAM, (e)=>{
+				console.log('NEBRTC_ON_LOCAL_STREAM', e)
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_OPEN, (e)=>{
+				console.log('WEBRTC_ON_DATA_CHANNEL_OPEN', e)
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_CLOSE, (e)=>{
+				console.log('WEBRTC_ON_DATA_CHANNEL_CLOSE', e)
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_ERR, (e)=>{
+				console.log('WEBRTC_ON_DATA_CHANNEL_ERR', e)
+			});
+
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_MSG, (e)=>{
+				console.log('WEBRTC_ON_DATA_CHANNEL_MSG', e)
+			});
+		
+			
 			/* player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, function (e) {
 				// ICE 协商出错
 				console.log('ICE 协商出错');
