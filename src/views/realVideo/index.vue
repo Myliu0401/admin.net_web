@@ -104,7 +104,7 @@
 						<img class="weiduyip" src="../../assets/realTimeVideo/6.png" />
 
 						<div class="progressBarSlider">
-							<el-slider size="small" :min="0" :max="100" v-model="volume" :show-tooltip="false" @input.stop="adjustingVolume"></el-slider>
+							<el-slider size="small" :min="0" :max="100" v-model="volume" :show-tooltip="false" @input="adjustingVolume"></el-slider>
 						</div>
 					</div>
 				</div>
@@ -197,6 +197,7 @@ function screenshot() {
 
 // 调节音量
 function adjustingVolume(value) {
+	
 	multiGridVideo.value.adjustingVolume(value);
 }
 

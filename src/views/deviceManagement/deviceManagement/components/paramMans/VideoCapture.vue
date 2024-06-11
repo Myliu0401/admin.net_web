@@ -193,6 +193,7 @@ export default {
 		align-items: center;
 		justify-content: center;
 		align-items: baseline;
+		justify-content: flex-start;
 
 		&:nth-child(1) {
 			border-right: 1px solid #ccc;

@@ -56,8 +56,9 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 					changeOrigin: true,
 				},
 				'/api': {
-					target: 'http://8.134.249.156:30000', /* 'http://8.134.249.156:30000' *///'http://120.25.172.200:5005',
+					target: 'https://121.15.194.102:29999', /* 'http://8.134.249.156:30000' *///'http://120.25.172.200:5005',
 					changeOrigin: true,
+					secure: false
 				},
 			},
 			

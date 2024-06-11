@@ -384,7 +384,6 @@ export default {
 		// 调节音量
 		function adjustingVolume(value) {
 			const example = state.videoInfos[state.activeNum || geta()];
-
 			example && example.adjustingVolume(value);
 		}
 

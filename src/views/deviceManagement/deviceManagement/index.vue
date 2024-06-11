@@ -33,8 +33,12 @@
 				<el-table :data="listData.deviceList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
 					<el-table-column prop="code" label="设备id" width="70" :align="'center'" />
 					<!-- <el-table-column prop="code" label="code" width="70" :align="'center'"> </el-table-column> -->
-					<el-table-column prop="createTime" label="创建日期" width="180" :align="'center'" />
-					<el-table-column prop="name" label="设备名称" :align="'center'" />
+					<el-table-column prop="keepaliveTime" label="心跳时间" width="180" :align="'center'" />
+					<el-table-column label="设备名称" :align="'center'">
+						<template #default="scope">
+							<span>{{ scope.row.customName || scope.row.name }}</span>
+						</template>
+					</el-table-column>
 					<el-table-column prop="signalStrength" label="无线信号强度" :align="'center'" width="110" />
 					<el-table-column prop="batteryVoltage" label="电池电压单位" :align="'center'" width="110" />
 					<el-table-column prop="imei" label="IMEI/MEID" :align="'center'" />

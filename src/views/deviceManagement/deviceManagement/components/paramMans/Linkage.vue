@@ -21,9 +21,9 @@
 
 			<el-table :data="state.lists" v-loading="state.loading" border style="width: 100%; margin-top: 15px" max-height="47vh">
 				<el-table-column prop="type" label="类型" align="center">
-					<!-- <template #default="scope">
+					<template #default="scope">
 						<el-text class="mx-1" size="small">{{ types[scope.row.type] }}</el-text>
-					</template> -->
+					</template>
 				</el-table-column>
 				<el-table-column prop="action" label="联动动作" align="center">
 					<template #default="scope">
