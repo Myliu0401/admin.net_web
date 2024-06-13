@@ -46,17 +46,25 @@
 			<div style=" height: 40vh; overflow: auto;">
 				<div v-for="item,index in state1.photos" :key="index" style="padding: 10px 0px;  border-bottom: 1px solid #ccc;">
 					<div class="itemBox" style="display: flex; align-items: center; margin-bottom: 10px;">
-						<span class="itemBox_title" style="font-size: 13px; width: 70px;">时</span>
-						<el-input v-model="item.hour" placeholder="时" style="width: 120px;" size="small" type="number" :min="1" :max="24" />
+						<span class="itemBox_title" style="font-size: 13px; width: 70px;">时间</span>
+						<div class="content">
+							<el-input v-model="item.hour" placeholder="时" style="width: 100px;" size="small" type="number" :min="1" :max="24" />
+							:
+							<el-input v-model="item.minute" placeholder="分" style="width: 100px;" size="small" type="number" :min="1" :max="60" />
+							:
+							<el-input v-model="item.preset" placeholder="秒" style="width: 100px;" size="small" type="number" :min="1" :max="60" />
+						</div>
+						
 					</div>
-					<div class="itemBox" style="display: flex; align-items: center; margin-bottom: 10px;">
+					<!-- <div class="itemBox" style="display: flex; align-items: center; margin-bottom: 10px;">
 						<span class="itemBox_title" style="font-size: 13px; width: 70px;">分</span>
 						<el-input v-model="item.minute" placeholder="分"  style="width: 120px;" size="small" type="number" :min="1" :max="60" />
 					</div>
 					<div class="itemBox" style="display: flex; align-items: center; margin-bottom: 10px;">
 						<span class="itemBox_title" style="font-size: 13px; width: 70px;">秒</span>
 						<el-input v-model="item.preset" placeholder="秒" style="width: 120px;" size="small" type="number" :min="1" :max="60" />
-					</div>
+					</div> -->
+					
 				</div>
 
 				<div style="display: flex;justify-content: center;">

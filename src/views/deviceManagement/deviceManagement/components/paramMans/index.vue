@@ -19,9 +19,9 @@
             <el-tab-pane label="拍照时间表" name="photographySchedule">
                 <PhotographySchedule :deviceID="state.deviceID" v-if="state.type === 'photographySchedule'"/>
             </el-tab-pane>
-            <el-tab-pane label="主站下发参数" name="MainStationIssuesPara">
+            <!-- <el-tab-pane label="主站下发参数" name="MainStationIssuesPara">
                 <MainStationIssuesPara :deviceID="state.deviceID" v-if="state.type === 'MainStationIssuesPara'"/>
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane label="主站装置文件列表" name="MainStationDeviceFileList">
                 <MainStationDeviceFileList :deviceID="state.deviceID" v-if="state.type === 'MainStationDeviceFileList'"/>
             </el-tab-pane>

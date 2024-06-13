@@ -64,7 +64,7 @@ export default {
 
 		
 
-		// 查询
+		
 		async function myMainStationIssues() {
 			state.loading = true;
 			const res = await mainStationIssues({ deviceId: props.deviceID, keepAliveInterval: state.keepAliveInterval,

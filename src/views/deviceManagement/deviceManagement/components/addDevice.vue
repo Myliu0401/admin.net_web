@@ -15,7 +15,7 @@
 
 			<el-form-item label="通讯协议类型" prop="protocol">
 				<el-radio-group v-model="form.protocol" class="ml-4">
-					<el-radio :value="1" size="small">南方电网</el-radio>
+					<el-radio :value="1" size="small">NW</el-radio>
 					<el-radio :value="2" size="small">GB28181</el-radio>
 				</el-radio-group>
 			</el-form-item>

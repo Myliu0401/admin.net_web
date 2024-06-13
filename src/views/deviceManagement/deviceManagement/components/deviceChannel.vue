@@ -7,7 +7,7 @@
 		</div>
 		<div class="deviceChannelMain">
 			<el-table :data="state.channelList" :border="true" empty-text="暂无数据" max-height="60vh" style="width: 100%" v-loading="state.loading">
-				<el-table-column prop="id" label="id" :align="'center'" />
+				<el-table-column prop="code" label="code" :align="'center'" />
 				<el-table-column prop="createTime" label="创建时间" :align="'center'" />
 				<el-table-column prop="name" label="名称" :align="'center'" >
 					<template #default="scope">

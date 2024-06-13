@@ -82,3 +82,12 @@ export function getChannelVideo(data = {}){
     });
 }
 
+
+// 获取上级数据
+export function getSuperiorData(data = {}){
+    return request({
+        url: '/api/sysPole/parents',
+        method: 'post',
+        data
+    });
+}

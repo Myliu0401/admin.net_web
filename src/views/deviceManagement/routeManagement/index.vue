@@ -2,12 +2,13 @@
 	<div class="deviceManagement">
 		<div class="leftNavigation">
 			<div class="searchArea">
-				<el-input v-model="leftData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="getSpecificTreeShape"></el-input>
+				<el-input v-model="leftData.keyword" placeholder="搜索" suffix-icon="el-icon-search"
+					@change="getSpecificTreeShape"></el-input>
 			</div>
 			<div class="accordion">
-				<el-tree :data="leftData.myTrees" :props="defaultProps"
-				 :highlight-current="true" accordion @node-click="handleNodeClick" >
-				 <template v-slot="{ node, data }">
+				<el-tree :data="leftData.myTrees" :props="defaultProps" :highlight-current="true" accordion
+					@node-click="handleNodeClick">
+					<template v-slot="{ node, data }">
 						<p class="custom-tree-node" :title="data.code" style="width: 100%;">
 							{{ data.label }}
 						</p>
@@ -19,11 +20,13 @@
 		<div class="contentMain">
 			<div class="contentMain_searchArea">
 				<el-select v-model="state.countyId" filterable clearable placeholder="区县" style="width: 240px">
-					<el-option v-for="item in state.countys" :key="item.value" :label="item.label" :value="item.value" />
+					<el-option v-for="item in state.countys" :key="item.value" :label="item.label"
+						:value="item.value" />
 				</el-select>
 
 				<el-select v-model="state.voltageLevelId" clearable placeholder="电压" style="width: 240px">
-					<el-option v-for="item in state.voltageLevels" :key="item.value" :label="item.label" :value="item.value" />
+					<el-option v-for="item in state.voltageLevels" :key="item.value" :label="item.label"
+						:value="item.value" />
 				</el-select>
 
 				<el-button plain size="small" @click="search">搜索</el-button>
@@ -34,7 +37,8 @@
 			</div>
 
 			<div class="cotentMain_table">
-				<el-table :data="listData.lineList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
+				<el-table :data="listData.lineList" max-height="70vh" :border="true" empty-text="暂无数据"
+					style="width: 100%" v-loading="listData.loading">
 					<el-table-column prop="id" label="id" :align="'center'"> </el-table-column>
 					<el-table-column prop="createTime" label="创建时间" :align="'center'"> </el-table-column>
 					<el-table-column prop="name" label="线路名称" :align="'center'"> </el-table-column>
@@ -48,7 +52,8 @@
 					<el-table-column prop="countyId" label="直属区县Id" :align="'center'"> </el-table-column>
 					<el-table-column label="操作" width="70" :align="'center'">
 						<template #default="scope">
-							<el-text @click="openPopup('set', scope.row)" class="mx-1" type="primary" style="margin-right: 5px">修改</el-text>
+							<el-text @click="openPopup('set', scope.row)" class="mx-1" type="primary"
+								style="margin-right: 5px">修改</el-text>
 							<el-text @click="myDeletePole(scope.row)" class="mx-1" type="danger">删除</el-text>
 						</template>
 					</el-table-column>
@@ -61,17 +66,10 @@
 				<button class="button" @click="setPagination('nextPage')">下一页</button>
 			</div> -->
 
-			<el-pagination
-				v-model:currentPage="listData.page"
-				v-model:page-size="listData.pageSize"
-				:total="listData.totalPages"
-				:page-sizes="[10, 20, 50, 100]"
-				small
-				background
-				@size-change="handleSizeChange"
-				@current-change="handleCurrentChange"
-				layout="total, sizes, prev, pager, next, jumper"
-			/>
+			<el-pagination v-model:currentPage="listData.page" v-model:page-size="listData.pageSize"
+				:total="listData.totalPages" :page-sizes="[10, 20, 50, 100]" small background
+				@size-change="handleSizeChange" @current-change="handleCurrentChange"
+				layout="total, sizes, prev, pager, next, jumper" />
 		</div>
 
 		<AddTowerPole ref="addPole" :voltageLevels="state.voltageLevels" :countys="state.countys" @complete="search" />
@@ -106,7 +104,7 @@ const { listData, search, reset, setPagination, handleSizeChange, handleCurrentC
 
 onBeforeMount(() => {
 	getAllVoltageList(); // 获取全部电压等级
-	getAllCountys(); // 获取行政区
+	//getAllCountys(); // 获取行政区
 });
 
 // 选中树节点
@@ -171,6 +169,7 @@ async function getAllCountys() {
 		return {
 			value: item.id,
 			label: item.name,
+			...item
 		};
 	});
 };

@@ -11,12 +11,18 @@
 				<el-input v-model="state.portNumber" placeholder="端口号" />
 			</div>
 			<div class="itemBox">
-				<span class="itemBox_title">卡号</span>
+				<span class="itemBox_title">卡 号</span>
 				<el-input v-model="state.cardNumber" placeholder="卡号" />
 			</div>
-			<el-button type="primary" :loading="state.loading" style="margin-top: 10px" @click="myQueryMainSiteInfo">查询</el-button>
+			<div>
+				<el-button type="primary" :loading="state.loading" style="margin-top: 10px"
+					@click="myQueryMainSiteInfo">查询</el-button>
+				<el-button type="primary" :loading="state1.loading" style="margin-top: 10px"
+					@click="mySetMasterStationInfo">设置</el-button>
+			</div>
+
 		</div>
-		<div class="item">
+		<!-- <div class="item">
 			<span class="title">设置主站信息</span>
 			<div class="itemBox">
 				<span class="itemBox_title">IP地址</span>
@@ -31,7 +37,7 @@
 				<el-input v-model="state1.cardNumber" placeholder="卡号" />
 			</div>
 			<el-button type="primary" :loading="state1.loading" style="margin-top: 10px" @click="mySetMasterStationInfo">设置</el-button>
-		</div>
+		</div> -->
 	</div>
 </template>
 
@@ -65,7 +71,13 @@ export default {
 		// 查询
 		async function myQueryMainSiteInfo() {
 			state.loading = true;
-			const res = await queryMainSiteInfo({ deviceId: props.deviceID });
+			let res = null;
+			try {
+				res = await queryMainSiteInfo({ deviceId: props.deviceID });
+			} catch (err) {
+				state.loading = false;
+				return
+			}
 			state.loading = false;
 			state.IPAddress = res.data.result.ip;
 			state.portNumber = res.data.result.port;
@@ -78,13 +90,45 @@ export default {
 
 		// 设置
 		async function mySetMasterStationInfo() {
+			if (validate()) {
+				return
+			}
 			state1.loading = true;
-			const res = await setMasterStationInfo({ deviceId: props.deviceID, ip: state1.IPAddress, port: state1.portNumber, phone: state1.cardNumber });
+			try {
+				const res = await setMasterStationInfo({
+					deviceId: props.deviceID,
+					ip: state.IPAddress,
+					port: state.portNumber,
+					phone: state.cardNumber
+				});
+			} catch (err) {
+				state1.loading = false;
+				return
+			}
+
 			state1.loading = false;
 			ElMessage({
 				message: '设置成功',
 				type: 'success',
 			});
+		};
+
+		function validate() {
+			let tips = null;
+			if (!state.IPAddress) {
+				tips = '请输入ip地址';
+			} else if (!state.portNumber) {
+				tips = '请输入端口号';
+			} else if (!state.cardNumber) {
+				tips = '请输入卡号';
+			};
+
+			tips && ElMessage({
+				message: tips,
+				type: 'warning',
+			});
+
+			return tips;
 		}
 
 		return {
@@ -104,8 +148,9 @@ export default {
 	height: 100%;
 	display: flex;
 	flex-wrap: wrap;
+
 	.item {
-		width: 50%;
+		width: 100%;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
@@ -116,8 +161,7 @@ export default {
 			border-right: 1px solid #ccc;
 		}
 
-		&:nth-child(2) {
-		}
+		&:nth-child(2) {}
 
 		&:nth-child(3) {
 			border-top: 1px solid #ccc;
@@ -136,10 +180,12 @@ export default {
 			display: flex;
 			align-items: center;
 			margin-top: 10px;
+
 			.itemBox_title {
 				font-size: 12px;
 				white-space: pre;
 				margin-right: 15px;
+				width: 60px;
 			}
 		}
 	}

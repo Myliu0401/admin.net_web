@@ -7,7 +7,7 @@
 			</div>
 			<el-table :data="state.lists" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%"
 				v-loading="state.loading">
-				<el-table-column prop="id" label="设备id" width="180" :align="'center'" />
+				<el-table-column prop="code" label="设备id" width="180" :align="'center'" />
 				<el-table-column prop="name" label="设备名称" :align="'center'" />
 				<el-table-column prop="createTime" label="创建时间" :align="'center'" />
 				<el-table-column label="操作" :align="'center'" width="100">
