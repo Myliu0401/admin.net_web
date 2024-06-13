@@ -2,15 +2,13 @@
 	<div class="videoRecordingManagement">
 		<div class="videoRecordingManagement_leftNavs">
 			<div class="searchArea">
-				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search"
-					@change="search"></el-input>
+				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search"></el-input>
 			</div>
 
 			<div class="accordion">
-				<el-tree :key="treeData.myKey" :data="treeData.myTrees" :props="treeData.defaultProps"
-					:highlight-current="true" accordion @node-click="handleNodeClick">
+				<el-tree :key="treeData.myKey" :data="treeData.myTrees" :props="treeData.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick">
 					<template v-slot="{ node, data }">
-						<p class="custom-tree-node" :title="data.code" style="width: 100%;">
+						<p class="custom-tree-node" :title="data.code" style="width: 100%">
 							{{ data.name }}
 						</p>
 					</template>
@@ -20,16 +18,21 @@
 
 		<div class="mainContent">
 			<div class="selectionArea">
-				<el-date-picker style="margin-right: 10px; margin-top: 6px" size="small" v-model="listData.times"
-					type="datetimerange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" />
+				<el-date-picker
+					style="margin-right: 10px; margin-top: 6px"
+					size="small"
+					v-model="listData.times"
+					type="datetimerange"
+					range-separator="至"
+					start-placeholder="开始时间"
+					end-placeholder="结束时间"
+				/>
 
-				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px"
-					@click="conditionSearch">搜索</el-button>
+				<el-button size="small" style="margin-right: 10px; margin-left: 0px; margin-top: 6px" @click="conditionSearch">搜索</el-button>
 			</div>
 
 			<div class="videoRecordingManagement_contentBox" :class="{ tableType: true }">
-				<el-table :data="listData.lists" max-height="70vh" border style="width: 100%"
-					v-loading="listData.loading">
+				<el-table :data="listData.lists" max-height="70vh" border style="width: 100%" v-loading="listData.loading">
 					<el-table-column prop="id" label="告警id" width="70" align="center"> </el-table-column>
 					<el-table-column prop="channelId" label="通道id" align="center"> </el-table-column>
 					<el-table-column prop="preset" label="预置位" align="center"> </el-table-column>
@@ -41,22 +44,40 @@
 					</el-table-column>
 					<el-table-column prop="credibility" label="告警置信度" align="center"> </el-table-column>
 					<el-table-column label="图片">
-						<template #default="scope">
-							<el-image style="width: 100px; height: 100px" :src="scope.row.src" :zoom-rate="1.2" :max-scale="7"
-								:min-scale="0.2" :preview-src-list="[scope.row.src]" :initial-index="4" fit="cover" :teleported="true"/>
+						<template #default="scope"> 
+							<span @click="aa">12321</span>
 						</template>
 					</el-table-column>
 				</el-table>
-
 			</div>
 
-
-
-			<el-pagination style="display: flex; justify-content: end; padding-right: 20px"
-				v-model:currentPage="listData.page" v-model:page-size="listData.pageSize" :total="listData.totalPages"
-				:page-sizes="[10]" small background @size-change="handleSizeChange"
-				@current-change="handleCurrentChange" layout="total, sizes, prev, pager, next, jumper" />
+			<el-pagination
+				style="display: flex; justify-content: end; padding-right: 20px"
+				v-model:currentPage="listData.page"
+				v-model:page-size="listData.pageSize"
+				:total="listData.totalPages"
+				:page-sizes="[10]"
+				small
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				layout="total, sizes, prev, pager, next, jumper"
+			/>
 		</div>
+
+		<el-image
+		    ref="imgBox"
+			style="width: 0px; height: 0px; border-radius: 5px"
+			:src="'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'"
+			:zoom-rate="1.2"
+			:max-scale="7"
+			:z-index="24123111"
+			:min-scale="0.2"
+			:preview-src-list="['https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg']"
+			:initial-index="4"
+			fit="cover"
+			:teleported="false"
+		/>
 	</div>
 </template>
 
@@ -66,11 +87,13 @@ import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed } fr
 import treeInfo from './composition/tree.js';
 import listInfo from './composition/list.js';
 
+const imgBox = ref(null);
 
 const { treeData, search, handleNodeClick } = treeInfo(() => {
 	return { getPages, listData };
 });
 const { listData, getPages, conditionSearch, handleSizeChange, handleCurrentChange } = listInfo(treeData);
+
 
 const types = ref({
 	1: '吊车',
@@ -108,6 +131,9 @@ const actions = ref({
 	3: '联动I/O输出',
 });
 
+function aa(){
+	console.log(imgBox.value.$el.querySelector('img').click())
+}
 
 </script>
 

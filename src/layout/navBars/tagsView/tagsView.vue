@@ -1,6 +1,7 @@
 <template>
-	<div class="layout-navbars-tagsview" :class="{ 'layout-navbars-tagsview-shadow': getThemeConfig.layout === 'classic' }">
-		<el-scrollbar ref="scrollbarRef" @wheel.prevent="onHandleScroll">
+	<div class="layout-navbars-tagsview"
+	 :class="{ 'layout-navbars-tagsview-shadow': getThemeConfig.layout === 'classic' }" style="z-index: 1;">
+		<el-scrollbar ref="scrollbarRef" @wheel.prevent="onHandleScroll" >
 			<ul class="layout-navbars-tagsview-ul" :class="setTagsStyle" ref="tagsUlRef">
 				<li
 					v-for="(v, k) in state.tagsViewList"
