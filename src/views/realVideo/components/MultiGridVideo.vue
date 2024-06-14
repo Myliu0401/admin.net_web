@@ -384,8 +384,8 @@ export default {
 			const arr = [];
 
 			for (let i = index; i < s; i++) {
-				i + 1 >= index && arr.push(state.videoInfos[i + 1].currentNodeId);
-				i + 1 >= index && delete state.videoInfos[i + 1];
+				i + 1 >= index && state.videoInfos[i + 1] && arr.push(state.videoInfos[i + 1].currentNodeId);
+				i + 1 >= index && state.videoInfos[i + 1] && delete state.videoInfos[i + 1];
 			}
 
 			return arr;
