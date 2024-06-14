@@ -284,7 +284,7 @@ export default {
 			state.item = item;
 			state.id = item.id;
 			form.name = item.name;
-			form.poleId = form.poleId ? form.poleId : 0;
+			form.poleId = item.poleId ? item.poleId : 0;
 			form.remark = item.remark;
 			form.orderNo = item.orderNo;
 			form.onOffStatus = item.onOffStatus == 1 ? true : false;
@@ -303,10 +303,12 @@ export default {
 			form.protocol = item.protocol;
 
 			await myGetRegion(); // 获取所有省份列表
-
+			
 			if (form.poleId === 0) {
 				return
 			}
+
+
 
 			// 获取塔杆的上级
 			const res = await myGetSuperiorData({
@@ -462,6 +464,13 @@ export default {
 			form.customName = '';
 			form.code = '';
 			form.protocol = 1;
+
+			stateData.provinceId = null;  // 省
+			stateData.cityId = null;  // 市
+			stateData.areaId = null;  // 区
+			stateData.gradeId = null; // 等级
+			stateData.lineId = null; // 线路
+			stateData.poleId = null; // 塔杆
 		}
 
 		return {
