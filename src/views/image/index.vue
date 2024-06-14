@@ -37,8 +37,10 @@
 
 			<div class="videoRecordingManagement_contentBox" :class="{ tableType: state.conetntType === 'table' }">
 				<el-table v-if="state.conetntType === 'table'" :data="listData.lists" height="100%" border style="width: 100%" v-loading="listData.loading">
-					<el-table-column prop="id" label="id" align="center" />
+					<el-table-column prop="通道编号" label="id" align="center" />
+					<el-table-column prop="snapTime" label="通道名称" align="center" />
 					<el-table-column prop="snapTime" label="时间" align="center" />
+					<el-table-column prop="snapTime" label="图片名称" align="center" />
 					<el-table-column label="图片" align="center" width="70px">
 						<template #default="scope">
 							<el-tooltip
@@ -60,17 +62,18 @@
 								<el-image
 									class="img"
 									style="width: 100%"
-									:src="state.ipurl + item.filePath"
+									:src="/* state.ipurl +  */item.filePath"
 									:zoom-rate="1.2"
 									:max-scale="7"
 									:min-scale="0.2"
-									:preview-src-list="[state.ipurl + item.filePath]"
+									:preview-src-list="[/* state.ipurl +  */item.filePath]"
 									:initial-index="0"
 									fit="cover"
 								/>
 							</div>
 
 							<p class="li_text">{{ item.snapTime }}</p>
+							<p class="li_text">{{ '通道名称' }}</p>
 						</li>
 						<li class="li" v-for="item in state.quantityPerRow" :key="item + ']'"></li>
 					</ul>
@@ -105,146 +108,9 @@ const state = reactive({
 	times: [new Date(), new Date()],
 	keyword: '',
 
-	tableData: [
-		{
-			date: '2016-05-03',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-02',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-04',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-01',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-08',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-06',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-		{
-			date: '2016-05-07',
-			name: '王小虎',
-			address: '上海市普陀区金沙江路 1518 弄',
-		},
-	],
+	tableData: [],
 
-	imgs: [
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-		{
-			id: 1,
-			src: 'https://pic.rmb.bdstatic.com/bjh/914b8c0f9814b14c5fedeec7ec6615df5813.jpeg',
-			date: '2023-09-10 12:00:15',
-		},
-	],
+	imgs: [],
 
 	quantityPerRow: 0,
 

@@ -66,7 +66,7 @@ export default function (state, multiGridVideo) {
 
 		if (bo1 && bo2 && bo3) {
 			treeData.passageway.push(a);
-			new multiGridVideo.value.createVideoInstance(a.currentNodeId, a.id);
+			new multiGridVideo.value.createVideoInstance(a.currentNodeId, a.id, a.name);
 		}
 
 		setTimeout(addAClassToANode); // 添加样式
@@ -156,7 +156,7 @@ export default function (state, multiGridVideo) {
 
 		// 添加
 		for (let i = 0; i < treeData.passageway.length; i++) {
-			const node = document.querySelector(`.${treeData.passageway[i].currentNodeId}`);
+			const node = document.querySelector(`.${treeData.passageway[i].currentNodeId}`); 
 			node && !node.classList.contains('active') && node.classList.add('active');
 		}
 	}

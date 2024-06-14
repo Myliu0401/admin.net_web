@@ -45,7 +45,11 @@
 					<el-table-column prop="credibility" label="告警置信度" align="center"> </el-table-column>
 					<el-table-column label="图片">
 						<template #default="scope"> 
-							<span @click="aa">12321</span>
+							<img 		
+						     	 style="width: 30px; height: 30px; border-radius: 4px; cursor: pointer;" 
+								 :src="scope.row.src" 
+								 @click="clickImg(scope.row)"
+							/>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -68,12 +72,12 @@
 		<el-image
 		    ref="imgBox"
 			style="width: 0px; height: 0px; border-radius: 5px"
-			:src="'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'"
+			:src="state.imgSrc"
 			:zoom-rate="1.2"
 			:max-scale="7"
 			:z-index="24123111"
 			:min-scale="0.2"
-			:preview-src-list="['https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg']"
+			:preview-src-list="[state.imgSrc]"
 			:initial-index="4"
 			fit="cover"
 			:teleported="false"
@@ -88,6 +92,10 @@ import treeInfo from './composition/tree.js';
 import listInfo from './composition/list.js';
 
 const imgBox = ref(null);
+
+const state = reactive({
+	imgSrc: null
+});
 
 const { treeData, search, handleNodeClick } = treeInfo(() => {
 	return { getPages, listData };
@@ -131,8 +139,9 @@ const actions = ref({
 	3: '联动I/O输出',
 });
 
-function aa(){
-	console.log(imgBox.value.$el.querySelector('img').click())
+function clickImg(item){
+	state.imgSrc = item.src;
+	imgBox.value.$el.querySelector('img').click()
 }
 
 </script>

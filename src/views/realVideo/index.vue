@@ -2,10 +2,12 @@
 	<div class="realTimeVideo">
 		<div class="realTimeVideo_leftNavs">
 			<div class="searchArea">
-				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search"> </el-input>
+				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search">
+				</el-input>
 			</div>
 			<div class="accordion">
-				<el-tree :key="treeData.myKey" show-checkbox :load="loadNode" lazy :props="treeData.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick">
+				<el-tree :key="treeData.myKey" show-checkbox :load="loadNode" lazy :props="treeData.defaultProps"
+					:highlight-current="true" accordion @node-click="handleNodeClick">
 					<template v-slot="{ node, data }">
 						<p class="custom-tree-node" :title="data.code" style="width: 100%;">
 							{{ data.name }}
@@ -19,7 +21,9 @@
 
 				<div class="content">
 					<div class="circle-btn">
-						<el-icon v-for="text in ['Up', 'UpRight', 'Right', 'DownRight', 'Down', 'Left', 'DownLeft', 'UpLeft']" :size="27" :key="text" color="#ccc" @click="clickGimbal(text)">
+						<el-icon
+							v-for="text in ['Up', 'UpRight', 'Right', 'DownRight', 'Down', 'Left', 'DownLeft', 'UpLeft']"
+							:size="27" :key="text" color="#ccc" @click="clickGimbal(text)">
 							<ele-CaretTop />
 						</el-icon>
 
@@ -83,28 +87,29 @@
 			</div>
 			<div class="domain">
 				<div class="domain_left">
-					<!-- <div class="item">
-						<img class="weiduyip" src="../../assets/realTimeVideo/1.png" />
-					</div> -->
+				
 
 					<div class="item">
 						<img class="weiduyip" src="../../assets/realTimeVideo/2.png" @click.stop="fullScreen" />
 					</div>
 					<div class="item">
-						<img class="weiduyip" :class="{ down: state.isDown }" src="../../assets/realTimeVideo/3.png" @click="recordingAudio" />
+						<img class="weiduyip" :class="{ down: state.isDown }" src="../../assets/realTimeVideo/3.png"
+							@click="recordingAudio" />
 					</div>
 					<div class="item">
 						<img class="weiduyip" src="../../assets/realTimeVideo/4.png" @click.stop="screenshot" />
 					</div>
 					<div class="item">
 						<span class="text" v-if="state.isRecording">录制中...</span>
-						<img class="weiduyip" src="../../assets/realTimeVideo/5.png" @click.stop="recordingAndDownloading" />
+						<img class="weiduyip" src="../../assets/realTimeVideo/5.png"
+							@click.stop="recordingAndDownloading" />
 					</div>
 					<div class="item">
 						<img class="weiduyip" src="../../assets/realTimeVideo/6.png" />
 
 						<div class="progressBarSlider">
-							<el-slider size="small" :min="0" :max="100" v-model="volume" :show-tooltip="false" @input="adjustingVolume"></el-slider>
+							<el-slider size="small" :min="0" :max="100" v-model="volume" :show-tooltip="false"
+								@input="adjustingVolume"></el-slider>
 						</div>
 					</div>
 				</div>
@@ -147,7 +152,7 @@ const { gimbalData, clickGimbal } = gimbalInfo(treeData, multiGridVideo);
 
 //================================//
 
-onMounted(() => {});
+onMounted(() => { });
 
 //=======================================================================================================//
 
@@ -197,7 +202,7 @@ function screenshot() {
 
 // 调节音量
 function adjustingVolume(value) {
-	
+
 	multiGridVideo.value.adjustingVolume(value);
 }
 
@@ -263,6 +268,6 @@ const broadcastStatusClick = async () => {
 @import './index.scss';
 </style>
 
-<style  lang="scss">
+<style lang="scss">
 @import './index.scss';
 </style>

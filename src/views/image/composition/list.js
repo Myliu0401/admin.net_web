@@ -36,8 +36,15 @@ export default function (treeData, getQuantityPerRow) {
         listData.loading = false;
         listData.totalPages = res.data.result.total;
         listData.lists = res.data.result.items;
+        
+        listData.lists = [
+            { snapTime: '2024-06-07', filePath: 'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'  },
+            { snapTime: '2024-06-07', filePath: 'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'  },
+            { snapTime: '2024-06-07', filePath: 'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'  },
+            { snapTime: '2024-06-07', filePath: 'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'  }
+        ]
 
-        setTimeout(()=>{getQuantityPerRow()}, 20)
+        setTimeout(()=>{getQuantityPerRow()}, 200)
     };
 
 

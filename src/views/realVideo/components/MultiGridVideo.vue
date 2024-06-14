@@ -18,6 +18,10 @@
 				</div>
 				<el-text v-if="state.videoInfos[num] && state.videoInfos[num].isBroadcasting" class="guanbo"
 					type="danger" size="small">广播中...</el-text>
+				<el-text v-if="state.videoInfos[num]" class="guanbo" size="small"
+					style="position: absolute; left: 50%; transform: translateX(-50%); top: 0px;color: #fff; text-align: center;">
+					通道名称:{{ state.videoInfos[num].passagewayName }}</el-text>
+
 				<div class="myVideo"></div>
 			</li>
 		</ul>
@@ -25,6 +29,8 @@
 		<teleport to="#app">
 			<PullFrame :videoInfos="state.videoInfos" :activeNum="state.activeNum" :currentGrid="currentGrid" />
 		</teleport>
+
+		<span style="display: none;">{{ state.random }}</span>
 	</div>
 </template>
 
@@ -52,6 +58,10 @@ export default {
 			activeNum: null, // 当前选中的格子
 
 			videoInfos: {}, // 视频数据
+
+			random: null,
+
+			randomId: null
 		});
 
 		watch(
@@ -84,10 +94,16 @@ export default {
 
 		onBeforeMount(() => {
 			window.addEventListener('click', deselect);
+
+			state.randomId = setInterval(() => {
+				state.random = Math.random();
+			}, 2000);
 		});
 
 		onBeforeUnmount(() => {
 			window.removeEventListener('click', deselect);
+
+			clearInterval(state.randomId);
 
 			const s = Object.keys(state.videoInfos);
 
@@ -130,7 +146,7 @@ export default {
 				res = await getMyPlaybackURL({
 					id: state.videoInfos[num].id,
 				});
-	
+
 			} catch (err) {
 				state.videoInfos[num].loading = false;
 				return;
@@ -138,11 +154,10 @@ export default {
 
 			state.videoInfos[num].create(num);
 			state.videoInfos[num].play(res.data.result);
+			state.videoInfos[num].loading = false;
 
 
-			setTimeout(() => {
-				state.videoInfos[num].loading = false;
-			}, 1000)
+
 		}
 
 		function getDuiYin() {
@@ -169,16 +184,18 @@ export default {
 
 		// 创建视频实例
 		class createVideoInstance {
-			constructor(currentNodeId, id) {
+			constructor(currentNodeId, id, name) {
 
+				// 判断选择宽中是否已经有数据
 				if (state.videoInfos[state.activeNum]) {
 					state.activeNum = null;
 				}
 
 				state.videoInfos[state.activeNum || getDuiYin()] = this;
-				this.currentNodeId = currentNodeId;
+				this.currentNodeId = currentNodeId; // 随机的唯一id
 				this.loading = false;
-				this.id = id;
+				this.id = id; // 通道id
+				this.passagewayName = name; // 通道名称
 				this.player = null;
 				this.isBroadcasting = false; // 是否广播中
 				state.activeNum = null;
@@ -261,7 +278,9 @@ export default {
 				if (!this.example) {
 					return;
 				}
-				return this.example.play(url, options);
+				let bool = false;
+				bool = this.example.play(url, options);
+				return bool;
 			}
 
 			// 重新调整视图大小
@@ -317,8 +336,13 @@ export default {
 				if (!this.example) {
 					return;
 				}
-				
-				return this.example.isPlaying();
+
+				let bool = false;
+
+				bool = this.example.isPlaying();
+
+				return bool;
+
 			}
 
 			// 返回是否静音
@@ -501,7 +525,7 @@ export default {
 				recvOnly: false,
 			});
 
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_REMOTE_STREAMS,  (e)=> {
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_REMOTE_STREAMS, (e) => {
 				//获取到了远端流，可以播放
 				console.log('播放成功', e.streams);
 				ElMessage({
@@ -555,7 +579,7 @@ export default {
 				});
 			});
 
-			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED,  (s)=> {
+			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, (s) => {
 				// 获取本地流失败
 
 				console.log('获取本地流失败');
@@ -566,31 +590,31 @@ export default {
 				});
 			});
 
-			player.on(ZLMRTCClient.Events.NEBRTC_NOT_SUPPORT, (e)=>{
+			player.on(ZLMRTCClient.Events.NEBRTC_NOT_SUPPORT, (e) => {
 				console.log('NEBRTC_NOT_SUPPORT', e)
 			});
 
-			player.on(ZLMRTCClient.Events.NEBRTC_ON_LOCAL_STREAM, (e)=>{
+			player.on(ZLMRTCClient.Events.NEBRTC_ON_LOCAL_STREAM, (e) => {
 				console.log('NEBRTC_ON_LOCAL_STREAM', e)
 			});
 
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_OPEN, (e)=>{
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_OPEN, (e) => {
 				console.log('WEBRTC_ON_DATA_CHANNEL_OPEN', e)
 			});
 
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_CLOSE, (e)=>{
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_CLOSE, (e) => {
 				console.log('WEBRTC_ON_DATA_CHANNEL_CLOSE', e)
 			});
 
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_ERR, (e)=>{
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_ERR, (e) => {
 				console.log('WEBRTC_ON_DATA_CHANNEL_ERR', e)
 			});
 
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_MSG, (e)=>{
+			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_MSG, (e) => {
 				console.log('WEBRTC_ON_DATA_CHANNEL_MSG', e)
 			});
-		
-			
+
+
 			/* player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, function (e) {
 				// ICE 协商出错
 				console.log('ICE 协商出错');
