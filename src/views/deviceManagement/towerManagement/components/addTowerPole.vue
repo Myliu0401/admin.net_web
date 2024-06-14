@@ -35,11 +35,38 @@
 					</el-form-item>
 
 					<el-form-item label="直属线路">
-						<el-select v-model="item.lineId" clearable placeholder="直属线路" size="small"
-							style="width: 150px; min-width: 150px; margin-right: 10px">
-							<el-option v-for="item1 in railLines" :key="item1.value" :label="item1.label"
-								:value="item1.value">
-							</el-option>
+						<el-select v-model="item.xinzheng.provinceId" placeholder="省" size="small"
+							style="width: 100px !important; margin-right: 10px; margin-bottom: 5px;"
+							@change="myGetRegionList('省', $event, index)">
+							<el-option v-for="item1 in stateData.province" :key="item1.id" :label="item1.name"
+								:value="item1.id" />
+						</el-select>
+
+						<el-select v-model="item.xinzheng.cityId" placeholder="市" size="small"
+							style="width: 100px !important; margin-right: 10px; margin-bottom: 5px;"
+							@change="myGetRegionList('市', $event, index)">
+							<el-option v-for="item1 in stateData.city[item.xinzheng.provinceId]" :key="item1.id"
+								:label="item1.name" :value="item1.id" />
+						</el-select>
+
+						<el-select v-model="item.xinzheng.areaId" placeholder="区" size="small"
+							style="width: 100px !important; margin-right: 10px; margin-bottom: 5px;"
+							@change="myGetRegionList('区', $event, index)">
+							<el-option v-for="item1 in stateData.area[item.xinzheng.cityId]" :key="item1.id"
+								:label="item1.name" :value="item1.id" />
+						</el-select>
+
+						<el-select v-model="item.xinzheng.gradeId" placeholder="等级" size="small"
+							style="width: 100px !important; margin-right: 10px; margin-bottom: 5px;"
+							@change="myGetRailLine($event, index)">
+							<el-option v-for="item1 in stateData.grade" :key="item1.id" :label="item1.name"
+								:value="item1.id" />
+						</el-select>
+
+						<el-select v-model="item.xinzheng.lineId" placeholder="线路" size="small"
+							style="width: 100px !important; margin-right: 10px; margin-bottom: 5px;">
+							<el-option v-for="item1 in stateData.line[item.xinzheng.gradeId]" :key="item1.id"
+								:label="item1.name" :value="item1.id" />
 						</el-select>
 					</el-form-item>
 
@@ -69,9 +96,10 @@
 
 <script>
 import { defineProps, reactive, defineComponent, ref, defineEmits, onMounted } from 'vue';
-import { addToerPoles } from '/@/api/deviceManagement/index.js';
+import { addToerPoles, getRegionList, getVoltageLevel, getRailLine, } from '/@/api/deviceManagement/index.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { conforms } from 'lodash-es';
+import { getRegion, getSuperiorData } from '/@/api/visualLargeScreen/index.js';
 export default defineComponent({
 	props: {
 		railLines: {
@@ -103,7 +131,15 @@ export default defineComponent({
 				property: undefined, // 性质
 
 				mapExample: null,
-				keyword: ''
+				keyword: '',
+
+				xinzheng: {
+					provinceId: null,  // 省
+					cityId: null,  // 市
+					areaId: null,  // 区
+					gradeId: null, // 等级
+					lineId: null, // 线路
+				}
 			}
 		]);
 
@@ -112,9 +148,80 @@ export default defineComponent({
 			lineId: [{ required: true, message: '必须选择线路', trigger: 'blur' }],
 		});
 
+		const stateData = reactive({
+			province: [],
+			city: {
+
+			},
+			area: {
+
+			},
+			grade: [], // 等级
+			line: { // 线路
+
+			},
+		});
+
+		// 获取所有省份
+		async function myGetRegion() {
+			const res = await getRegion(0);
+			stateData.province = res.data.result;
+		};
+
+		// 获取省以下级别
+		async function myGetRegionList(type, pid, index) {
+			if (type === '省' && stateData.city[pid] || type === '市' && stateData.area[pid]) {
+				return
+			}
+			if (type === '区') {
+				myGetVoltageLevel(index);
+				return
+			}
+			const res = await getRegionList({
+				page: 1,
+				pageSize: 10000,
+				pid,
+			});
+
+
+			if (type === '省' && !stateData.city[pid]) {
+
+				stateData.city[pid] = res.data.result.items;
+
+				form.value[index].xinzheng.cityId = null;
+
+			} else if (type === '市' && !stateData.area[pid]) {
+				stateData.area[pid] = res.data.result.items;
+
+			}
+
+			form.value[index].xinzheng.areaId = null;
+			form.value[index].xinzheng.gradeId = null;
+			form.value[index].xinzheng.lineId = null;
+		};
+
+		// 获取等级列表
+		async function myGetVoltageLevel(index) {
+			const res = await getVoltageLevel();
+			stateData.grade = res.data.result;
+			form.value[index].xinzheng.lineId = null;
+		};
+
+
+		// 获取线路
+		async function myGetRailLine(id, index) {
+			const res = await getRailLine({
+				countyId: form.value[index].xinzheng.areaId, // 区县id
+				voltageLevelId: id, // 电压等级
+			});
+			stateData.line[id] = res.data.result;
+
+		};
+
 		// 开启弹窗
 		function open() {
 			state.dialogVisible = true;
+			myGetRegion();
 			setTimeout(() => {
 				initBaiduMap(0)
 			}, 200);
@@ -128,9 +235,13 @@ export default defineComponent({
 
 		async function submitForm(ruleFormRef) {
 
+			form.value.forEach((item) => {
+				item.xinzheng.lineId && (item.lineId = item.xinzheng.lineId)
+			});
+
 			if (validate()) {
 				return
-			}
+			};
 
 			state.loading = true;
 			const arr = form.value.map((item) => {
@@ -147,7 +258,7 @@ export default defineComponent({
 				}
 			});
 			try {
-				await addToerPoles(arr);
+				await addToerPoles({ poles: arr });
 			} catch (err) {
 				state.loading = false;
 				return
@@ -205,7 +316,14 @@ export default defineComponent({
 				material: undefined, // 材质
 				property: undefined, // 性质
 				mapExample: null,
-				keyword: ''
+				keyword: '',
+				xinzheng: {
+					provinceId: null,  // 省
+					cityId: null,  // 市
+					areaId: null,  // 区
+					gradeId: null, // 等级
+					lineId: null, // 线路
+				}
 			})
 		}
 
@@ -228,6 +346,14 @@ export default defineComponent({
 				latitude: undefined,
 				material: undefined, // 材质
 				property: undefined, // 性质
+
+				xinzheng: {
+					provinceId: null,  // 省
+					cityId: null,  // 市
+					areaId: null,  // 区
+					gradeId: null, // 等级
+					lineId: null, // 线路
+				}
 			});
 			setTimeout(() => {
 				initBaiduMap(form.value.length - 1)
@@ -250,7 +376,9 @@ export default defineComponent({
 					tips = `第${i + 1}项材质不能为空`;
 				} else if (!item.property) {
 					tips = `第${i + 1}项性质不能为空`;
-				};
+				} else if (!item.lineId) {
+					tips = `第${i + 1}项必须选择线路`;
+				}
 				if (tips) {
 					break;
 				}
@@ -264,7 +392,21 @@ export default defineComponent({
 			return tips;
 		}
 
-		return { state, open, close, form, rules, submitForm, ruleFormRef, search, removeItem, addItem };
+		return {
+			state,
+			open,
+			close,
+			form,
+			rules,
+			submitForm,
+			ruleFormRef,
+			search,
+			removeItem,
+			addItem,
+			stateData,
+			myGetRegionList,
+			myGetRailLine
+		};
 	},
 });
 </script>
@@ -324,7 +466,7 @@ export default defineComponent({
 	}
 }
 
-.el-form-item__content{
+.el-form-item__content {
 	flex: 0;
 }
 </style>

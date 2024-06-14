@@ -260,3 +260,31 @@ export function setDevice(data = {}){
 };
 
 
+// 获取等级列表
+export function getVoltageLevel(data = {}){
+   return request({
+      url: '/api/sysVoltageLevel/list',
+      method: 'post',
+      data
+   });
+};
+
+
+// 获取线路
+export function getRailLine(data = {}){
+   return request({
+      url: '/api/sysRailLine/list',
+      method: 'post',
+      data
+   });
+};
+
+
+// 获取塔杆
+export function getPole(data = {}){
+   return request({
+      url: '/api/sysPole/list',
+      method: 'post',
+      data
+   });
+}

@@ -39,11 +39,11 @@
 						</template>
 					</el-table-column>
 					<el-table-column prop="signalStrength" label="无线信号强度" :align="'center'" width="110" />
-					<el-table-column prop="batteryVoltage" label="电池电压单位" :align="'center'" width="110" />
+					<el-table-column prop="batteryVoltage" label="电池电压" :align="'center'" width="110" />
 					<el-table-column prop="imei" label="IMEI/MEID" :align="'center'" />
 					<el-table-column prop="phone" label="电话" :align="'center'" />
 					<el-table-column prop="type" label="类型" :align="'center'" />
-					<el-table-column prop="lensType" label="静态类别" :align="'center'" />
+					<el-table-column prop="lensType" label="镜头类别" :align="'center'" />
 					<el-table-column prop="model" label="装置型号" :align="'center'" />
 					<el-table-column prop="installDate" label="安装日期" :align="'center'" />
 					<el-table-column prop="networkType" label="网络类型" :align="'center'" />

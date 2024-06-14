@@ -38,9 +38,13 @@
 			<div class="videoRecordingManagement_contentBox" :class="{ tableType: state.conetntType === 'table' }">
 				<el-table v-if="state.conetntType === 'table'" :data="listData.lists" height="100%" border style="width: 100%" v-loading="listData.loading">
 					<el-table-column prop="通道编号" label="id" align="center" />
-					<el-table-column prop="snapTime" label="通道名称" align="center" />
+					<el-table-column prop="name" label="通道名称" align="center" />
 					<el-table-column prop="snapTime" label="时间" align="center" />
-					<el-table-column prop="snapTime" label="图片名称" align="center" />
+					<el-table-column label="图片名称" align="center" >
+						<template #default="scope">
+							<span>{{ getImgName(scope.row.filePath) }}</span>
+						</template>
+					</el-table-column>
 					<el-table-column label="图片" align="center" width="70px">
 						<template #default="scope">
 							<el-tooltip
@@ -73,7 +77,7 @@
 							</div>
 
 							<p class="li_text">{{ item.snapTime }}</p>
-							<p class="li_text">{{ '通道名称' }}</p>
+							<p class="li_text">{{ item.name }}</p>
 						</li>
 						<li class="li" v-for="item in state.quantityPerRow" :key="item + ']'"></li>
 					</ul>
@@ -149,7 +153,18 @@ const listState = computed(() => {
 
 function change(e) {
 	console.log(state.times);
-}
+};
+
+
+function getImgName(filePath){
+    if(!filePath){
+         return
+	};
+	let fileName = filePath.split('/').pop();
+
+	return fileName;
+};
+
 
 // 获取每行的数量
 function getQuantityPerRow() {
