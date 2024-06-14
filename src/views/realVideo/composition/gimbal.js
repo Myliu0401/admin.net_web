@@ -3,6 +3,11 @@ import { myPanTiltControl } from '/@/api/realTimeVideo/index.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default function (treeData, multiGridVideo) {
+
+    const state = reactive({
+        pressAndHold: false, // 是否按住
+    });
+
     const gimbalData = reactive({
         speed: 127, // 移动速度
         Up: undefined, // 上
@@ -34,7 +39,8 @@ export default function (treeData, multiGridVideo) {
                 message: '请先选择通道',
                 type: 'warning',
             });
-           return
+
+           return false
         };
 
         switch (type) {
@@ -79,8 +85,30 @@ export default function (treeData, multiGridVideo) {
 			message: '成功',
 			type: 'success',
 		});
+
+        return true;
+    };
+
+    async function contentMousedown(type, bool = false){
+        if(bool && !state.pressAndHold){
+           return
+        }
+        bool || window.addEventListener('mouseup', mouseup);
+        bool || (state.pressAndHold = true);
+        const boolean = await clickGimbal(type);
+        if(!boolean){
+            return
+        }
+        contentMousedown(type, true);
     };
 
 
-    return { gimbalData, clickGimbal };
+    function mouseup(){
+        clickGimbal('Stop');
+        state.pressAndHold = false;
+        window.removeEventListener('mouseup', mouseup);
+    };
+
+
+    return { gimbalData, clickGimbal, contentMousedown };
 };

@@ -202,6 +202,7 @@ export default {
 			}
 
 			create(num) {
+				this.destroy();
 				this.example = new window.Jessibuca({
 					container: document.querySelectorAll('.multiGridVideo .myVideo')[num - 1],
 					videoBuffer: 1,
