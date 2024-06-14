@@ -64,7 +64,7 @@
 							<el-text class="mx-1" :type="scope.row.okFailureStatus == 1 ? 'success' : 'warning'">{{ scope.row.okFailureStatus == 1 ? '正常' : '故障' }}</el-text>
 						</template>
 					</el-table-column>
-					<el-table-column label="操作" width="70" :align="'center'">
+					<el-table-column label="操作" width="70" :align="'center'" fixed="right">
 						<template #default="scope">
 							<el-text style="margin-right: 5px" @click="openPopup('set', scope.row)" class="mx-1" type="primary">修改</el-text>
 							<el-text style="margin-right: 5px" class="mx-1" type="danger" @click="myDeleteDevice(scope.row)">删除</el-text>

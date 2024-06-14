@@ -18,7 +18,7 @@
 				<el-input v-model="form.remark" />
 			</el-form-item>
 
-			<el-form-item label="code">
+			<el-form-item label="code" prop="code">
 				<el-input v-model="form.code" />
 			</el-form-item>
 
@@ -42,9 +42,9 @@
 				<el-switch inline-prompt active-text="正常" inactive-text="故障" v-model="form.okFailureStatus" />
 			</el-form-item>
 
-			<!-- <el-form-item label="是否启用定时截图">
+			<el-form-item label="是否启用定时截图">
 				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.enableSnapshot" />
-			</el-form-item> -->
+			</el-form-item>
 
 			<el-form-item label="截图时段" v-if="form.enableSnapshot">
 				<div class="itemBox">
@@ -102,7 +102,7 @@ export default {
 			orderNo: undefined, // 排序
 			deviceId: undefined, // 直属设备id
 			status: undefined, // 通用状态
-			enableSnapshot: true, // 是否启用定时截图
+			enableSnapshot: false, // 是否启用定时截图
 			snapInterval: 5, // 定时截图的间隔时间，分钟数
 			code: undefined,
 			hasPtz: false,
@@ -112,6 +112,7 @@ export default {
 		const rules = reactive({
 			/* name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }], */
 			customName: [{ required: true, message: '必须输入自定义名称', trigger: 'blur' }],
+			code: [{ required: true, message: '必须输入code编码', trigger: 'blur' }]
 		});
 
 		// 开启弹窗
@@ -130,6 +131,7 @@ export default {
 
 		// 转换日期格式
 		function formatTime(date) {
+		    date = typeof(date) === 'number' ? new Date(date) : date;
 			var hours = date.getHours().toString().padStart(2, '0');
 			var minutes = date.getMinutes().toString().padStart(2, '0');
 			var seconds = date.getSeconds().toString().padStart(2, '0');
@@ -139,9 +141,11 @@ export default {
 		async function submitForm(ruleFormRef) {
 		
 			const bool = await ruleFormRef.validate();
+			
 			if (!bool) {
 				return;
 			}
+			
 			state.loading = true;
 			try {
 				await addChannel({
@@ -162,6 +166,7 @@ export default {
 				});
 
 			} catch (err) {
+				console.log(err)
 				state.loading = false;
 				return;
 			}

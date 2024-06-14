@@ -1,6 +1,5 @@
 <template>
-	<el-dialog title="修改通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%"
-		:before-close="close">
+	<el-dialog title="修改通道" v-model="state.dialogVisible" :close-on-click-modal="false" width="50%" :before-close="close">
 		<el-form v-loading="state.loading" ref="ruleFormRef" :model="form" :rules="rules" label-width="100px">
 			<el-form-item label="设备名称">
 				<el-input v-model="form.name" disabled />
@@ -16,6 +15,10 @@
 
 			<el-form-item label="备注">
 				<el-input v-model="form.remark" />
+			</el-form-item>
+
+			<el-form-item label="code" prop="code">
+				<el-input v-model="form.code" />
 			</el-form-item>
 
 			<el-form-item label="排序">
@@ -34,7 +37,7 @@
 				<el-switch inline-prompt active-text="正常" inactive-text="故障" v-model="form.okFailureStatus" />
 			</el-form-item>
 
-			<el-form-item label="定时截图">
+			<el-form-item label="是否启用定时截图">
 				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.enableSnapshot" />
 			</el-form-item>
 
@@ -105,6 +108,7 @@ export default {
 		const rules = reactive({
 			/* name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }], */
 			customName: [{ required: true, message: '必须输入自定义名称', trigger: 'blur' }],
+			code: [{ required: true, message: '必须输入code编码', trigger: 'blur' }],
 		});
 
 		// 开启弹窗
@@ -163,7 +167,6 @@ export default {
 
 		// 提交
 		async function submitForm(ruleFormRef) {
-			
 			const bool = await ruleFormRef.validate();
 
 			if (!bool) {
@@ -201,11 +204,8 @@ export default {
 			});
 			close();
 
-
 			window.deviceChannelList();
-
-		};
-
+		}
 
 		// 清空数据
 		function wipeData() {
