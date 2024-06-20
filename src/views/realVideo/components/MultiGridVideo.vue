@@ -5,7 +5,7 @@
 				yige: currentGridNum === 1,
 				liange: currentGridNum === 4,
 				shangge: currentGridNum === 9,
-				active: state.activeNum === num
+				active: state.activeNum === num,
 			}" @click.stop="selectGrid(num)">
 				<el-button style="z-index: 111" :icon="Close" circle @click.stop="closeVideo(num)"
 					v-if="state.videoInfos[num]" />
@@ -13,13 +13,26 @@
 				<div class="mongolianLayer" v-if="state.videoInfos[num] && !state.videoInfos[num].isPlaying()">
 					<el-button v-if="!state.videoInfos[num].loading" :icon="CaretRight" circle
 						@click.stop="playVideo(num)" />
-					<el-icon v-else
-						style="color: #fff; font-size: 30px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><ele-Loading /></el-icon>
+					<el-icon v-else style="
+							color: #fff;
+							font-size: 30px;
+							position: absolute;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+						"><ele-Loading /></el-icon>
 				</div>
 				<el-text v-if="state.videoInfos[num] && state.videoInfos[num].isBroadcasting" class="guanbo"
 					type="danger" size="small">广播中...</el-text>
-				<el-text v-if="state.videoInfos[num]" class="guanbo" size="small"
-					style="position: absolute; left: 50%; transform: translateX(-50%); top: 0px;color: #fff; text-align: center;">
+				<el-text v-if="state.videoInfos[num]" class="guanbo" size="small" style="
+						position: absolute;
+						left: 50%;
+						transform: translateX(-50%);
+						top: 0px;
+						color: #fff;
+						text-align: center;
+						z-index: 11;
+					">
 					通道名称:{{ state.videoInfos[num].passagewayName }}</el-text>
 
 				<div class="myVideo"></div>
@@ -30,11 +43,9 @@
 			<PullFrame :videoInfos="state.videoInfos" :activeNum="state.activeNum" :currentGrid="currentGrid" />
 		</teleport>
 
-		<span style="display: none;">{{ state.random }}</span>
+		<span style="display: none">{{ state.random }}</span>
 	</div>
 </template>
-
-
 
 <script name="MultiGridVideo">
 import { defineProps, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed, watch } from 'vue';
@@ -61,7 +72,7 @@ export default {
 
 			random: null,
 
-			randomId: null
+			randomId: null,
 		});
 
 		watch(
@@ -124,6 +135,8 @@ export default {
 			} else {
 				state.activeNum = num;
 			}
+			const example = state.videoInfos[state.activeNum || geta()];
+			emit('switchGrid', example ? example.volume : 0);
 		}
 
 		// 关闭视频
@@ -146,7 +159,6 @@ export default {
 				res = await getMyPlaybackURL({
 					id: state.videoInfos[num].id,
 				});
-
 			} catch (err) {
 				state.videoInfos[num].loading = false;
 				return;
@@ -155,8 +167,6 @@ export default {
 			state.videoInfos[num].create(num);
 			state.videoInfos[num].play(res.data.result);
 			state.videoInfos[num].loading = false;
-
-
 
 		}
 
@@ -185,7 +195,6 @@ export default {
 		// 创建视频实例
 		class createVideoInstance {
 			constructor(currentNodeId, id, name) {
-
 				// 判断选择宽中是否已经有数据
 				if (state.videoInfos[state.activeNum]) {
 					state.activeNum = null;
@@ -198,6 +207,7 @@ export default {
 				this.passagewayName = name; // 通道名称
 				this.player = null;
 				this.isBroadcasting = false; // 是否广播中
+				this.volume = 50; // 音量
 				state.activeNum = null;
 			}
 
@@ -231,6 +241,12 @@ export default {
 				this.example.on('fullscreen', function (flag) {
 					window.fullscreen = flag;
 				});
+
+				this.example.on("error",  (error)=> {
+					this.volume = 0;
+					console.log(error)
+					emit('switchGrid', 0);
+				})
 			}
 
 			// 调节音量
@@ -239,6 +255,7 @@ export default {
 					return;
 				}
 				this.example.setVolume(value / 100);
+				this.volume = value;
 			}
 
 			// 暂停播放
@@ -281,6 +298,9 @@ export default {
 				}
 				let bool = false;
 				bool = this.example.play(url, options);
+				setTimeout(() => {
+					adjustingVolume(this.volume);
+				}, 1000);
 				return bool;
 			}
 
@@ -343,7 +363,6 @@ export default {
 				bool = this.example.isPlaying();
 
 				return bool;
-
 			}
 
 			// 返回是否静音
@@ -429,23 +448,6 @@ export default {
 
 			return !!example;
 
-			/*
-			
-			  const keys = Object.keys(state.videoInfos);
-
-			 for (let key in keys) {
-				
-				if (state.videoInfos[keys[key]]) {
-					if(state.videoInfos[keys[key]].isRecording()){
-						
-						state.videoInfos[keys[key]].stopRecordAndSave();
-					}else {
-						
-						startRecord();
-					}
-					return
-				}
-			} */
 		}
 
 		function myIsRecording() {
@@ -511,6 +513,7 @@ export default {
 			const player = createPlayer(res.data.result, example);
 			example.player = player;
 			example.isBroadcasting = true;
+
 		}
 
 		// 创建播放实例
@@ -528,7 +531,7 @@ export default {
 
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_REMOTE_STREAMS, (e) => {
 				//获取到了远端流，可以播放
-				console.log('播放成功', e.streams);
+				console.log('WEBRTC_ON_REMOTE_STREAMS 播放成功', e.streams);
 				ElMessage({
 					message: '播放成功',
 					type: 'success',
@@ -538,7 +541,7 @@ export default {
 
 			player.on(ZLMRTCClient.Events.WEBRTC_NOT_SUPPORT, (e) => {
 				// 获取到了本地流
-				console.error('不支持webrtc', e);
+				console.error('WEBRTC_NOT_SUPPORT 不支持webrtc', e);
 				example.isBroadcasting = false;
 				ElMessage({
 					message: '不支持webrtc',
@@ -548,7 +551,7 @@ export default {
 
 			player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, (e) => {
 				// ICE 协商出错
-				console.error('ICE 协商出错');
+				console.error('WEBRTC_ICE_CANDIDATE_ERROR ICE 协商出错');
 				example.isBroadcasting = false;
 				ElMessage({
 					message: 'ICE 协商出错',
@@ -558,21 +561,22 @@ export default {
 
 			player.on(ZLMRTCClient.Events.WEBRTC_OFFER_ANWSER_EXCHANGE_FAILED, (e) => {
 				// offer anwser 交换失败
-				console.error('offer anwser 交换失败', e);
+				console.error('WEBRTC_OFFER_ANWSER_EXCHANGE_FAILED offer anwser 交换失败', e);
 				example.isBroadcasting = false;
 				ElMessage({
 					message: 'offer anwser 交换失败',
 					type: 'warning',
 				});
 			});
+
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_CONNECTION_STATE_CHANGE, (e) => {
 				// offer anwser 交换失败
-				console.log('状态改变', e);
-
+				console.log('WEBRTC_ON_CONNECTION_STATE_CHANGE 状态改变', e);
 			});
+
 			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, (e) => {
 				// offer anwser 交换失败
-				console.log('捕获流失败', e);
+				console.log('CAPTURE_STREAM_FAILED 捕获流失败', e);
 				example.isBroadcasting = false;
 				ElMessage({
 					message: '捕获流失败',
@@ -580,124 +584,42 @@ export default {
 				});
 			});
 
-			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, (s) => {
-				// 获取本地流失败
-
-				console.log('获取本地流失败');
-				example.isBroadcasting = false;
-				ElMessage({
-					message: '获取本地流失败',
-					type: 'warning',
-				});
-			});
-
-			player.on(ZLMRTCClient.Events.NEBRTC_NOT_SUPPORT, (e) => {
-				console.log('NEBRTC_NOT_SUPPORT', e)
-			});
-
-			player.on(ZLMRTCClient.Events.NEBRTC_ON_LOCAL_STREAM, (e) => {
-				console.log('NEBRTC_ON_LOCAL_STREAM', e)
-			});
-
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_OPEN, (e) => {
-				console.log('WEBRTC_ON_DATA_CHANNEL_OPEN', e)
+				console.log('WEBRTC_ON_DATA_CHANNEL_OPEN', e);
 			});
 
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_CLOSE, (e) => {
-				console.log('WEBRTC_ON_DATA_CHANNEL_CLOSE', e)
+				console.log('WEBRTC_ON_DATA_CHANNEL_CLOSE', e);
 			});
 
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_ERR, (e) => {
-				console.log('WEBRTC_ON_DATA_CHANNEL_ERR', e)
+				console.log('WEBRTC_ON_DATA_CHANNEL_ERR', e);
 			});
 
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_MSG, (e) => {
-				console.log('WEBRTC_ON_DATA_CHANNEL_MSG', e)
-			});
-
-
-			/* player.on(ZLMRTCClient.Events.WEBRTC_ICE_CANDIDATE_ERROR, function (e) {
-				// ICE 协商出错
-				console.log('ICE 协商出错');
-				ElMessage({
-					message: 'ICE 协商出错',
-					type: 'warning',
-				});
-			});
-
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_REMOTE_STREAMS, function (e) {
-				//获取到了远端流，可以播放
-				console.log('播放成功', e.streams);
-				ElMessage({
-					message: '播放成功',
-					type: 'warning',
-				});
-				example.isBroadcasting = true;
-			});
-
-			player.on(ZLMRTCClient.Events.WEBRTC_OFFER_ANWSER_EXCHANGE_FAILED, function (e) {
-				// offer anwser 交换失败
-				console.log('offer anwser 交换失败', e);
-				ElMessage({
-					message: 'offer anwser 交换失败',
-					type: 'warning',
-				});
+				console.log('WEBRTC_ON_DATA_CHANNEL_MSG', e);
 			});
 
 			player.on(ZLMRTCClient.Events.WEBRTC_ON_LOCAL_STREAM, function (s) {
-				// 获取到了本地流
-
-				document.getElementById('selfVideo').srcObject = s;
-				document.getElementById('selfVideo').muted = true;
-
-				//console.log('offer anwser 交换失败',e)
+				console.log('WEBRTC_ON_LOCAL_STREAM', e);
 			});
-
-			player.on(ZLMRTCClient.Events.CAPTURE_STREAM_FAILED, function (s) {
-				// 获取本地流失败
-
-				console.log('获取本地流失败');
-
-				ElMessage({
-					message: '获取本地流失败',
-					type: 'warning',
-				});
-			});
-
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_CONNECTION_STATE_CHANGE, function (state) {
-				// RTC 状态变化 ,详情参考 https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionState
-				console.log('当前状态==>', state);
-			});
-
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_OPEN, function (event) {
-				console.log('rtc datachannel 打开 :', event);
-				ElMessage({
-					message: 'rtc datachannel 打开',
-					type: 'warning',
-				});
-			});
-
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_MSG, function (event) {
-				console.log('rtc datachannel 消息 :', event.data);
-				document.getElementById('msgrecv').value = event.data;
-			});
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_ERR, function (event) {
-				console.log('rtc datachannel 错误 :', event);
-				ElMessage({
-					message: 'rtc datachannel 错误',
-					type: 'warning',
-				});
-			});
-			player.on(ZLMRTCClient.Events.WEBRTC_ON_DATA_CHANNEL_CLOSE, function (event) {
-				console.log('rtc datachannel 关闭 :', event);
-				ElMessage({
-					message: 'rtc datachannel 关闭',
-					type: 'warning',
-				});
-			}); */
 
 			return player;
 		}
+
+
+		// 返回当前选中的实例
+		function returnExample() {
+			const example = state.videoInfos[state.activeNum || geta()];
+
+			if (!example) {
+				return null;
+			};
+
+			return example;
+		};
+
+
 
 		return {
 			state,
@@ -717,11 +639,11 @@ export default {
 			enablePauseBroadcast,
 			CaretRight,
 			createVideoInstance,
+			returnExample
 		};
 	},
 };
 </script>
-
 
 <style lang="scss" scoped>
 .multiGridVideo {
@@ -860,7 +782,6 @@ export default {
 	}
 }
 </style>
-
 
 <style lang="scss">
 .multiGridVideo {

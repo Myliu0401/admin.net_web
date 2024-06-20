@@ -99,7 +99,6 @@ export default function (treeData, multiGridVideo) {
         if(!boolean){
             return
         }
-        contentMousedown(type, true);
     };
 
 

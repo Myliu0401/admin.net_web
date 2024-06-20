@@ -15,7 +15,8 @@
 				</el-select>
 			</div>
 
-			<el-table :data="state.lists" v-loading="state.loading" border style="width: 100%; margin-top: 15px" max-height="45vh">
+			<el-table :data="state.lists" v-loading="state.loading" border style="width: 100%; margin-top: 15px"
+				max-height="45vh">
 				<el-table-column prop="hour" label="时" align="center" />
 				<el-table-column prop="minute" label="分" align="center" />
 				<el-table-column prop="preset" label="预置位号" align="center" />
@@ -32,29 +33,25 @@
 
 			<div class="itemBox" style="display: flex; margin-top: 20px; margin-bottom: 20px;">
 				<span class="itemBox_title">定时拍照设置的集合</span>
-				<el-icon
-					@click="deleteItem"
-					size="20"
-					style="margin-right: 15px; margin-left: 20px"
+				<el-icon @click="deleteItem" size="20" style="margin-right: 15px; margin-left: 20px"
 					:color="state1.photos.length == 1 ? '#ccc' : ''"
-					:style="{ cursor: state1.photos.length == 1 ? 'no-drop' : 'pointer' }"
-					><ele-RemoveFilled
-				/></el-icon>
+					:style="{ cursor: state1.photos.length == 1 ? 'no-drop' : 'pointer' }"><ele-RemoveFilled /></el-icon>
 				<el-icon size="20" style="cursor: pointer" @click="addItem"><ele-CirclePlusFilled /></el-icon>
 			</div>
 
 			<div style=" height: 40vh; overflow: auto;">
-				<div v-for="item,index in state1.photos" :key="index" style="padding: 10px 0px;  border-bottom: 1px solid #ccc;">
+				<div v-for="item, index in state1.photos" :key="index"
+					style="padding: 10px 0px;  border-bottom: 1px solid #ccc;">
 					<div class="itemBox" style="display: flex; align-items: center; margin-bottom: 10px;">
 						<span class="itemBox_title" style="font-size: 13px; width: 70px;">时间</span>
-						<div class="content">
+						<!-- <div class="content">
 							<el-input v-model="item.hour" placeholder="时" style="width: 100px;" size="small" type="number" :min="1" :max="24" />
 							:
 							<el-input v-model="item.minute" placeholder="分" style="width: 100px;" size="small" type="number" :min="1" :max="60" />
 							:
 							<el-input v-model="item.preset" placeholder="秒" style="width: 100px;" size="small" type="number" :min="1" :max="60" />
-						</div>
-						
+						</div> -->
+						<el-time-picker v-model="item.date" placeholder="时间" />
 					</div>
 					<!-- <div class="itemBox" style="display: flex; align-items: center; margin-bottom: 10px;">
 						<span class="itemBox_title" style="font-size: 13px; width: 70px;">分</span>
@@ -64,13 +61,14 @@
 						<span class="itemBox_title" style="font-size: 13px; width: 70px;">秒</span>
 						<el-input v-model="item.preset" placeholder="秒" style="width: 120px;" size="small" type="number" :min="1" :max="60" />
 					</div> -->
-					
+
 				</div>
 
 				<div style="display: flex;justify-content: center;">
-					<el-button type="primary" style="margin-top: 10px;" :loading="state1.loading" @click="mySetPhotoTimeTable">设置</el-button>
+					<el-button type="primary" style="margin-top: 10px;" :loading="state1.loading"
+						@click="mySetPhotoTimeTable">设置</el-button>
 				</div>
-				
+
 			</div>
 		</div>
 	</div>
@@ -104,6 +102,7 @@ export default {
 					hour: '',
 					minute: '',
 					preset: '',
+					date: ''
 				},
 			],
 		});
@@ -153,12 +152,14 @@ export default {
 				hour: '',
 				minute: '',
 				preset: '',
+				date: ''
 			});
 		};
 
 
 		// 设置
-		async function mySetPhotoTimeTable(){
+		async function mySetPhotoTimeTable() {
+
 			if (!state1.channelId) {
 				ElMessage({
 					message: '必须选择通道',
@@ -167,10 +168,28 @@ export default {
 				return;
 			};
 			state1.loading = true;
-			const res = await setPhotoTimeTable({
-				channelId: state1.channelId,
-				photos: state1.photos
-			});
+			let res = null;
+			try {
+				res = await setPhotoTimeTable({
+					channelId: state1.channelId,
+					photos: state1.photos.map((item) => {
+						// 获取时、分、秒
+						let hours = item.date ? item.date.getHours() : '';
+						let minutes = item.date ? item.date.getMinutes() : '';
+						let seconds = item.date ? item.date.getSeconds() : '';
+
+						return {
+							hour: hours,
+							minute: minutes,
+							preset: seconds
+						}
+					})
+				});
+			} catch (err) {
+				state1.loading = false;
+				return
+			}
+
 			state1.loading = false;
 			ElMessage({
 				message: '设置成功',

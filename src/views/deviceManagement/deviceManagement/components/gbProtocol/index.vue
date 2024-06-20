@@ -1,5 +1,5 @@
 <template>
-	<el-dialog title="参数配置" v-model="state.show" :close-on-click-modal="false" width="60%" :before-close="close">
+	<el-dialog title="参数管理" v-model="state.show" :close-on-click-modal="false" width="60%" :before-close="close">
 		<el-tabs v-model="state.type" class="demo-tabs" @tab-change="handleClick">
 			<el-tab-pane label="关键帧与重启" name="KeyframesAndRestarts">
                 <KeyframesAndRestarts :deviceID="state.deviceID" v-if="state.type === 'KeyframesAndRestarts'"/>

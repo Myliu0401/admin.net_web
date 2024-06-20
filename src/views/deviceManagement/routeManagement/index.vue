@@ -42,7 +42,7 @@
 					<el-table-column prop="id" label="id" :align="'center'"> </el-table-column>
 					<el-table-column prop="createTime" label="创建时间" :align="'center'"> </el-table-column>
 					<el-table-column prop="name" label="线路名称" :align="'center'"> </el-table-column>
-					<el-table-column label="通用状态" :align="'center'">
+					<el-table-column label="是否启用" :align="'center'">
 						<template #default="scope">
 							<el-text v-if="scope.row.status == 1" class="mx-1" type="success">启用</el-text>
 							<el-text v-else-if="scope.row.status == 2" class="mx-1" type="warning">停用</el-text>
@@ -164,6 +164,7 @@ async function getAllCountys() {
 	const res = await getRegionList({
 		page: 1,
 		pageSize: 1000000,
+		excludeSelf: true,
 	});
 	state.countys = res.data.result.items.map((item) => {
 		return {

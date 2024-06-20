@@ -41,9 +41,10 @@
 		}
 
 		.accordion {
-			height: calc(100% - 50%);
+			height: calc(100% - 60%);
 			border-bottom: 1px solid #ccc;
 			overflow: auto;
+			transition: all 0.5s;
 
 			.el-tree {
 				background-color: transparent;
@@ -97,7 +98,9 @@
 			padding-top: 10px;
 			padding-left: 10px;
 			padding-right: 10px;
-			height: calc(50% - 60px);
+			height: calc(60% - 60px);
+			transition: all 0.5s;
+			overflow: hidden;
 
 			.text {
 				color: rgba(51, 51, 51, 1);
@@ -110,12 +113,11 @@
 				height: 84%;
 				margin-top: 10px;
 				position: relative;
-				overflow: auto;
+				overflow: hidden;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				padding: 10px 0px;
-				overflow: auto;
 				padding-bottom: 60px;
 				.circle-btn {
 					display: inline-block;
@@ -312,7 +314,7 @@
 					justify-content: space-between;
 					.item {
 						width: 32%;
-						height: 45px;
+						height: 35px;
 						border: 1px solid #ccc;
 						cursor: pointer;
 						transition: all 0.2s;
@@ -398,7 +400,7 @@
 					margin-top: 10px;
 					.item {
 						width: 50%;
-						height: 45px;
+						height: 35px;
 						border: 1px solid #ccc;
 						cursor: pointer;
 						transition: all 0.2s;
@@ -463,12 +465,31 @@
 						}
 					}
 
-					.el-input{
+					.el-input {
 						width: 60px;
 						margin-top: 10px;
 						position: relative;
 						left: 50%;
 						transform: translateX(-50%);
+					}
+				}
+			}
+
+			.controlIcon {
+				margin-left: 20px;
+				cursor: pointer;
+				transform: scale(1);
+				transition: all 0.3s;
+
+				&:hover {
+					transform: scale(1.3);
+				}
+
+				&.rotate {
+					transform: rotate(90deg);
+
+					&:hover {
+						transform: rotate(90deg) scale(1.3);
 					}
 				}
 			}

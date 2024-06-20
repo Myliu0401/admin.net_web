@@ -2,27 +2,26 @@
 	<el-dialog :visible="state.show" title="添加授权设备" v-model="state.show" :close-on-click-modal="false" width="50%">
 		<div class="mainContent">
 			<div class="mainContent_searchArea">
-				<el-input v-model="state.name" suffix-icon="el-icon-search" placeholder="请输入设备名称" size="small"
-					style="margin-right: 10px; max-width: 200px"></el-input>
+				<el-input v-model="state.name" suffix-icon="el-icon-search" placeholder="请输入设备名称" size="small" style="margin-right: 10px; max-width: 200px"></el-input>
 				<el-button type="primary" :icon="Search" @click="search">搜索</el-button>
 			</div>
 
-			<el-table ref="myTable" @selection-change="handleSelectionChange" :data="state.lists" max-height="50vh"
-				:border="true" empty-text="暂无数据" style="width: 100%" v-loading="state.loading">
+			<el-table ref="myTable" @selection-change="handleSelectionChange" :data="state.lists" max-height="50vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="state.loading">
 				<el-table-column type="selection" width="50" />
 				<el-table-column prop="code" label="设备id" width="180" :align="'center'" />
-				<el-table-column prop="name" label="设备名称" :align="'center'" />
+				<el-table-column prop="name" label="设备名称" :align="'center'">
+					<template #default="scope">
+						<span>{{ scope.row.customName || scope.row.name }}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop="createTime" label="创建时间" :align="'center'" />
 			</el-table>
 
 			<el-pagination layout="prev, pager, next" :total="state.total" @current-change="pagination" />
 		</div>
-		<div style="display: flex; justify-content: flex-end;"><el-button type="primary"
-				@click="addAuthorization">添加授权</el-button></div>
+		<div style="display: flex; justify-content: flex-end"><el-button type="primary" @click="addAuthorization">添加授权</el-button></div>
 	</el-dialog>
 </template>
-
-
 
 <script>
 import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
@@ -42,7 +41,7 @@ export default {
 			pageSize: 10,
 			lists: [], // 设备列表
 			selectedRows: [], // 选中的数据
-			id: null
+			id: null,
 		});
 
 		const myTable = ref(null);
@@ -51,12 +50,12 @@ export default {
 			state.show = true;
 			state.id = id;
 			getMyDeviceList();
-		};
+		}
 
 		// 关闭弹窗
 		function close() {
-            state.show = false;
-		};
+			state.show = false;
+		}
 
 		// 获取设备列表
 		async function getMyDeviceList() {
@@ -95,29 +94,28 @@ export default {
 			needToSelect.forEach((row) => {
 				table.toggleRowSelection(row, true); // 重新选中这些行
 			});
-		};
-
-
+		}
 
 		// 添加授权
 		async function addAuthorization() {
-
 			if (state.loading) {
-				return
+				return;
 			}
 
 			if (!state.selectedRows || !state.selectedRows.length) {
 				ElMessage({
 					message: '请选择设备',
 					type: 'warning',
-				})
-				return
-			};
+				});
+				return;
+			}
 
 			state.loading = true;
 			await addDevicesAuthorization({
 				userId: state.id,
-				devices: state.selectedRows.map((item) => { return item.id })
+				devices: state.selectedRows.map((item) => {
+					return item.id;
+				}),
 			});
 
 			state.loading = false;
@@ -127,14 +125,12 @@ export default {
 				message: '添加成功',
 				type: 'success',
 			});
-
-		};
+		}
 
 		return { state, open, search, pagination, handleSelectionChange, addAuthorization, myTable };
 	},
 };
 </script>
-
 
 <style lang="scss" scoped>
 .mainContent {

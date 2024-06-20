@@ -7,7 +7,7 @@
 			<div class="accordion">
 				<el-tree :data="leftData.myTrees" :props="leftData.defaultProps" :highlight-current="true" node-key="id" :current-node-key="'2104'" accordion @node-click="handleNodeClick">
 					<template v-slot="{ node, data }">
-						<p class="custom-tree-node" :title="data.code" style="width: 100%;">
+						<p class="custom-tree-node" :title="data.code" style="width: 100%">
 							{{ data.label }}
 						</p>
 					</template>
@@ -30,46 +30,78 @@
 			</div>
 
 			<div class="cotentMain_table">
-				<el-table :data="listData.deviceList" max-height="70vh" :border="true" empty-text="暂无数据" style="width: 100%" v-loading="listData.loading">
-					<el-table-column prop="code" label="设备id" width="70" :align="'center'" />
-					<el-table-column prop="keepaliveTime" label="心跳时间" width="180" :align="'center'" />
-					<el-table-column label="设备名称" :align="'center'">
+				<el-table :data="listData.deviceList" :border="true" 
+				empty-text="暂无数据" 
+				style="width: 100%" 
+				v-loading="listData.loading"
+				max-height="70vh"
+				>
+					<el-table-column prop="code" label="设备id" :align="'center'" width="160" />
+					<el-table-column prop="name" label="设备名称" :align="'center'" width="160">
 						<template #default="scope">
 							<span>{{ scope.row.customName || scope.row.name }}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="signalStrength" label="无线信号强度" :align="'center'" width="110" />
-					<el-table-column prop="batteryVoltage" label="电池电压" :align="'center'" width="110" />
+					<el-table-column label="上下线" :align="'center'">
+						<template #default="scope">
+							<el-text class="mx-1" :type="scope.row.onOffStatus == 1 ? 'success' : 'warning'">{{ scope.row.onOffStatus == 1 ? '在线' : '离线' }}</el-text>
+						</template>
+					</el-table-column>
+					<el-table-column prop="keepaliveTime" label="心跳时间" :align="'center'" width="130">
+						<template #default="scope">
+							<span>{{ FormatKeepaliveDate(scope.row.keepaliveTime) }}</span>
+						</template>
+					</el-table-column>
+					<el-table-column prop="signalStrength" label="信号强度" :align="'center'">
+						<template #default="scope">
+							<el-text v-if="scope.row.signalStrength >= -0.1">{{ scope.row.signalStrength + '%' }}</el-text>
+							<el-text v-else>{{ '' }}</el-text>
+						</template>
+					</el-table-column>
+					<el-table-column prop="batteryVoltage" label="电池电压" :align="'center'">
+						<template #default="scope">
+							<el-text v-if="scope.row.batteryVoltage >= -0.1">{{ scope.row.batteryVoltage + 'V' }}</el-text>
+							<el-text v-else>{{ '' }}</el-text>
+						</template>
+					</el-table-column>
+					<el-table-column prop="protocol" label="通信协议" :align="'center'">
+						<template #default="scope">
+							<el-text v-if="scope.row.protocol === 1">{{ 'NW' }}</el-text>
+							<el-text v-else-if="scope.row.protocol === 2">{{ 'GB28181' }}</el-text>
+							<el-text v-else-if="scope.row.protocol === 3">{{ '温气象' }}</el-text>
+						</template>
+					</el-table-column>
 					<el-table-column prop="imei" label="IMEI/MEID" :align="'center'" />
 					<el-table-column prop="phone" label="电话" :align="'center'" />
 					<el-table-column prop="type" label="类型" :align="'center'" />
 					<el-table-column prop="lensType" label="镜头类别" :align="'center'" />
 					<el-table-column prop="model" label="装置型号" :align="'center'" />
-					<el-table-column prop="installDate" label="安装日期" :align="'center'" />
+					<el-table-column prop="installDate" label="安装日期" :align="'center'" width="130" />
 					<el-table-column prop="networkType" label="网络类型" :align="'center'" />
 					<el-table-column prop="manufacturer" label="生产厂家" :align="'center'" />
-
-					<el-table-column label="通用状态" :align="'center'">
-						<template #default="scope">
-							<el-text class="mx-1" :type="scope.row.status == 1 ? 'success' : 'warning'">{{ scope.row.status == 1 ? '启用' : '停用' }}</el-text>
-						</template>
-					</el-table-column>
-					<el-table-column label="上下线状态" :align="'center'">
-						<template #default="scope">
-							<el-text class="mx-1" :type="scope.row.onOffStatus == 1 ? 'success' : 'warning'">{{ scope.row.onOffStatus == 1 ? '在线' : '离线' }}</el-text>
-						</template>
-					</el-table-column>
 					<el-table-column prop="okFailureStatus" label="故障状态" :align="'center'">
 						<template #default="scope">
 							<el-text class="mx-1" :type="scope.row.okFailureStatus == 1 ? 'success' : 'warning'">{{ scope.row.okFailureStatus == 1 ? '正常' : '故障' }}</el-text>
 						</template>
 					</el-table-column>
-					<el-table-column label="操作" width="70" :align="'center'" fixed="right">
+					<el-table-column label="是否启用" :align="'center'">
 						<template #default="scope">
-							<el-text style="margin-right: 5px" @click="openPopup('set', scope.row)" class="mx-1" type="primary">修改</el-text>
-							<el-text style="margin-right: 5px" class="mx-1" type="danger" @click="myDeleteDevice(scope.row)">删除</el-text>
-							<el-text class="mx-1" type="primary" @click="openChannel(scope.row)">设备通道</el-text>
-							<el-text class="mx-1" type="primary" @click="openTheConfig(scope.row)">参数管理</el-text>
+							<el-text class="mx-1" :type="scope.row.status == 1 ? 'success' : 'warning'">{{ scope.row.status == 1 ? '启用' : '停用' }}</el-text>
+						</template>
+					</el-table-column>
+					<el-table-column label="操作" width="180" fixed="right" align="center" show-overflow-tooltip>
+						<template #default="scope">
+							<el-button icon="ele-Edit" size="small" text type="primary" @click="openPopup('set', scope.row)"> 编辑 </el-button>
+							<el-button icon="ele-Delete" size="small" text type="danger" @click="myDeleteDevice(scope.row)"> 删除 </el-button>
+							<el-dropdown>
+								<el-button icon="ele-MoreFilled" size="small" text type="primary" style="padding-left: 12px" />
+								<template #dropdown>
+									<el-dropdown-menu>
+										<el-dropdown-item icon="ele-Tickets" @click="openChannel(scope.row)"> 通道管理 </el-dropdown-item>
+										<el-dropdown-item icon="ele-Setting" @click="openTheConfig(scope.row)"> 参数管理 </el-dropdown-item>
+									</el-dropdown-menu>
+								</template>
+							</el-dropdown>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -90,12 +122,11 @@
 
 		<AddDevice ref="addDevic" @complete="mySearch" :towerTress="state.towerTress" />
 		<SetDevice ref="setDevic" @complete="mySearch" :towerTress="state.towerTress" />
-		<DeviceChannel ref="channel" :deviceList="state.allDevices"/>
+		<DeviceChannel ref="channel" :deviceList="state.allDevices" />
 		<ParamMans ref="paramMans" />
 		<GbProtocol ref="gbProtocol" />
 	</div>
 </template>
-
 
 <script setup>
 import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
@@ -126,6 +157,7 @@ const state = reactive({
 
 const { leftData, getSpecificTreeShape } = leftInfo();
 const { listData, search, reset, setPagination, handleSizeChange, handleCurrentChange } = listInfo(state);
+listData.pageSize = 20;
 
 onBeforeMount(() => {
 	//getAllTowerPole(); // 获取所有塔杆
@@ -133,6 +165,20 @@ onBeforeMount(() => {
 
 	getSuperiorTower(); // 获取塔杆上级
 });
+
+function FormatKeepaliveDate(str) {
+	const date = new Date(str);
+	if (isNaN(date.getTime())) {
+		return '';
+	}
+	const now = new Date();
+	let difference = now.getTime() - date.getTime();
+	difference = difference / 1000 / 60;
+	if (difference >= 30) {
+		return str;
+	}
+	return '刚才 ' + str.split(' ')[1];
+}
 
 // 选中树节点
 function handleNodeClick(data) {
@@ -142,7 +188,7 @@ function handleNodeClick(data) {
 
 	state.treeNode = data;
 	listData.page = 1;
-	listData.pageSize = 10;
+	listData.pageSize = 20;
 }
 
 // 获取所有塔杆
@@ -242,12 +288,10 @@ function convertKeyValues(datas) {
 	}
 }
 
-function getChannelList(){
-	console.log('========')
+function getChannelList() {
+	console.log('========');
 }
 </script>
-
-
 
 <style lang="scss" scoped>
 @import './index.scss';

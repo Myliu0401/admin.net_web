@@ -137,11 +137,11 @@ export const useThemeConfig = defineStore('themeConfig', {
 			 * 全局网站标题 / 副标题
 			 */
 			// 网站主标题（菜单导航、浏览器当前网页标题）
-			globalTitle: 'Admin.NET',
+			globalTitle: '鼎信设备管理平台',
 			// 网站副标题（登录页顶部文字）
-			globalViceTitle: 'Admin.NET',
+			globalViceTitle: '鼎信设备管理平台',
 			// 网站副标题（登录页顶部文字）
-			globalViceTitleMsg: '有可能是.NET最好用的通用权限开发框架',
+			globalViceTitleMsg: '助力铁路行业数字化',
 			// 默认初始语言，可选值"<zh-cn|en|zh-tw>"，默认 zh-cn
 			globalI18n: 'zh-cn',
 			// 默认全局组件大小，可选值"<large|'default'|small>"，默认 'large'

@@ -121,32 +121,8 @@
   
   
               .el-table {
-                  border-top-left-radius: 10px;
-                  border-top-right-radius: 10px;
-  
-                  .el-table__row {
-                      &:nth-child(even) {
-                          background-color: rgba(250, 250, 250, 1);
-                      }
-                  }
-  
-                  .el-table__cell {
-                      padding: 9px 0px;
-                  }
-  
-  
-                  .el-icon-edit {
-                      cursor: pointer;
-  
-                      &:hover {
-                          color: #409EFF;
-                      }
-                  }
-              }
-
-              .el-text{
-                display: block;
-              }
+					flex: 1;
+				}
           }
   
   

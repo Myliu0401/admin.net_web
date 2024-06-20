@@ -37,7 +37,7 @@
 					<el-table-column prop="material" label="材质" :align="'center'"> </el-table-column>
 					<el-table-column prop="property" label="性质" :align="'center'"> </el-table-column>
 
-					<el-table-column label="通用状态" :align="'center'">
+					<el-table-column label="是否启用" :align="'center'">
 						<template #default="scope">
 							<el-text class="mx-1" :type="scope.row.status == 1 ? 'success' : 'warning'">{{ scope.row.status == 1 ? '启用' : '停用' }}</el-text>
 						</template>

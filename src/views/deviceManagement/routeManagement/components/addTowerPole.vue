@@ -14,7 +14,7 @@
 				<el-input v-model="form.orderNo" type="number" style="width: 150px" min="1" />
 			</el-form-item>
 
-			<el-form-item label="通用状态">
+			<el-form-item label="是否启用">
 				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.status" />
 			</el-form-item>
 
@@ -104,7 +104,7 @@ export default defineComponent({
 
 		const form = reactive({
 			name: undefined, // 塔杆名称
-			status: false, // 通用状态
+			status: false, // 是否启用
 			remark: undefined, // 备注
 			orderNo: undefined, // 排序
 			voltageLevelId: '', // 电压等级id
@@ -177,6 +177,7 @@ export default defineComponent({
 				page: 1,
 				pageSize: 10000,
 				pid,
+				excludeSelf: true,
 			});
 			const arr = res.data.result.items;
 

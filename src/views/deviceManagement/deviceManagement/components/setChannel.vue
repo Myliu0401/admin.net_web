@@ -17,10 +17,6 @@
 				<el-input v-model="form.remark" />
 			</el-form-item>
 
-			<el-form-item label="code" prop="code">
-				<el-input v-model="form.code" />
-			</el-form-item>
-
 			<el-form-item label="排序">
 				<el-input v-model="form.orderNo" type="number" style="width: 150px" min="1" />
 			</el-form-item>
@@ -29,26 +25,22 @@
 				<el-switch inline-prompt active-text="启用" inactive-text="停用" v-model="form.status" />
 			</el-form-item>
 
-			<!-- <el-form-item label="上下线状态">
-				<el-switch inline-prompt active-text="上线" inactive-text="离线" v-model="form.onOffStatus" />
-			</el-form-item> -->
-
-			<el-form-item label="设备故障状态">
+			<el-form-item label="故障状态">
 				<el-switch inline-prompt active-text="正常" inactive-text="故障" v-model="form.okFailureStatus" />
 			</el-form-item>
 
-			<el-form-item label="是否启用定时截图">
+			<el-form-item label="定时截图">
 				<el-switch inline-prompt active-text="启用" inactive-text="禁用" v-model="form.enableSnapshot" />
 			</el-form-item>
 
-			<el-form-item label="截图时段" v-if="form.enableSnapshot">
+			<el-form-item label="截图时段">
 				<div class="itemBox">
 					<el-time-picker v-model="snapStartTime" placeholder="起始时间" style="width: 150px" />至
 					<el-time-picker v-model="snapEndTime" placeholder="终止时间" style="width: 150px" />
 				</div>
 			</el-form-item>
 
-			<el-form-item label="截图间隔" v-if="form.enableSnapshot">
+			<el-form-item label="截图间隔">
 				<el-input v-model="form.snapInterval" style="width: 100px" placeholder="分钟" type="number" />
 			</el-form-item>
 
@@ -59,7 +51,6 @@
 		</el-form>
 	</el-dialog>
 </template>
-
 
 <script>
 import { reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
@@ -93,12 +84,11 @@ export default {
 		const form = reactive({
 			id: state.id,
 			name: undefined, // 通道名称
-			onOffStatus: false, // 上下线状态
-			okFailureStatus: false, // 设备故障状态
+			okFailureStatus: false, // 通道故障状态
 			remark: undefined, // 备注
 			orderNo: undefined, // 排序
 			deviceId: undefined, // 直属设备id
-			status: undefined, // 通用状态
+			status: false, // 是否启用
 			enableSnapshot: undefined, // 是否启用定时截图
 			snapInterval: undefined, // 定时截图的间隔时间，分钟数
 			code: undefined,
@@ -106,9 +96,7 @@ export default {
 		});
 
 		const rules = reactive({
-			/* name: [{ required: true, message: '必须输入设备名称', trigger: 'blur' }], */
-			customName: [{ required: true, message: '必须输入自定义名称', trigger: 'blur' }],
-			code: [{ required: true, message: '必须输入code编码', trigger: 'blur' }],
+			code: [{ required: true, message: '必须输入code', trigger: 'blur' }],
 		});
 
 		// 开启弹窗
@@ -119,7 +107,6 @@ export default {
 			state.deviceName = item.deviceName;
 			state.deviceId = item.deviceId;
 			form.name = item.name;
-			form.onOffStatus = item.onOffStatus == 1 ? true : false;
 			form.okFailureStatus = item.okFailureStatus == 1 ? true : false;
 			form.status = item.status == 1 ? true : false;
 			form.remark = item.remark;
@@ -182,7 +169,6 @@ export default {
 					orderNo: form.orderNo,
 					remark: form.remark,
 					status: form.status ? 1 : 2,
-					onOffStatus: form.onOffStatus ? 1 : 2,
 					okFailureStatus: form.okFailureStatus ? 1 : 2,
 					enableSnapshot: form.enableSnapshot,
 					snapStartTime: snapStartTime.value ? formatTime(snapStartTime.value) : undefined,
@@ -213,12 +199,11 @@ export default {
 			state.loading = false;
 
 			form.name = undefined;
-			form.onOffStatus = false;
 			form.okFailureStatus = false;
 			form.remark = undefined;
 			form.orderNo = undefined;
 			form.deviceId = undefined;
-			form.status = undefined;
+			form.status = false;
 			form.enableSnapshot = undefined;
 			form.snapInterval = undefined;
 			form.code = undefined;

@@ -2,10 +2,12 @@
 	<div class="realTimeVideo">
 		<div class="realTimeVideo_leftNavs">
 			<div class="searchArea">
-				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search"> </el-input>
+				<el-input v-model="treeData.keyword" placeholder="搜索" suffix-icon="el-icon-search" @change="search">
+				</el-input>
 			</div>
-			<div class="accordion">
-				<el-tree :key="treeData.myKey" show-checkbox :load="loadNode" lazy :props="treeData.defaultProps" :highlight-current="true" accordion @node-click="handleNodeClick">
+			<div class="accordion" :style="{ height: state.gimbalShow ? 'calc(100% - 60%)' : 'calc(100% - 17%)' }">
+				<el-tree :key="treeData.myKey" show-checkbox :load="loadNode" lazy :props="treeData.defaultProps"
+					:highlight-current="true" accordion @node-click="handleNodeClick">
 					<template v-slot="{ node, data }">
 						<p class="custom-tree-node" :title="data.code" style="width: 100%">
 							{{ data.name }}
@@ -14,12 +16,18 @@
 				</el-tree>
 			</div>
 
-			<div class="control">
-				<span class="text">云台控制</span>
+			<div class="control" :style="{ height: state.gimbalShow ? 'calc(60% - 60px)' : '40px' }">
+				<div class="text" style="display: flex; align-items: center">
+					云台控制
+					<el-icon class="el-icon--right" @click="state.gimbalShow = !state.gimbalShow">
+						<ele-ArrowDown v-if="state.gimbalShow" />
+						<ele-ArrowUp v-if="!state.gimbalShow" />
+					</el-icon>
+				</div>
 
 				<div class="content">
 					<div class="directionBox">
-						<div class="item" title="左上角" @mousedown="contentMousedown('UpLeft')" >
+						<div class="item" title="左上角" @mousedown="contentMousedown('UpLeft')">
 							<el-icon size="20"><ele-CaretLeft /></el-icon>
 						</div>
 						<div class="item" title="向上" @mousedown="contentMousedown('Up')">
@@ -34,7 +42,7 @@
 						<div class="item" title="暂停" @click="clickGimbal('Stop')">
 							<el-icon size="20"><ele-UserFilled /></el-icon>
 						</div>
-						<div class="item" title="向右"  @mousedown="contentMousedown('Right')">
+						<div class="item" title="向右" @mousedown="contentMousedown('Right')">
 							<el-icon size="20"><ele-CaretLeft /></el-icon>
 						</div>
 						<div class="item" title="左下角" @mousedown="contentMousedown('DownLeft')">
@@ -76,76 +84,16 @@
 					</div>
 
 					<div class="sliderBox">
-						<el-slider v-model="gimbalData.speed" :show-tooltip="false" :min="1" :max="254"/>
-						<el-input v-model="gimbalData.speed" 
-						disabled 
-						placeholder="速度" />
+						<el-slider v-model="gimbalData.speed" :show-tooltip="false" :min="1" :max="254" />
+						<el-input v-model="gimbalData.speed" disabled placeholder="速度" />
 					</div>
-
-					<!-- <div class="circle-btn">
-						<el-icon
-							v-for="text in ['Up', 'UpRight', 'Right', 'DownRight', 'Down', 'Left', 'DownLeft', 'UpLeft']"
-							:size="27" :key="text" color="#ccc" @click="clickGimbal(text)">
-							<ele-CaretTop />
-						</el-icon>
-
-						<el-button class="cease" circle @click="clickGimbal('Stop')">停止</el-button>
-					</div> -->
-
-					<!-- <ul class="liest">
-						<li class="item">
-							<span class="title">变倍</span>
-							<div class="main">
-								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Zoom1')">
-									<ele-CirclePlusFilled />
-								</el-icon>
-
-								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Zoom2')">
-									<ele-RemoveFilled />
-								</el-icon>
-							</div>
-						</li>
-
-						<li class="item">
-							<span class="title">聚焦</span>
-							<div class="main">
-								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Focus1')">
-									<ele-CirclePlusFilled />
-								</el-icon>
-
-								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Focus2')">
-									<ele-RemoveFilled />
-								</el-icon>
-							</div>
-						</li>
-
-						<li class="item">
-							<span class="title">光圈</span>
-							<div class="main">
-								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Iris1')">
-									<ele-CirclePlusFilled />
-								</el-icon>
-
-								<el-icon :size="25" :key="num" color="#333" @click="clickGimbal('Iris2')">
-									<ele-RemoveFilled />
-								</el-icon>
-							</div>
-						</li>
-
-						<li class="item">
-							<span class="title">速度</span>
-							<div class="main" style="padding-left: 13px; padding-right: 13px">
-								<el-slider :min="1" :max="254" size="small" v-model="gimbalData.speed" />
-							</div>
-						</li>
-					</ul> -->
 				</div>
 			</div>
 		</div>
 
 		<div class="realTimeVideo_main">
 			<div class="content">
-				<MultiGridVideo :currentGrid="state.currentGrid" @deleteVideo="deleteVideo" ref="multiGridVideo" />
+				<MultiGridVideo :currentGrid="state.currentGrid" @deleteVideo="deleteVideo" ref="multiGridVideo" @switchGrid="switchGrid1"/>
 			</div>
 			<div class="domain">
 				<div class="domain_left">
@@ -153,20 +101,23 @@
 						<img class="weiduyip" src="../../assets/realTimeVideo/2.png" @click.stop="fullScreen" />
 					</div>
 					<div class="item">
-						<img class="weiduyip" :class="{ down: state.isDown }" src="../../assets/realTimeVideo/3.png" @click="recordingAudio" />
+						<img class="weiduyip" :class="{ down: state.isDown }" :src="myMicrophoneSrc"
+							@click="recordingAudio" />
 					</div>
 					<div class="item">
 						<img class="weiduyip" src="../../assets/realTimeVideo/4.png" @click.stop="screenshot" />
 					</div>
 					<div class="item">
 						<span class="text" v-if="state.isRecording">录制中...</span>
-						<img class="weiduyip" src="../../assets/realTimeVideo/5.png" @click.stop="recordingAndDownloading" />
+						<img class="weiduyip" src="../../assets/realTimeVideo/5.png"
+							@click.stop="recordingAndDownloading" />
 					</div>
 					<div class="item">
-						<img class="weiduyip" src="../../assets/realTimeVideo/6.png" />
+						<img class="weiduyip" :src="volumeIcon" />
 
 						<div class="progressBarSlider">
-							<el-slider size="small" :min="0" :max="100" v-model="volume" :show-tooltip="false" @input="adjustingVolume"></el-slider>
+							<el-slider size="small" :min="0" :max="100" v-model="volume" :show-tooltip="false"
+								@input="adjustingVolume"></el-slider>
 						</div>
 					</div>
 				</div>
@@ -176,19 +127,25 @@
 				</div>
 			</div>
 		</div>
+
+
+		<PresetPosition />
 	</div>
 </template>
 
-
 <script setup>
-import { defineAsyncComponent, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+import { defineAsyncComponent, reactive, ref, onBeforeMount, onBeforeUnmount, onMounted, computed } from 'vue';
 import Choices from './components/Choices.vue';
 import directSeeding from './composition/directSeeding.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import treeInfo from './composition/tree.js';
 import gimbalInfo from './composition/gimbal.js';
 import MultiGridVideo from './components/MultiGridVideo.vue';
-
+import microphoneSrc from '../../assets/realTimeVideo/麦克风.png';
+import microphoneDisabledSrc from '../../assets/realTimeVideo/麦克风禁用.png';
+import volumeIcon1 from '../../assets/realTimeVideo/6.png';
+import volumeIcon2 from '../../assets/realTimeVideo/静音.png';
+import PresetPosition from './components/presetPosition.vue';
 const volume = ref(0);
 const multiGridVideo = ref(null);
 
@@ -201,6 +158,29 @@ const state = reactive({
 	currentGrid: '1x1', // 当前格子
 
 	broadcastRtc: null,
+
+	gimbalShow: true, // 云台是否展示
+
+});
+
+const myMicrophoneSrc = computed(() => {
+	if (!multiGridVideo.value) {
+		return microphoneDisabledSrc;
+	}
+	const example = multiGridVideo.value.returnExample();
+	if (!example) {
+		return microphoneDisabledSrc;
+	} else {
+		return example.isBroadcasting ? microphoneSrc : microphoneDisabledSrc;
+	}
+});
+
+const volumeIcon = computed(()=>{
+	if(volume.value){
+         return volumeIcon1
+	}
+
+	return volumeIcon2
 });
 
 const { treeData, loadNode, handleNodeClick, search, cleanUp } = treeInfo(state, multiGridVideo);
@@ -209,7 +189,7 @@ const { gimbalData, clickGimbal, contentMousedown } = gimbalInfo(treeData, multi
 
 //================================//
 
-onMounted(() => {});
+onMounted(() => { });
 
 //=======================================================================================================//
 
@@ -220,6 +200,10 @@ function recordingAndDownloading() {
 	} else {
 		stopRecordAndSave();
 	}
+}
+
+function switchGrid1(value){
+    volume.value = value;
 }
 
 // 按下
@@ -283,10 +267,26 @@ function recordingAudio() {
 	//broadcastStatusClick();
 }
 
+
+function currentInstance() {
+	if (!multiGridVideo.value) {
+		return null
+	}
+
+	const example = multiGridVideo.value.returnExample();
+
+	if (!example) {
+		return
+	}
+
+	return example;
+}
+
 const broadcastStatusClick = async () => {
 	state.broadcastRtc = new ZLMRTCClient.Endpoint({
 		debug: true, // 是否打印日志
-		zlmsdpUrl: 'https://120.25.172.200:30006/index/api/webrtc?app=broadcast&stream=34020000001320004006&type=push', //流地址
+		zlmsdpUrl:
+			'https://120.25.172.200:30006/index/api/webrtc?app=broadcast&stream=34020000001320004006&type=push', //流地址
 		simulecast: false,
 		useCamera: false,
 		audioEnable: true,
